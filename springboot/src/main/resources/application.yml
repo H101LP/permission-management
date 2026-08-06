@@ -23,3 +23,13 @@ logging:
     com.fast: debug
     #spring框架的日志级别  warn只输出警告和错误信息 减少控制台输出
     org.springframework: warn
+
+#mybatis配置
+mybatis:
+  #告诉mybatis去哪找接口
+  type-aliases-package: com.fast.**.mapper
+  #配置扫描
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  configuration:
+    #日志
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
