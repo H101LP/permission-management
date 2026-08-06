@@ -10,6 +10,11 @@ spring:
     url: jdbc:mysql://localhost:3306/fast?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+  #配置默认的用户名和密码
+  security:
+    user:
+      name: admin
+      password: 123456
 
 #环境配置
 server:
@@ -26,10 +31,18 @@ logging:
 
 #mybatis配置
 mybatis:
-  #告诉mybatis去哪找接口
-  type-aliases-package: com.fast.**.mapper
+  #告诉mybatis去哪找实体类映射
+  type-aliases-package: com.fast.**.domin
   #配置扫描
   mapper-locations: classpath*:mapper/**/*Mapper.xml
   configuration:
     #日志
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+token:
+  #请求头的字段名： 前端携带此字段
+  header: Authorization
+  #令牌密钥 用于加密解密token
+  secret: ${JWT_SECRET}
+  #令牌有效期（M）
+  expireTime: 300

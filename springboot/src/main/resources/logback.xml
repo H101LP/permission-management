@@ -69,8 +69,8 @@
     <!-- ====== 6. 包级别日志 ====== -->
     <logger name="com.fast" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ASYNC_FILE"/>      <!-- 异步写全量 -->
-        <appender-ref ref="ASYNC_ERROR"/>     <!-- 异步写错误 -->
+<!--        <appender-ref ref="ASYNC_FILE"/>      &lt;!&ndash; 异步写全量 &ndash;&gt;-->
+<!--        <appender-ref ref="ASYNC_ERROR"/>      异步写错误 -->
     </logger>
 
     <!-- 第三方框架降低日志级别 -->
@@ -81,8 +81,8 @@
     <!-- ====== 7. 根日志 ====== -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ASYNC_FILE"/>
-        <appender-ref ref="ASYNC_ERROR"/>
+<!--        <appender-ref ref="ASYNC_FILE"/>-->
+<!--        <appender-ref ref="ASYNC_ERROR"/>-->
     </root>
 
 </configuration>

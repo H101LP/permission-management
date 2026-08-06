@@ -67,6 +67,36 @@
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
 			<version>2.1.0</version>
 		</dependency>
+		<!-- JWT API接口：包含创建和解析JWT的核心接口和抽象类 -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+
+		<!-- JWT实现：包含JWT的具体实现，如签名算法、验证逻辑等 -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- JWT Jackson支持：用于JWT与JSON的序列化和反序列化 -->
+		<!-- JWT内部是JSON格式，需要Jackson库做Java对象和JSON互相转换 -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Spring Security 安全认证 -->
+		<!-- Spring提供的安全框架，身份认证、接口权限控制 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
