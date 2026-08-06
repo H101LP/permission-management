@@ -13,3 +13,33 @@
 2026-08-06 09:11:11.707 INFO  [http-nio-8080-exec-1] o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
 2026-08-06 09:11:20.805 INFO  [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} closing ...
 2026-08-06 09:11:20.805 INFO  [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} closed
+2026-08-06 10:40:10.739 INFO  [main] com.fast.SpringbootApplication - Starting SpringbootApplication using Java 24 with PID 8464 (D:\Java_WorkSpase\RBAC\springboot\target\classes started by a8630 in D:\Java_WorkSpase\RBAC)
+2026-08-06 10:40:10.740 DEBUG [main] com.fast.SpringbootApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-08-06 10:40:10.741 INFO  [main] com.fast.SpringbootApplication - No active profile set, falling back to 1 default profile: "default"
+2026-08-06 10:40:11.108 WARN  [main] org.mybatis.spring.mapper.ClassPathMapperScanner - No MyBatis mapper was found in '[com.fast.**.mapper]' package. Please check your configuration.
+2026-08-06 10:40:11.325 INFO  [main] org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-08-06 10:40:11.326 INFO  [main] org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-08-06 10:40:11.326 INFO  [main] org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-08-06 10:40:11.358 INFO  [main] o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-08-06 10:40:11.548 INFO  [main] c.a.d.s.b.a.DruidDataSourceAutoConfigure - Init DruidDataSource
+2026-08-06 10:40:11.599 INFO  [main] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
+2026-08-06 10:40:11.707 INFO  [main] org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-08-06 10:40:11.724 INFO  [main] com.fast.SpringbootApplication - Started SpringbootApplication in 1.264 seconds (process running for 1.897)
+2026-08-06 10:40:28.807 INFO  [http-nio-8080-exec-1] o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-06 10:41:10.224 INFO  [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} closing ...
+2026-08-06 10:41:10.225 INFO  [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} closed
+2026-08-06 10:41:13.962 INFO  [main] com.fast.SpringbootApplication - Starting SpringbootApplication using Java 24 with PID 16144 (D:\Java_WorkSpase\RBAC\springboot\target\classes started by a8630 in D:\Java_WorkSpase\RBAC)
+2026-08-06 10:41:13.962 DEBUG [main] com.fast.SpringbootApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-08-06 10:41:13.963 INFO  [main] com.fast.SpringbootApplication - No active profile set, falling back to 1 default profile: "default"
+2026-08-06 10:41:14.338 WARN  [main] org.mybatis.spring.mapper.ClassPathMapperScanner - No MyBatis mapper was found in '[com.fast.**.mapper]' package. Please check your configuration.
+2026-08-06 10:41:14.550 INFO  [main] org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-08-06 10:41:14.551 INFO  [main] org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-08-06 10:41:14.551 INFO  [main] org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-08-06 10:41:14.582 INFO  [main] o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-08-06 10:41:14.762 INFO  [main] c.a.d.s.b.a.DruidDataSourceAutoConfigure - Init DruidDataSource
+2026-08-06 10:41:14.811 INFO  [main] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
+2026-08-06 10:41:14.925 INFO  [main] org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-08-06 10:41:14.946 INFO  [main] com.fast.SpringbootApplication - Started SpringbootApplication in 1.218 seconds (process running for 1.77)
+2026-08-06 10:41:17.881 INFO  [http-nio-8080-exec-5] o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-06 10:41:59.448 INFO  [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} closing ...
+2026-08-06 10:41:59.448 INFO  [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} closed
