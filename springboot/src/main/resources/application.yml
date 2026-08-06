@@ -1,0 +1,25 @@
+#项目相关路径
+fast:
+  profile: ./file
+
+#spring配置
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/fast?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+#环境配置
+server:
+  port: 8080
+  servlet:
+    context-path: /
+#日志配置
+logging:
+  level:
+    #debug级别适合开发阶段 生产阶段info warn
+    com.fast: debug
+    #spring框架的日志级别  warn只输出警告和错误信息 减少控制台输出
+    org.springframework: warn

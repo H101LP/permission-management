@@ -1,0 +1,15 @@
+2026-08-06 09:10:59.072 INFO  [main] com.fast.SpringbootApplication - Starting SpringbootApplication using Java 24 with PID 8808 (D:\Java_WorkSpase\RBAC\springboot\target\classes started by a8630 in D:\Java_WorkSpase\RBAC)
+2026-08-06 09:10:59.073 DEBUG [main] com.fast.SpringbootApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-08-06 09:10:59.074 INFO  [main] com.fast.SpringbootApplication - No active profile set, falling back to 1 default profile: "default"
+2026-08-06 09:10:59.518 WARN  [main] org.mybatis.spring.mapper.ClassPathMapperScanner - No MyBatis mapper was found in '[com.fast.**.mapper]' package. Please check your configuration.
+2026-08-06 09:10:59.754 INFO  [main] org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-08-06 09:10:59.755 INFO  [main] org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-08-06 09:10:59.755 INFO  [main] org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-08-06 09:10:59.788 INFO  [main] o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-08-06 09:11:00.000 INFO  [main] c.a.d.s.b.a.DruidDataSourceAutoConfigure - Init DruidDataSource
+2026-08-06 09:11:00.060 INFO  [main] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
+2026-08-06 09:11:00.174 INFO  [main] org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-08-06 09:11:00.191 INFO  [main] com.fast.SpringbootApplication - Started SpringbootApplication in 1.389 seconds (process running for 1.992)
+2026-08-06 09:11:11.707 INFO  [http-nio-8080-exec-1] o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-06 09:11:20.805 INFO  [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} closing ...
+2026-08-06 09:11:20.805 INFO  [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource - {dataSource-1} closed
