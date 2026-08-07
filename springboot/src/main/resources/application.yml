@@ -27,7 +27,7 @@ logging:
     #debug级别适合开发阶段 生产阶段info warn
     com.fast: debug
     #spring框架的日志级别  warn只输出警告和错误信息 减少控制台输出
-    org.springframework: warn
+    org.springframework: info
 
 #mybatis配置
 mybatis:
