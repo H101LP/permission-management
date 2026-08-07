@@ -15,6 +15,5 @@ public interface UserMapper {
     public User selectByUserName(String userName);
 
 
-
-
+    User selectByUserUserId(long userId);
 }

@@ -32,7 +32,7 @@ logging:
 #mybatis配置
 mybatis:
   #告诉mybatis去哪找实体类映射
-  type-aliases-package: com.fast.**.domin
+  type-aliases-package: com.fast.**.domain
   #配置扫描
   mapper-locations: classpath*:mapper/**/*Mapper.xml
   configuration:

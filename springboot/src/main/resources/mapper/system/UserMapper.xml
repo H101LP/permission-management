@@ -16,6 +16,10 @@
         select user_id,user_name,sex,avatar,password,create_time
         from user where user_name = #{userName}
     </select>
+    <select id="selectByUserUserId" resultType="com.fast.system.domain.User" parameterType="Long">
+        select user_id,user_name,sex,avatar,password,create_time
+        from user where user_id = #{userId}
+    </select>
 
 
 </mapper>

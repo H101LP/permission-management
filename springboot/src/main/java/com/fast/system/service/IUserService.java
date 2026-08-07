@@ -13,5 +13,10 @@ public interface IUserService {
      */
     public User selectByUserName(String userName);
 
-
+    /**
+     * 根据用户ID查询用户
+     * @param userId 用户ID
+     * @return 用户对象信息
+     */
+    User selectByUserUserId(long userId);
 }
