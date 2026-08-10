@@ -44,6 +44,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import {login} from "~/API/login.js";
     //表单实例
     const loginRef = ref()
     //表单参数
@@ -61,6 +62,7 @@ loginRef.value.validate(valid =>{
    loading.value = true;
    //调用登录方法 TODO
 
+
   }
 })
 }
@@ -68,11 +70,9 @@ loginRef.value.validate(valid =>{
 const rules = ref({
   userName: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'blur' }
   ]
 })
 
