@@ -1,9 +1,6 @@
 <template>
-  <h1>这是前端根组件</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+<!--  组件是vue router的核心组件  用于渲染当前路由对应的组件-->
+  <router-view></router-view>
 </template>
 
 <script setup></script>
