@@ -14,7 +14,7 @@
             <el-input v-model="loginForm.userName" size="large" placeholder="请输入账号"/>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="loginForm.password" size="large" placeholder="请输入密码"/>
+            <el-input show-password v-model="loginForm.password" size="large" placeholder="请输入密码"/>
           </el-form-item>
         </el-form>
         <el-form style="width: 100% ">
@@ -45,6 +45,10 @@
 <script setup>
 import { ref } from 'vue'
 import {login} from "~/API/login.js";
+import {useRouter} from "vue-router";
+import useUserStore from "@/stores/modules/userStore.js";
+
+
     //表单实例
     const loginRef = ref()
     //表单参数
@@ -54,6 +58,14 @@ import {login} from "~/API/login.js";
     })
     //加载状态
     const loading = ref(false)
+//用户状态管理
+const userStore = useUserStore()
+//拿到路由实例
+const router = useRouter()
+
+
+
+
 //登录方法
 const handleLogin = () => {
 loginRef.value.validate(valid =>{
@@ -61,7 +73,14 @@ loginRef.value.validate(valid =>{
     //打开加载状态
    loading.value = true;
    //调用登录方法 TODO
+  userStore.login(loginForm.value).then(res =>{
+    //登录成功后让路由守卫处理跳转逻辑
+    const redirectPath = '/';
+    router.push(redirectPath);
+  }).catch(()=>{
+    loading.value = false;
 
+  })
 
   }
 })

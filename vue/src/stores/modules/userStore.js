@@ -35,7 +35,7 @@ const useUserStore = defineStore(
                 });
             },
             //获取用户详细信息
-            getUserInfo() {
+            getInfo() {
                 //返回一个Promise
                 return new Promise((resolve, reject) => {
                     //调用获取用户信息接口
