@@ -11,6 +11,11 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import './permission'
 //导入pinia
 import store from './stores'
+//导入svg图标
+import 'virtual:svg-icons-register'
+import SvgIcon from '@/components/SvgIcon'
+//引入全局样式
+import '@/assets/styles/all.css'
 
 
 const app = createApp(App)
@@ -24,6 +29,8 @@ app.use(store)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
+
+app.component('svg-icon', SvgIcon)
 
 app.use(ElementPlus, {
     //本地化配置 设置中文

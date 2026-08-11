@@ -20,7 +20,8 @@
       <span style="margin-right: 15px">您好:{{ userStore.name }}</span>
 
       <el-button type="text" @click="logout" style="display: flex;padding: 0 20px;align-items: center;">
-        退出登录
+        <SvgIcon icon-class="logout" />
+        <span>退出登录</span>
       </el-button>
 
       <el-dropdown trigger="click" style="cursor: pointer">
@@ -53,6 +54,7 @@ import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import useUserStore from "@/stores/modules/userStore.js";
 import {ElMessage, ElMessageBox} from "element-plus";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 //用户状态信息
 const userStore = useUserStore()
