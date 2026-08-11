@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getToken } from "@/utils/auth.js";
+import useUserStore from "@/stores/modules/userStore.js";
 
 // ==================== 全局状态 ====================
 export let isReLogin = { show: false };
@@ -25,9 +26,13 @@ const handleReLogin = () => {
         type: 'warning',
     })
         .then(() => {
+            //用户点击了重新登录
             isReLogin.show = false;
-            // 这里可以执行跳转到登录页的逻辑
-            // router.push('/login')
+            //调用重新登录的方法
+            useUserStore().logOut().then(() => {
+                //跳转到登录页
+                location.href = '/login';
+            })
         })
         .catch(() => {
             isReLogin.show = false;
