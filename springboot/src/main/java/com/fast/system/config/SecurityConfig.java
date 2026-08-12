@@ -53,7 +53,7 @@ public class SecurityConfig {
                 //6 路径权限配置
                 .authorizeHttpRequests(req ->req
                         //公开接口
-                                .requestMatchers("/login","/reqister").permitAll()
+                                .requestMatchers("/login","/register").permitAll()
                         //其他接口需要认证
                                 .anyRequest().authenticated()
                         )
