@@ -19,4 +19,11 @@ public interface IUserService {
      * @return 用户对象信息
      */
     User selectByUserUserId(long userId);
+
+    /**
+     * 注册用户
+     * @param newUser 新用户对象
+     * @return  注册结果
+     */
+    boolean registerUser(User newUser);
 }

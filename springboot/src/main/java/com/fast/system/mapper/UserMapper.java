@@ -14,6 +14,17 @@ public interface UserMapper {
      */
     public User selectByUserName(String userName);
 
-
+    /**
+     * 根据用户ID查询用户
+     * @param userId
+     * @return
+     */
     User selectByUserUserId(long userId);
+
+    /**
+     * 新增用户
+     * @param user 用户
+     * @return 是否新增成功
+     */
+    int insertUser(User user);
 }

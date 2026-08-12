@@ -23,4 +23,9 @@ public class UserServiceImpl implements IUserService {
     public User selectByUserUserId(long userId) {
         return userMapper.selectByUserUserId(userId);
     }
+
+    @Override
+    public boolean registerUser(User newUser) {
+        return userMapper.insertUser(newUser) > 0;
+    }
 }

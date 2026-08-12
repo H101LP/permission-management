@@ -21,7 +21,7 @@ const useUserStore = defineStore(
                 return new Promise((resolve, reject) => {
                     login(userInfo).then(res => {
                         setToken(res.token)
-                        this.token = res.token;
+                         this.token = res.token;
                         // 必须等getInfo完成之后再 resolve
                         this.getInfo()
                             .then(() => {
