@@ -26,6 +26,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public boolean registerUser(User newUser) {
+        //根据用户名查询用户信息
+        User user = userMapper.selectByUserName(newUser.getUserName());
+        if (user != null) {
+           throw new RuntimeException("用户名已存在");
+        }
         return userMapper.insertUser(newUser) > 0;
     }
 }
