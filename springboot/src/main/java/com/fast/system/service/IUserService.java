@@ -26,4 +26,12 @@ public interface IUserService {
      * @return  注册结果
      */
     boolean registerUser(User newUser);
+
+    /**
+     * 更新用户头像
+     * @param userId 用户ID
+     * @param avatar 头像地址
+     * @return 结果
+     */
+    int updateUserAvatar(Long userId, String avatar);
 }

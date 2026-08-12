@@ -12,6 +12,7 @@
         <result column="create_time" property="createTime"/>
     </resultMap>
 
+
     <!-- 根据用户名查询用户 -->
     <select id="selectByUserName" resultMap="UserResult" parameterType="String">
         select user_id,user_name,sex,avatar,password,create_time
@@ -42,6 +43,9 @@
 
 
     </insert>
-
+    <!--更新用户头像-->
+    <update id="updateUserAvatar" parameterType="User">
+        update user set avatar = #{avatar} where user_id = #{userId}
+    </update>
 
 </mapper>

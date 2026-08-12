@@ -33,4 +33,9 @@ public class UserServiceImpl implements IUserService {
         }
         return userMapper.insertUser(newUser) > 0;
     }
+
+    @Override
+    public int updateUserAvatar(Long userId, String avatar) {
+        return userMapper.updateUserAvatar(userId, avatar);
+    }
 }

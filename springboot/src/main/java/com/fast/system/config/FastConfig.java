@@ -1,5 +1,7 @@
 package com.fast.system.config;
 
+import lombok.Data;
+import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -11,20 +13,16 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "fast")//核心注解 读取配置文件中以fast开头的配置项
 public class FastConfig {
+    /**
+     * 文件上传路径，对应 application.yml 中的 fast.profile
+     */
+    private String profile;
 
     public String getProfile() {
         return profile;
     }
 
-    public FastConfig setProfile(String profile) {
+    public void setProfile(String profile) {
         this.profile = profile;
-        return this;
     }
-
-    /**
-     * 文件上传路径配置  对应配置文件中的fast.profile
-     * 使用static静态变量 可以直接通过类名访问  比如 fastconfig.profile
-     */
-
-    private String profile;//存储上传文件的基本路径
 }

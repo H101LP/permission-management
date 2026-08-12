@@ -27,4 +27,6 @@ public interface UserMapper {
      * @return 是否新增成功
      */
     int insertUser(User user);
+
+    int updateUserAvatar(Long userId, String avatar);
 }
