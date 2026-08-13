@@ -29,10 +29,10 @@
   </ul>
    <div style=" margin-top: 20px">
      <el-button type="primary" @click ="editUserInfo">修改基本资料</el-button>
-     <el-button type="primary" @click ="">修改密码</el-button>
+     <el-button type="primary" @click ="editPassword">修改密码</el-button>
    </div>
 <!--基本资料修改对话框-->
-  <vxe-modal title="修改基本资料" v-model="userInfoOpen"  with="500px" showFooter show-maximize resize>
+  <vxe-modal title="修改基本资料" v-model="userInfoOpen"  width="500px" showFooter show-maximize resize>
     <template #default>
     <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
       <el-form-item label="用户名" prop="userName">
@@ -53,7 +53,30 @@
       </div>
     </template>
   </vxe-modal>
+  <!--基本资料密码对话框-->
+  <vxe-modal title="修改密码" v-model="pwdOpen"  width="500px" showFooter show-maximize resize>
+    <template #default>
+      <el-form ref="pwdRef" :model="pwdForm" :rules="pwdRules" label-width="80px">
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input v-model="pwdForm.oldPassword" placeholder="请输入旧密码"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="pwdForm.newPassword" placeholder="请输入新密码"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPassword">
+          <el-input v-model="pwdForm.confirmPassword" placeholder="请输入确认密码"></el-input>
+        </el-form-item>
 
+
+      </el-form>
+    </template>
+    <template #footer>
+      <div>
+        <el-button type="primary" @click="submitPwd">保存</el-button>
+        <el-button @click="pwdOpen = false">取消</el-button>
+      </div>
+    </template>
+  </vxe-modal>
 </div>
 </template>
 
@@ -65,10 +88,54 @@ import {onMounted, reactive} from "vue";
 import {getInfo} from "~/API/login.js";
 import {getToken} from "@/utils/auth.js";
 import {ElMessage} from "element-plus";
-import {updateProfile} from "~/API/system/user.js";
+import {updateProfile, updatePwd} from "~/API/system/user.js";
+//修改密码按钮
+const editPassword = () => {
+  pwdOpen.value = true;
+}
+//保存密码
+const submitPwd = () => {
+  if(pwdForm.value.newPassword !== pwdForm.value.confirmPassword){
+    ElMessage.error('新密码和确认密码不一致');
+    return
+  }
+  pwdRef.value.validate(valid => {
+  if(valid){
+    updatePwd(pwdForm.value).then(res=>{
+      ElMessage.success('修改成功');
+      pwdOpen.value = false;
+    })
+
+  }
+  })
+}
+
+//修改密码对话框是否打开
+const pwdOpen = ref(false);
+//修改密码表单实例
+const pwdRef = ref();
+//密码表单参数
+const pwdForm = ref({
+})
+//密码表单校验
+const pwdRules = ref({
+  oldPassword: [
+    { required: true, message: '请输入旧密码', trigger: 'blur' },
+  ],
+  newPassword: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
+  ],
+  confirmPassword: [
+    { required: true, message: '请输入确认密码', trigger: 'blur' },
+  ],
+})
+
+
+
+
 
 //修改基本资料对话框是否打开
-const userInfoOpen = ref(true);
+const userInfoOpen = ref(false);
 //修改基本资料表单实例
 const userRef = ref(null);
 //用户资料表单参数

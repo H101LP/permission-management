@@ -36,4 +36,6 @@ public interface UserMapper {
      * @return 是否修改成功
      */
     int updateUser(User user);
+
+    int resetUserPwd(Long userId, String newPassword);
 }

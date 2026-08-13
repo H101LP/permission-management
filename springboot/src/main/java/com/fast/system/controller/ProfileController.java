@@ -3,6 +3,7 @@ package com.fast.system.controller;
 import com.fast.system.config.FastConfig;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.LoginUser;
+import com.fast.system.domain.SubmitPwdBody;
 import com.fast.system.domain.User;
 import com.fast.system.service.IUserService;
 import com.fast.system.utils.SecurityUtils;
@@ -104,5 +105,33 @@ public class ProfileController extends BaseController {
         //调用服务层更新用户信息
         return toAjax(userService.updateUser(currentUser));
 
+    }
+
+    /**
+     * 重置密码
+     */
+    @PutMapping("/updatePwd")
+    public AjaxResult updatePwd(@RequestBody SubmitPwdBody submitPwdBody) {
+        String oldPassword = submitPwdBody.getOldPassword();
+        String newPassword = submitPwdBody.getNewPassword();
+        //获取当前用户数据
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        User user = loginUser.getUser();
+        //修改前密码
+        String password = user.getPassword();
+        if (newPassword.equals(password)){
+            return error("新密码不能与旧密码相同");
+        }
+        if(!oldPassword.equals(password)){
+            return error("旧密码不正确");
+        }
+        //修改密码
+        if (userService.resetUserPwd(user.getUserId(), newPassword) > 0){
+            //更新用户缓存密码
+            loginUser.getUser().setPassword(newPassword);
+            return success("密码修改成功");
+        }
+
+        return error("密码修改失败");
     }
 }

@@ -44,4 +44,9 @@ public class UserServiceImpl implements IUserService {
     {
         return userMapper.updateUser(user);
     }
+
+    @Override
+    public int resetUserPwd(Long userId, String newPassword) {
+        return userMapper.resetUserPwd(userId, newPassword);
+    }
 }

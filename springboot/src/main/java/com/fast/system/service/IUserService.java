@@ -41,4 +41,12 @@ public interface IUserService {
      * @return 是否成功
      */
     int updateUser(User user);
+
+    /**
+     * 重置密码
+     * @param userId 用户ID
+     * @param newPassword 新密码
+     * @return 结果
+     */
+    int resetUserPwd(Long userId, String newPassword);
 }
