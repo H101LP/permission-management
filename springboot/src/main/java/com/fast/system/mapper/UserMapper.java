@@ -29,4 +29,11 @@ public interface UserMapper {
     int insertUser(User user);
 
     int updateUserAvatar(Long userId, String avatar);
+
+    /**
+     * 修改用户信息
+     * @param user 用户对象
+     * @return 是否修改成功
+     */
+    int updateUser(User user);
 }

@@ -28,21 +28,74 @@
     </li>
   </ul>
    <div style=" margin-top: 20px">
-     <el-button type="primary" @click ="">修改基本资料</el-button>
+     <el-button type="primary" @click ="editUserInfo">修改基本资料</el-button>
      <el-button type="primary" @click ="">修改密码</el-button>
-
    </div>
+<!--基本资料修改对话框-->
+  <vxe-modal title="修改基本资料" v-model="userInfoOpen"  with="500px" showFooter show-maximize resize>
+    <template #default>
+    <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
+      <el-form-item label="用户名" prop="userName">
+        <el-input v-model="form.userName" placeholder="请输入用户名"></el-input>
+      </el-form-item>
+      <el-form-item label="性别" prop="sex">
+        <el-radio-group v-model="form.sex">
+          <el-radio :value="0">男</el-radio>
+          <el-radio :value="1">女</el-radio>
+        </el-radio-group>
+      </el-form-item>
+    </el-form>
+    </template>
+    <template #footer>
+      <div>
+        <el-button type="primary" @click="submitUserInfo">保存</el-button>
+        <el-button @click="userInfoOpen = false">取消</el-button>
+      </div>
+    </template>
+  </vxe-modal>
 
 </div>
 </template>
 
 <script setup>
-
+import {VxeModal} from "vxe-pc-ui"
 import useUserStore from "@/stores/modules/userStore.js";
+import {ref, watch} from "vue";
 import {onMounted, reactive} from "vue";
 import {getInfo} from "~/API/login.js";
 import {getToken} from "@/utils/auth.js";
 import {ElMessage} from "element-plus";
+import {updateProfile} from "~/API/system/user.js";
+
+//修改基本资料对话框是否打开
+const userInfoOpen = ref(true);
+//修改基本资料表单实例
+const userRef = ref(null);
+//用户资料表单参数
+const form = ref({
+})
+//表单校验
+const rules = ref({
+  userName: [
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+  ],
+})
+//提交用户资料
+const submitUserInfo = () => {
+  userRef.value.validate(valid =>{
+    if(valid){
+      updateProfile(form.value).then(res=>{
+        userInfoOpen.value = false;
+        ElMessage.success('修改成功');
+        getUser();
+        userStore.name = form.value.userName;
+      })
+
+    }
+  })
+}
+
+
 
 //头像上传接口地址
 const uploadUrl = import.meta.env.VITE_APP_BASE_API + "/system/user/profile/avatar"
@@ -57,10 +110,25 @@ const userStore = useUserStore()
 const  state = reactive({
   user:{}
 })
+
+//修改基本资料按钮
+const editUserInfo = () => {
+  userInfoOpen.value = true;
+}
+
+
+
+
+
 //获取用户信息
 const getUser = () =>{
   getInfo().then(res =>{
     state.user = res.data;
+    //初始化表单
+    form.value={
+      userName: state.user.userName,
+      sex: state.user.sex
+    }
   })
 }
 //上传前处理
@@ -95,7 +163,15 @@ const handleAvatarError = () => {
 onMounted(()=>{
   getUser();
 })
-
+//监听用户信息变化时
+watch(()=>state.user, //要监听的数据源
+    user=>{ //回调函数，接收监听的数据
+      if(user){
+        form.value = {userName:user.userName, sex:user.sex}
+      }
+    },
+    {immediate: true}
+)
 </script>
 
 

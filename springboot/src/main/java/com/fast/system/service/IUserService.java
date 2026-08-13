@@ -34,4 +34,11 @@ public interface IUserService {
      * @return 结果
      */
     int updateUserAvatar(Long userId, String avatar);
+
+    /**
+     * 修改用户信息
+     * @param user 用户对象
+     * @return 是否成功
+     */
+    int updateUser(User user);
 }

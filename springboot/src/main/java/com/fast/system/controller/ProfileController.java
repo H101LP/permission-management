@@ -3,14 +3,12 @@ package com.fast.system.controller;
 import com.fast.system.config.FastConfig;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.LoginUser;
+import com.fast.system.domain.User;
 import com.fast.system.service.IUserService;
 import com.fast.system.utils.SecurityUtils;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -25,7 +23,7 @@ import java.util.UUID;
  * 个人信息
  */
 @RestController
-@RequestMapping("system/user/profile")
+@RequestMapping("/system/user/profile")
 public class ProfileController extends BaseController {
     @Resource
     private FastConfig fastConfig;
@@ -89,5 +87,22 @@ public class ProfileController extends BaseController {
 
         //如果上传失败 返回错误信息
         return error("上传头像失败");
+    }
+
+    /**
+     * 修改个人信息
+     */
+    @PutMapping
+    public AjaxResult updateProfile(@RequestBody User user) {
+        //获取当前用户数据
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        //提取用户数据
+        User currentUser = loginUser.getUser();
+        //设置要更新的用户信息
+        currentUser.setUserName(user.getUserName());
+        currentUser.setSex(user.getSex());
+        //调用服务层更新用户信息
+        return toAjax(userService.updateUser(currentUser));
+
     }
 }

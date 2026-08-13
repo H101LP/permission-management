@@ -38,4 +38,10 @@ public class UserServiceImpl implements IUserService {
     public int updateUserAvatar(Long userId, String avatar) {
         return userMapper.updateUserAvatar(userId, avatar);
     }
+
+    @Override
+    public int updateUser(User user)
+    {
+        return userMapper.updateUser(user);
+    }
 }

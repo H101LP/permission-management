@@ -16,7 +16,11 @@ import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/SvgIcon'
 //引入全局样式
 import '@/assets/styles/all.css'
-
+//ui
+import VxeUIBase from 'vxe-pc-ui'
+import 'vxe-pc-ui/es/style.css'
+import VxeUITable from 'vxe-table'
+import 'vxe-table/es/style.css'
 
 const app = createApp(App)
 
@@ -24,6 +28,8 @@ app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
 app.use(store)
+app.use(VxeUIBase)
+app.use(VxeUITable)
 
 // 注册所有 Element Plus 图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
