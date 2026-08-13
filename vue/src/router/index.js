@@ -28,6 +28,19 @@ export const constantRouters = [
       },
     ]
   },
+  {
+    path:'/user',
+    component: Layout,
+    hidden:true,
+    children: [
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('@/views/system/user/profile'),
+        meta: { title: '个人中心' }
+      },
+    ]
+  },
 ]
 
 //创建路由实例

@@ -41,9 +41,11 @@
       </el-dropdown>
 
     </div>
-
-
   </el-header>
+<!--主内容区-->
+  <main style="margin-left: 240px; position: relative;top: 50px;">
+    <AppMain/>
+  </main>
 
 </div>
 </template>
@@ -55,6 +57,7 @@ import {useRoute} from "vue-router";
 import useUserStore from "@/stores/modules/userStore.js";
 import {ElMessage, ElMessageBox} from "element-plus";
 import SvgIcon from "@/components/SvgIcon/index.vue";
+import AppMain from "@/views/layout/components/AppMain.vue";
 
 //用户状态信息
 const userStore = useUserStore()
