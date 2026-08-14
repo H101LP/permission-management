@@ -46,6 +46,10 @@
   <main style="margin-left: 240px; position: relative;top: 50px;">
     <AppMain/>
   </main>
+<!-- 侧边栏 -->
+  <el-aside style="width: 240px; position: fixed;top: 51px;bottom: 0">
+    <SidBar />
+  </el-aside>
 
 </div>
 </template>
@@ -58,6 +62,7 @@ import useUserStore from "@/stores/modules/userStore.js";
 import {ElMessage, ElMessageBox} from "element-plus";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import AppMain from "@/views/layout/components/AppMain.vue";
+import SidBar from "./components/Sidebar"
 
 //用户状态信息
 const userStore = useUserStore()

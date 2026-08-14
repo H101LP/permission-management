@@ -23,8 +23,27 @@ export const constantRouters = [
     children: [
       {
         path: 'index',
+        component: () => import('@/views/system/index'),
         name: 'Index',
         meta: { title: '首页' }
+      },
+    ]
+  },
+  {
+    path:'/system',
+    component: Layout,
+    children: [
+      {
+        path: 'user',
+        component: () => import('@/views/system/user/index'),
+      },
+      {
+        path: 'role',
+        component: () => import('@/views/system/role/index'),
+      },
+      {
+        path: 'menu',
+        component: () => import('@/views/system/menu/index'),
       },
     ]
   },
