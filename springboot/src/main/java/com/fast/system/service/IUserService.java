@@ -2,6 +2,8 @@ package com.fast.system.service;
 
 import com.fast.system.domain.User;
 
+import java.util.List;
+
 /**
  * 用户业务接口
  */
@@ -49,4 +51,11 @@ public interface IUserService {
      * @return 结果
      */
     int resetUserPwd(Long userId, String newPassword);
+
+    /**
+     * 查询用户列表
+     * @param user
+     * @return
+     */
+    List<User> selectUserList(User user);
 }

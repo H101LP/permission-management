@@ -2,6 +2,9 @@ package com.fast.system.mapper;
 
 import com.fast.system.domain.User;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
 /**
  * 用户Mapper
  */
@@ -38,4 +41,6 @@ public interface UserMapper {
     int updateUser(User user);
 
     int resetUserPwd(Long userId, String newPassword);
+
+    List<User> selectUserList(User user);
 }

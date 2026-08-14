@@ -46,3 +46,12 @@ token:
   secret: ${JWT_SECRET}
   #令牌有效期（M）
   expireTime: 300
+
+#分页插件配置
+pagehelper:
+  #配置数据库类型
+  helperdialect: mysql
+  #支持方法参数 可以通过方法参数传递分页信息
+  support-methods-arguments: true
+  #使用count查询获取数据总数
+  params: count=countSql
