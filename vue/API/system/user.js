@@ -44,3 +44,11 @@ export function insertUser(data){
         data: data //请求参数
     })
 }
+//修改用户
+export function updateUser(data){
+    return request({
+        url:"/system/user/updateUser", //后端接口地址
+        method:"put",//请求方法(严格遵守后端)
+        data: data //请求参数
+    })
+}

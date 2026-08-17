@@ -14,7 +14,7 @@
 <el-row :gutter="10" class="mb8">
   <el-col :span="1.5"/>
   <el-button type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
-  <el-button type="success" icon="Edit" @click="" plain>修改</el-button>
+  <el-button :disabled="single" type="success" icon="Edit" @click="handleUpdate" plain>修改</el-button>
   <el-button type="danger" icon="Delete" @click="" plain>删除</el-button>
 
 </el-row>
@@ -37,8 +37,10 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200px">
-        <el-button link type="primary" icon="Edit" @click="">修改</el-button>
-        <el-button link type="danger" icon="Delete" @click="">删除</el-button>
+        <template #default="scope">
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button link type="danger" icon="Delete" @click="">删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
 <!--分页-->
@@ -82,7 +84,7 @@
 <script setup>
 import Pagination from "@/components/Pagination/index.vue";
 import {onMounted, ref} from "vue";
-import {insertUser, selectUserById, selectUserList} from "~/API/system/user.js";
+import {insertUser, selectUserById, selectUserList, updateUser} from "~/API/system/user.js";
 //引入默认头像
 import defaultAvatar from "@/assets/images/profile.jpg";
 import {VxeModal} from "vxe-pc-ui";
@@ -130,6 +132,11 @@ const submitForm = () => {
     if(valid){
       if(form.value.userId !=null){
         //修改
+        updateUser(form.value).then(res=>{
+          ElMessage.success('修改成功')
+          Open.value = false;
+          getList();
+        })
       }else {
         //新增
         insertUser(form.value).then(res=>{
@@ -140,9 +147,6 @@ const submitForm = () => {
       }
     }
   })
-
-
-
   Open.value = false;
 }
 
@@ -190,6 +194,17 @@ const resetQuery = () => {
   queryRef.value.resetFields();
   getList();
 }
+//修改按钮
+const handleUpdate = (row) => {
+  const userId = row.userId || ids.value
+  selectUserById(userId).then(res=>{
+    form.value = res.data;
+    Open.value = true;
+    title.value = '修改用户'
+
+  })
+}
+
 //数据总数
 const total = ref(0); //数据总数
 
