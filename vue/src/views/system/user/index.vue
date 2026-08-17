@@ -40,12 +40,18 @@
         <el-button link type="primary" icon="Edit" @click="">修改</el-button>
         <el-button link type="danger" icon="Delete" @click="">删除</el-button>
       </el-table-column>
-
     </el-table>
+<!--分页-->
+    <pagination :total="total"
+                v-model:page="query.pageNum"
+                v-model:limit="query.pageSize"
+                @pagination="getList"/>
   </div>
 </template>
 <script setup>
 //拿后端路径
+import Pagination from "@/components/Pagination/index.vue";
+
 const baseUrl = import.meta.env.VITE_APP_BASE_API
 
 import {onMounted, ref} from "vue";

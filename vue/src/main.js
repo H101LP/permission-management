@@ -21,12 +21,13 @@ import VxeUIBase from 'vxe-pc-ui'
 import 'vxe-pc-ui/es/style.css'
 import VxeUITable from 'vxe-table'
 import 'vxe-table/es/style.css'
+//分页组件
+import Pagination from '@/components/Pagination'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(ElementPlus)
 app.use(store)
 app.use(VxeUIBase)
 app.use(VxeUITable)
@@ -43,7 +44,7 @@ app.use(ElementPlus, {
     locale: zhCn,
 })
 
-
+app.component('Pagination', Pagination)
 
 
 app.mount('#app')
