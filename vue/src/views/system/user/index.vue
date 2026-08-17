@@ -13,7 +13,7 @@
 <!--顶部按钮    -->
 <el-row :gutter="10" class="mb8">
   <el-col :span="1.5"/>
-  <el-button type="primary" icon="Plus" @click="" plain>新增</el-button>
+  <el-button type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
   <el-button type="success" icon="Edit" @click="" plain>修改</el-button>
   <el-button type="danger" icon="Delete" @click="" plain>删除</el-button>
 
@@ -46,18 +46,108 @@
                 v-model:page="query.pageNum"
                 v-model:limit="query.pageSize"
                 @pagination="getList"/>
+    <!--添加或修改用户对话框-->
+    <vxe-modal :title="title" v-model="Open"  width="500px" showFooter show-maximize resize>
+      <template #default>
+        <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
+          <el-form-item label="用户名" prop="userName">
+            <el-input v-model="form.userName" placeholder="请输入用户名"></el-input>
+          </el-form-item>
+          <el-form-item label="性别" prop="sex">
+            <el-radio-group v-model="form.sex">
+              <el-radio :value="0">男</el-radio>
+              <el-radio :value="1">女</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="form.password" placeholder="请输入密码"></el-input>
+          </el-form-item>
+        </el-form>
+      </template>
+      <template #footer>
+        <div>
+          <el-button type="primary" @click="submitForm">保存</el-button>
+          <el-button @click="Open = false">取消</el-button>
+        </div>
+      </template>
+    </vxe-modal>
+
+
+
+
+
+
   </div>
 </template>
 <script setup>
-//拿后端路径
 import Pagination from "@/components/Pagination/index.vue";
-
-const baseUrl = import.meta.env.VITE_APP_BASE_API
-
 import {onMounted, ref} from "vue";
-import {selectUserList} from "~/API/system/user.js";
+import {insertUser, selectUserById, selectUserList} from "~/API/system/user.js";
 //引入默认头像
 import defaultAvatar from "@/assets/images/profile.jpg";
+import {VxeModal} from "vxe-pc-ui";
+import {ElMessage} from "element-plus";
+
+//拿后端路径
+const baseUrl = import.meta.env.VITE_APP_BASE_API
+//表单实例
+const userRef = ref()
+
+//对话框表单title
+const title = ref('')
+//对话框是否打开
+const Open = ref(false)
+//表单参数
+const form = ref({
+  userId: null,
+  userName: null,
+  sex: null,
+  password: null
+})
+//表单校验
+const rules = ref({
+  userName: [
+    { required: true, message: '请输入用户名', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'change' }
+  ]
+})
+//新增按钮
+const handleInsert = () => {
+  form.value = {
+    userId: null,
+    userName: null,
+    sex: null,
+    password: null
+  }
+  Open.value = true;
+  title.value = '新增用户'
+}
+//保存按钮
+const submitForm = () => {
+  userRef.value.validate(valid =>{
+    if(valid){
+      if(form.value.userId !=null){
+        //修改
+      }else {
+        //新增
+        insertUser(form.value).then(res=>{
+          ElMessage.success('新增成功')
+          Open.value = false;
+          getList();
+        })
+      }
+    }
+  })
+
+
+
+  Open.value = false;
+}
+
+
+
 
 
 //查询参数

@@ -27,3 +27,20 @@ export function selectUserList(query){
         params: query //请求参数
     })
 }
+//查询用户列表
+export function selectUserById(userId){
+    return request({
+        url:"/system/user/selectUserById/" + userId, //后端接口地址
+        method:"get",//请求方法(严格遵守后端)
+    })
+}
+
+
+//新增用户
+export function insertUser(data){
+    return request({
+        url:"/system/user/insertUser", //后端接口地址
+        method:"post",//请求方法(严格遵守后端)
+        data: data //请求参数
+    })
+}

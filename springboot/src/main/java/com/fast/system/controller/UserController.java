@@ -1,12 +1,11 @@
 package com.fast.system.controller;
 
+import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.TableDataInfo;
 import com.fast.system.domain.User;
 import com.fast.system.service.IUserService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,5 +27,22 @@ public class UserController extends BaseController {
         List<User> list = userService.selectUserList(user);
         return getDataTable(list);
     }
+    /**
+     * 根据用户ID查询用户信息
+     */
+    @GetMapping("selectUserById/{userId}")
+    public AjaxResult selectUserById(@PathVariable Long userId) {
+        User user = userService.selectByUserUserId(userId);
+        return success(user);
+    }
+    /**
+     * 新增用户
+     */
+    @PostMapping("insertUser")
+    public AjaxResult insertUser(@RequestBody User user){
+        return toAjax(userService.insertUser(user));
+    }
+
+
 
 }

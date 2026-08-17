@@ -57,4 +57,10 @@ public class UserServiceImpl implements IUserService {
         return userMapper.selectUserList(user);
 
     }
+
+    @Override
+    public int insertUser(User user) {
+        return userMapper.insertUser(user);
+
+    }
 }
