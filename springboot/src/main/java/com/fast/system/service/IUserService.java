@@ -65,4 +65,11 @@ public interface IUserService {
      * @return 结果
      */
     int insertUser(User user);
+
+    /**
+     * 删除用户
+     * @param userIds 用户ID数组
+     * @return 结果
+     */
+    int deleteUserByUserIds(Long[] userIds);
 }

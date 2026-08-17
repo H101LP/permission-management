@@ -13,6 +13,7 @@
     </resultMap>
 
 
+
     <!-- 根据用户名查询用户 -->
     <select id="selectByUserName" resultMap="UserResult" parameterType="String">
         select user_id,user_name,sex,avatar,password,create_time
@@ -77,4 +78,14 @@
         where user_id = #{userId}
     </update>
 
+    <!--删除用户-->
+    <delete id="deleteUserByUserIds">
+        delete from user where user_id in
+        <foreach collection="userIdArray" item="userId" separator="," open="(" close=")">
+            #{userId}
+        </foreach>
+    </delete>
+    
+    
+    
 </mapper>

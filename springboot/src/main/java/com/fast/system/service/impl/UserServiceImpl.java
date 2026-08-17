@@ -63,4 +63,9 @@ public class UserServiceImpl implements IUserService {
         return userMapper.insertUser(user);
 
     }
+
+    @Override
+    public int deleteUserByUserIds(Long[] userIds) {
+        return userMapper.deleteUserByUserIds(userIds);
+    }
 }

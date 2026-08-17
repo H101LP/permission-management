@@ -15,7 +15,7 @@
   <el-col :span="1.5"/>
   <el-button type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
   <el-button :disabled="single" type="success" icon="Edit" @click="handleUpdate" plain>修改</el-button>
-  <el-button type="danger" icon="Delete" @click="" plain>删除</el-button>
+  <el-button :disabled="multiple" type="danger" icon="Delete" @click="handleDelete" plain>删除</el-button>
 
 </el-row>
 
@@ -39,7 +39,7 @@
       <el-table-column label="操作" align="center" width="200px">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button link type="danger" icon="Delete" @click="">删除</el-button>
+          <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -84,11 +84,11 @@
 <script setup>
 import Pagination from "@/components/Pagination/index.vue";
 import {onMounted, ref} from "vue";
-import {insertUser, selectUserById, selectUserList, updateUser} from "~/API/system/user.js";
+import {deleteUserByUserIds, insertUser, selectUserById, selectUserList, updateUser} from "~/API/system/user.js";
 //引入默认头像
 import defaultAvatar from "@/assets/images/profile.jpg";
 import {VxeModal} from "vxe-pc-ui";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 //拿后端路径
 const baseUrl = import.meta.env.VITE_APP_BASE_API
@@ -204,6 +204,34 @@ const handleUpdate = (row) => {
 
   })
 }
+//删除按钮
+const handleDelete = (row) => {
+  const userIds = row.userId || ids.value
+  ElMessageBox.confirm(
+      '是否确认删除用户',
+      '系统提示',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  )
+      .then(() => {
+       //调用删除API
+       deleteUserByUserIds(userIds).then(res =>{
+         ElMessage.success('删除成功')
+         getList();
+       })
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '已取消删除',
+        })
+      })
+
+}
+
 
 //数据总数
 const total = ref(0); //数据总数

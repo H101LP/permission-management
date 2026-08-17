@@ -2,6 +2,7 @@ package com.fast.system.mapper;
 
 import com.fast.system.domain.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -43,4 +44,11 @@ public interface UserMapper {
     int resetUserPwd(Long userId, String newPassword);
 
     List<User> selectUserList(User user);
+
+    /**
+     * 根据用户ID删除用户
+      * @param userIds 用户ID数组
+      * @return 是否删除成功
+     */
+    int deleteUserByUserIds(@Param("userIdArray")Long[] userIds);
 }

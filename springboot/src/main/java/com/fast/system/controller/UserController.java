@@ -49,6 +49,14 @@ public class UserController extends BaseController {
     public AjaxResult updateUser(@RequestBody User user){
         return toAjax(userService.updateUser(user));
     }
+    /**
+     *删除用户
+     */
+    @DeleteMapping("/deleteUserByUserIds/{userIds}")
+    public AjaxResult deleteUserByUserIds(@PathVariable Long[] userIds){
+       return toAjax(userService.deleteUserByUserIds(userIds));
+    }
+
 
 
 }
