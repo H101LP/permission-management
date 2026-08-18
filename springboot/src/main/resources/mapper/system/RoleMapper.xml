@@ -22,6 +22,12 @@
         </where>
         order by role_sort
     </select>
+    <!-- 根据角色ID查询角色信息 -->
+    <select id="selectRoleById" resultMap="RoleResult">
+        select role_id, role_name, role_sort, create_time
+        from role
+        where role_id = #{roleId}
+    </select>
 
 
 </mapper>

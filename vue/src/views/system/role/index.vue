@@ -44,7 +44,7 @@
 
 import {onMounted, ref} from "vue";
 import {selectUserList} from "~/API/system/user.js";
-import {selectRoleList} from "~/API/system/role.js";
+import {selectRoleById, selectRoleList} from "~/API/system/role.js";
 import defaultAvatar from "@/assets/images/profile.jpg";
 import Pagination from "@/components/Pagination/index.vue";
 //定义数据
@@ -96,7 +96,6 @@ const resetQuery = () => {
 
 onMounted(() => {
   getList();
-  //查询所有角色列表
 
 })
 </script>

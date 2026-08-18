@@ -6,6 +6,7 @@ import com.fast.system.domain.TableDataInfo;
 import com.fast.system.service.IRoleService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,5 +35,12 @@ public class RoleController extends BaseController {
         startPage();
         List<Role> list = roleService.selectRoleList(role);
         return getDataTable(list);
+    }
+    /**
+     * 根据角色ID查询角色信息
+     */
+    @GetMapping("/selectRoleById/{roleId}")
+    public AjaxResult selectRoleById(@PathVariable Long roleId) {
+        return success(roleService.selectRoleById(roleId));
     }
 }
