@@ -1,5 +1,6 @@
 package com.fast.system.service.impl;
 
+import com.fast.system.constants.RoleIdConstants;
 import com.fast.system.domain.User;
 import com.fast.system.mapper.UserMapper;
 import com.fast.system.mapper.UserRoleMapper;
@@ -29,7 +30,7 @@ public class UserServiceImpl implements IUserService {
     public User selectByUserUserId(long userId) {
         return userMapper.selectByUserUserId(userId);
     }
-
+    @Transactional
     @Override
     public boolean registerUser(User newUser) {
         //根据用户名查询用户信息
@@ -37,7 +38,10 @@ public class UserServiceImpl implements IUserService {
         if (user != null) {
            throw new RuntimeException("用户名已存在");
         }
-        return userMapper.insertUser(newUser) > 0;
+        int i = userMapper.insertUser(newUser);
+        userRoleMapper.insertUserRole(newUser.getUserId(), RoleIdConstants.USER_ROLE_ID);
+        //注册用户后默认为普通用户
+        return i > 0;
     }
 
     @Override
@@ -76,7 +80,7 @@ public class UserServiceImpl implements IUserService {
         return userRoleMapper.insertUserRole(user.getUserId(), user.getRoleId());
 
     }
-
+    @Transactional//事务管理
     @Override
     public int deleteUserByUserIds(Long[] userIds) {
         //批量删除用户与角色的关联信息
