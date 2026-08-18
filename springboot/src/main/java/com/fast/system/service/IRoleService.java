@@ -12,5 +12,5 @@ public interface IRoleService {
      * 查询角色列表
      * @return
      */
-    List<Role> selectRoleList();
+    List<Role> selectRoleList(Role role);
 }

@@ -10,5 +10,5 @@ import java.util.List;
  */
 @Mapper
 public interface RoleMapper {
-    List<Role> selectRoleList();
+    List<Role> selectRoleList(Role role);
 }

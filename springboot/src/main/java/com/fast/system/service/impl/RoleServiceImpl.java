@@ -22,7 +22,7 @@ public class RoleServiceImpl implements IRoleService {
      * @return 角色列表
      */
     @Override
-    public List<Role> selectRoleList() {
-        return roleMapper.selectRoleList();
+    public List<Role> selectRoleList(Role role) {
+        return roleMapper.selectRoleList(role);
     }
 }
