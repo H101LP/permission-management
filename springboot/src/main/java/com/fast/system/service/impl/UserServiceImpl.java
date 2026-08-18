@@ -79,6 +79,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public int deleteUserByUserIds(Long[] userIds) {
+        //批量删除用户与角色的关联信息
+        userRoleMapper.deleteUserRoles(userIds);
         return userMapper.deleteUserByUserIds(userIds);
     }
 }

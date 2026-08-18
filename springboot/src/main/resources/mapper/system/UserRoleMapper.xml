@@ -14,4 +14,12 @@
         delete from user_role
         where user_id = #{userId}
     </delete>
+    <!-- 根据用户ID批量删除用户和角色关联 -->
+    <delete id="deleteUserRoles">
+        delete from user_role
+        where user_id in
+        <foreach item="userId" collection="userIds" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
 </mapper>

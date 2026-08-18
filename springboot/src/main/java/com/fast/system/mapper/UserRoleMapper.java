@@ -22,4 +22,11 @@ public interface UserRoleMapper {
      * @return 结果
      */
     int deleteUserRoleByUserId(Long userId);
+
+    /**
+     * 根据用户ID批量删除用户和角色关联
+     * @param userIds 用户ID数组
+     * @return 结果
+     */
+    int deleteUserRoles(Long[] userIds);
 }
