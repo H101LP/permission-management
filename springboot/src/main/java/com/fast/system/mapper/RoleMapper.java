@@ -23,4 +23,11 @@ public interface RoleMapper {
      * @return
      */
     Role selectRoleById(Long roleId);
+
+    /**
+     * 新增角色信息
+     * @param role 角色信息
+     * @return 结果
+     */
+    int insertRole(Role role);
 }

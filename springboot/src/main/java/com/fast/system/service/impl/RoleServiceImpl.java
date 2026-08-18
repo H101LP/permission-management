@@ -35,4 +35,13 @@ public class RoleServiceImpl implements IRoleService {
     public Role selectRoleById(Long roleId) {
         return roleMapper.selectRoleById(roleId);
     }
+    /**
+     * 新增角色信息
+     * @param role 角色信息
+     * @return 结果
+     */
+    @Override
+    public int insertRole(Role role) {
+        return roleMapper.insertRole(role);
+    }
 }

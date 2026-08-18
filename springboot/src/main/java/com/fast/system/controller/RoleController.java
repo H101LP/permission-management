@@ -5,10 +5,7 @@ import com.fast.system.domain.Role;
 import com.fast.system.domain.TableDataInfo;
 import com.fast.system.service.IRoleService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,5 +39,12 @@ public class RoleController extends BaseController {
     @GetMapping("/selectRoleById/{roleId}")
     public AjaxResult selectRoleById(@PathVariable Long roleId) {
         return success(roleService.selectRoleById(roleId));
+    }
+    /**
+     * 新增角色信息
+     */
+    @PostMapping("/insertRole")
+    public AjaxResult insertRole(@RequestBody Role role) {
+        return toAjax(roleService.insertRole(role));
     }
 }

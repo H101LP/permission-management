@@ -13,7 +13,7 @@
     <!--顶部按钮    -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5"/>
-      <el-button type="primary" icon="Plus" @click="" plain>新增</el-button>
+      <el-button type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
       <el-button :disabled="single" type="success" icon="Edit" @click="" plain>修改</el-button>
       <el-button :disabled="multiple" type="danger" icon="Delete" @click="" plain>删除</el-button>
 
@@ -35,6 +35,26 @@
                 v-model:page="query.pageNum"
                 v-model:limit="query.pageSize"
                 @pagination="getList"/>
+    <!--添加或修改角色对话框-->
+    <vxe-modal :title="title" v-model="Open"  width="500px" showFooter show-maximize resize>
+      <template #default>
+        <el-form ref="roleRef" :model="form" :rules="rules" label-width="80px">
+          <el-form-item label="角色名" prop="roleName">
+            <el-input v-model="form.roleName" placeholder="请输入角色名"></el-input>
+          </el-form-item>
+          <el-form-item label="角色顺序" prop="roleSort">
+            <el-input v-model="form.roleSort" placeholder="请输入角色顺序"></el-input>
+          </el-form-item>
+        </el-form>
+      </template>
+      <template #footer>
+        <div>
+          <el-button type="primary" @click="submitForm">保存</el-button>
+          <el-button @click="Open = false">取消</el-button>
+        </div>
+      </template>
+    </vxe-modal>
+
   </div>
 </template>
 
@@ -44,9 +64,11 @@
 
 import {onMounted, ref} from "vue";
 import {selectUserList} from "~/API/system/user.js";
-import {selectRoleById, selectRoleList} from "~/API/system/role.js";
+import {insertRole, selectRoleById, selectRoleList} from "~/API/system/role.js";
 import defaultAvatar from "@/assets/images/profile.jpg";
 import Pagination from "@/components/Pagination/index.vue";
+import {VxeModal} from "vxe-pc-ui";
+import {ElMessage} from "element-plus";
 //定义数据
 const query = ref({
   pageNum: 1,
@@ -60,6 +82,61 @@ const roleList = ref([])
 const total = ref(0)
 //顶部表单实例
 const queryRef = ref()
+
+//表单实例
+const roleRef = ref()
+
+//对话框表单title
+const title = ref('')
+//对话框是否打开
+const Open = ref(false)
+//表单参数
+const form = ref({
+  roleId: null,
+  roleName: null,
+  roleSort: null,
+})
+//表单校验
+const rules = ref({
+  roleName: [
+    { required: true, message: '请输入角色名', trigger: 'blur' }
+  ],
+  roleSort: [
+    { required: true, message: '请输入角色排序', trigger: 'blur' }
+  ]
+})
+//新增按钮
+const handleInsert = () => {
+  form.value = {
+    roleId: null,
+    roleName: null,
+    roleSort: null,
+  }
+  Open.value = true;
+  title.value = '新增角色'
+}
+//保存按钮
+const submitForm = () => {
+  roleRef.value.validate((valid) => {
+    if (valid) {
+      if (form.value.roleId != null) {
+        // 修改角色
+
+      } else {
+        // 新增角色
+        insertRole(form.value).then((res) => {
+          ElMessage.success('新增成功')
+          Open.value = false
+          getList()
+        })
+      }
+    }
+  })
+}
+
+
+
+
 
 
 

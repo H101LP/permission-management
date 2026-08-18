@@ -24,3 +24,11 @@ export function selectRoleById(roleId) {
         method: "get",//请求方法(严格遵守后端)
     })
 }
+//新增角色信息
+export function insertRole(data) {
+    return request({
+        url: "/system/role/insertRole", //后端接口地址
+        method: "post",//请求方法(严格遵守后端)
+        data: data //请求参数
+    })
+}
