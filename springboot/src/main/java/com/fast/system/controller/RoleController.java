@@ -47,4 +47,11 @@ public class RoleController extends BaseController {
     public AjaxResult insertRole(@RequestBody Role role) {
         return toAjax(roleService.insertRole(role));
     }
+    /**
+     * 修改角色信息
+     */
+    @PostMapping("/updateRole")
+    public AjaxResult updateRole(@RequestBody Role role) {
+        return toAjax(roleService.updateRole(role));
+    }
 }

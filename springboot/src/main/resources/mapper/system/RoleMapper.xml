@@ -10,6 +10,7 @@
         <result column="create_time" property="createTime"/>
     </resultMap>
 
+
     <select id="selectRoleList" resultMap="RoleResult" parameterType="Role">
         select role_id, role_name, role_sort, create_time
         from role
@@ -44,4 +45,17 @@
             <if test="roleSort !=null">#{roleSort},</if>
         </trim>
     </insert>
+
+    <!-- 修改角色信息 -->
+    <update id="updateRole" parameterType="Role">
+        update role
+        <set>
+            <if test="roleName != null and roleName != ''">role_name = #{roleName},</if>
+            <if test="roleSort != null">role_sort = #{roleSort},</if>
+            <if test="createTime != null and createTime != ''">create_time = #{createTime},</if>
+        </set>
+        where role_id = #{roleId}
+    </update>
+
+
 </mapper>

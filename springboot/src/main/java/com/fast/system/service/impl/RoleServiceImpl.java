@@ -44,4 +44,13 @@ public class RoleServiceImpl implements IRoleService {
     public int insertRole(Role role) {
         return roleMapper.insertRole(role);
     }
+    /**
+     * 修改角色信息
+     * @param role 角色信息
+     * @return 结果
+     */
+    @Override
+    public int updateRole(Role role) {
+        return roleMapper.updateRole(role);
+    }
 }

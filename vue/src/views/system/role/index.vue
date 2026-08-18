@@ -14,8 +14,8 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5"/>
       <el-button type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
-      <el-button :disabled="single" type="success" icon="Edit" @click="" plain>修改</el-button>
-      <el-button :disabled="multiple" type="danger" icon="Delete" @click="" plain>删除</el-button>
+      <el-button :disabled="single" type="success" icon="Edit" @click="handleUpdate" plain>修改</el-button>
+      <el-button :disabled="multiple" type="danger" icon="Delete" @click="handleDelete" plain>删除</el-button>
 
     </el-row>
     <!--列表    -->
@@ -25,8 +25,8 @@
       <el-table-column prop="roleName" label="角色名" min-width="180" align="center" />
       <el-table-column label="操作" align="center" :width="200">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="">修改</el-button>
-          <el-button link type="danger" icon="Delete" @click="">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -64,7 +64,7 @@
 
 import {onMounted, ref} from "vue";
 import {selectUserList} from "~/API/system/user.js";
-import {insertRole, selectRoleById, selectRoleList} from "~/API/system/role.js";
+import {insertRole, selectRoleById, selectRoleList, updateRole} from "~/API/system/role.js";
 import defaultAvatar from "@/assets/images/profile.jpg";
 import Pagination from "@/components/Pagination/index.vue";
 import {VxeModal} from "vxe-pc-ui";
@@ -115,13 +115,27 @@ const handleInsert = () => {
   Open.value = true;
   title.value = '新增角色'
 }
+//修改按钮
+const handleUpdate = (row) => {
+  const roleId = row.roleId || ids.value
+  selectRoleById(roleId).then(res=>{
+    form.value = res.data;
+    Open.value = true;
+    title.value = '修改角色'
+
+  })
+}
 //保存按钮
 const submitForm = () => {
   roleRef.value.validate((valid) => {
     if (valid) {
       if (form.value.roleId != null) {
         // 修改角色
-
+        updateRole(form.value).then((res) => {
+          ElMessage.success('修改成功')
+          Open.value = false
+          getList()
+        })
       } else {
         // 新增角色
         insertRole(form.value).then((res) => {
@@ -156,7 +170,7 @@ const multiple = ref(true)
 
 //多选时的触发方法
 const handleSelectionChange = (selection) => {
-  ids.value = selection.map(item => item.userId)
+  ids.value = selection.map(item => item.roleId)
   single.value = selection.length !=1;
   multiple.value = !selection.length;
 }

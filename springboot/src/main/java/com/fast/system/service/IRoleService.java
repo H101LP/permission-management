@@ -26,4 +26,10 @@ public interface IRoleService {
      * @return 结果
      */
     int insertRole(Role role);
+    /**
+     * 修改角色信息
+     * @param role 角色信息
+     * @return 结果
+     */
+    int updateRole(Role role);
 }

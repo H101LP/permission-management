@@ -32,3 +32,12 @@ export function insertRole(data) {
         data: data //请求参数
     })
 }
+
+//修改角色信息
+export function updateRole(data) {
+    return request({
+        url: "/system/role/updateRole", //后端接口地址
+        method: "post",//请求方法(严格遵守后端)
+        data: data //请求参数
+    })
+}
