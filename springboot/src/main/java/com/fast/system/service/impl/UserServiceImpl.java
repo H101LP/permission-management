@@ -45,10 +45,16 @@ public class UserServiceImpl implements IUserService {
         return userMapper.updateUserAvatar(userId, avatar);
     }
 
+    @Transactional//事务管理
     @Override
     public int updateUser(User user)
     {
-        return userMapper.updateUser(user);
+        //修改用户信息
+        userMapper.updateUser(user);
+        //先删除用户之前的角色关联
+        userRoleMapper.deleteUserRoleByUserId(user.getUserId());
+        //新增用户和角色关联
+        return userRoleMapper.insertUserRole(user.getUserId(), user.getRoleId());
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.fast.system.controller;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.TableDataInfo;
 import com.fast.system.domain.User;
+import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IUserService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,8 @@ import java.util.List;
 public class UserController extends BaseController {
     @Resource
     private IUserService userService;
+    @Resource
+    private UserRoleMapper userRoleMapper;
     /**
      * 查询用户列表
      */

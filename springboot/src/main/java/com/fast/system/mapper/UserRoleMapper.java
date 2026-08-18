@@ -15,4 +15,11 @@ public interface UserRoleMapper {
      * @return
      */
     int insertUserRole(Long userId, Long roleId);
+
+    /**
+     * 根据用户ID删除用户和角色关联
+      * @param userId 用户ID
+     * @return 结果
+     */
+    int deleteUserRoleByUserId(Long userId);
 }
