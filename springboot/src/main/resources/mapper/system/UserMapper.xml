@@ -39,7 +39,12 @@
         </where>
     </select>
     <!-- 新增用户 -->
-    <insert id="insertUser" parameterType="User">
+    <!--
+    useGeneratedKeys="true" keyProperty="userId"
+    解释：useGeneratedKeys="true" 表示使用数据库生成的主键值，
+    keyProperty="userId" 表示将生成的主键值赋给 User 对象的 userId 属性。
+    -->
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
         insert into user
         <trim prefix="(" suffix=")" suffixOverrides=",">
         <if test="userId !=null">user_id,</if>

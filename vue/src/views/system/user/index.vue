@@ -64,6 +64,16 @@
           <el-form-item label="密码" prop="password">
             <el-input v-model="form.password" placeholder="请输入密码"></el-input>
           </el-form-item>
+          <el-form-item label="角色" prop="roleId">
+            <el-select v-model="form.roleId"  placeholder="请选择角色">
+              <el-option
+                  v-for="role in roleList"
+                  :key="role.roleId"
+                  :label="role.roleName"
+                  :value="role.roleId"
+              />
+            </el-select>
+          </el-form-item>
         </el-form>
       </template>
       <template #footer>
@@ -89,6 +99,7 @@ import {deleteUserByUserIds, insertUser, selectUserById, selectUserList, updateU
 import defaultAvatar from "@/assets/images/profile.jpg";
 import {VxeModal} from "vxe-pc-ui";
 import {ElMessage, ElMessageBox} from "element-plus";
+import {selectAllRole} from "~/API/system/role.js";
 
 //拿后端路径
 const baseUrl = import.meta.env.VITE_APP_BASE_API
@@ -104,7 +115,8 @@ const form = ref({
   userId: null,
   userName: null,
   sex: null,
-  password: null
+  password: null,
+  roleId: null
 })
 //表单校验
 const rules = ref({
@@ -112,7 +124,10 @@ const rules = ref({
     { required: true, message: '请输入用户名', trigger: 'blur' }
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'change' }
+    { required: true, message: '请输入密码', trigger: 'blur' }
+  ],
+  roleId: [
+    { required: true, message: '请选择角色', trigger: 'change' }
   ]
 })
 //新增按钮
@@ -121,7 +136,8 @@ const handleInsert = () => {
     userId: null,
     userName: null,
     sex: null,
-    password: null
+    password: null,
+    roleId: null
   }
   Open.value = true;
   title.value = '新增用户'
@@ -170,6 +186,11 @@ const single =ref(true)
 const multiple = ref(true)
 //顶部表单查询实例
 const queryRef = ref()
+
+
+
+
+
 
 //查询数据
 const getList = () => {
@@ -236,8 +257,17 @@ const handleDelete = (row) => {
 //数据总数
 const total = ref(0); //数据总数
 
+
+//角色列表数据
+const roleList = ref([])
+
+
 onMounted(() => {
   getList();
+  //查询所有角色列表
+  selectAllRole().then(res => {
+    roleList.value = res.data
+  })
 })
 </script>
 

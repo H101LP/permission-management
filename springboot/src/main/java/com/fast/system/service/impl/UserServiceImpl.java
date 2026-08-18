@@ -2,9 +2,11 @@ package com.fast.system.service.impl;
 
 import com.fast.system.domain.User;
 import com.fast.system.mapper.UserMapper;
+import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IUserService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ import java.util.List;
 public class UserServiceImpl implements IUserService {
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private UserRoleMapper userRoleMapper;
     @Override
     public User selectByUserName(String userName) {
         return userMapper.selectByUserName(userName);
@@ -57,10 +61,13 @@ public class UserServiceImpl implements IUserService {
         return userMapper.selectUserList(user);
 
     }
-
+    @Transactional//事务管理
     @Override
     public int insertUser(User user) {
-        return userMapper.insertUser(user);
+        //新增用户
+        userMapper.insertUser(user);
+        //新增用户和角色关联
+        return userRoleMapper.insertUserRole(user.getUserId(), user.getRoleId());
 
     }
 

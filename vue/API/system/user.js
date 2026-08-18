@@ -27,7 +27,7 @@ export function selectUserList(query){
         params: query //请求参数
     })
 }
-//查询用户列表
+//查询用户
 export function selectUserById(userId){
     return request({
         url:"/system/user/selectUserById/" + userId, //后端接口地址
