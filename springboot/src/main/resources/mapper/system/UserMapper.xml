@@ -11,6 +11,8 @@
         <result column="avatar" property="avatar"/>
         <result column="password" property="password"/>
         <result column="create_time" property="createTime"/>
+        <result column="role_id" property="roleId"/>
+        <result column="role_name" property="roleName"/>
     </resultMap>
 
 
@@ -22,21 +24,29 @@
     </select>
     <!-- 根据用户ID查询用户 -->
     <select id="selectByUserUserId" resultMap="UserResult" parameterType="Long">
-        select user_id,user_name,sex,avatar,password,create_time
-        from user where user_id = #{userId}
+        select u.user_id,u.user_name,u.sex,u.avatar,u.password,u.create_time
+             ,ur.role_id,r.role_name
+        from user u
+        left join user_role ur on u.user_id = ur.user_id
+        left join role r on ur.role_id = r.role_id
+        where u.user_id = #{userId}
     </select>
     <!--查询用户列表-->
     <select id="selectUserList" resultMap="UserResult" parameterType="User">
-        select user_id,user_name,sex,avatar,password,create_time
-        from user
+        select u.user_id,u.user_name,u.sex,u.avatar,u.password,u.create_time
+             ,ur.role_id,r.role_name
+        from user u
+        left join user_role ur on u.user_id = ur.user_id
+        left join role r on ur.role_id = r.role_id
         <where>
           <if test="userId != null">
-            and user_id = #{userId}
+            and u.user_id = #{userId}
           </if>
           <if test="userName != null and userName != ''">
-            and user_name like CONCAT('%', #{userName}, '%')
+            and u.user_name like CONCAT('%', #{userName}, '%')
           </if>
         </where>
+        order by u.user_id asc
     </select>
     <!-- 新增用户 -->
     <!--

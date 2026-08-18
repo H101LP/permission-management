@@ -36,6 +36,8 @@
           <el-avatar :size="50" :src="scope.row.avatar? baseUrl+scope.row.avatar : defaultAvatar" />
         </template>
       </el-table-column>
+      <el-table-column prop="roleName" label="对应角色" align="center" />
+
       <el-table-column label="操作" align="center" width="200px">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
