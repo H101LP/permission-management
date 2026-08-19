@@ -68,12 +68,16 @@
                   trigger="click"
               >
                 <template #reference>
-                 <el-input v-model="form.icon" placeholder="请输入菜单图标" @blur="">
+                 <el-input v-model="form.icon" placeholder="点击选择图标" @blur="">
                    <template #prefix>
-
+                    <svg-icon v-if="form.icon" :icon-class="form.icon" style="height: 32px;width: 16px" />
+                     <el-icon v-else>
+                       <Search/>
+                     </el-icon>
                    </template>
                  </el-input>
                 </template>
+                <icon-select ref="iconSelectRef" @selected="selectedIcon"/>
               </el-popover>
               </el-form-item>
             </el-col>
@@ -125,6 +129,22 @@ import SvgIcon from "@/components/SvgIcon/index.vue";
 import {VxeModal} from "vxe-pc-ui";
 import {ElMessage} from "element-plus";
 import {ElTreeSelect} from "element-plus";
+import {Search} from "@element-plus/icons-vue";
+import IconSelect from "@/components/IconSelect/index.vue";
+
+
+//图标选择组件实例
+const iconSelectRef = ref();
+//选择图标回调事件
+const selectedIcon = (name) => {
+  form.value.icon = name;
+};
+
+
+
+
+
+
 
 //title
 const title = ref('');

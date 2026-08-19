@@ -23,6 +23,8 @@ import VxeUITable from 'vxe-table'
 import 'vxe-table/es/style.css'
 //分页组件
 import Pagination from '@/components/Pagination'
+//图标选择组件
+import IconSelect from '@/components/IconSelect'
 
 const app = createApp(App)
 
@@ -45,6 +47,7 @@ app.use(ElementPlus, {
 })
 
 app.component('Pagination', Pagination)
-
+//注册图标选择组件
+app.component('IconSelect', IconSelect)
 
 app.mount('#app')
