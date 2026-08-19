@@ -17,4 +17,10 @@ public interface MenuMapper {
      * @return 菜单列表
      */
     List<Menu> selectMenuListByUserId(Menu menu);
+    /**
+     * 新增菜单
+     * @param menu 菜单信息
+     * @return 结果
+     */
+    int insertMenu(Menu menu);
 }

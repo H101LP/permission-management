@@ -5,9 +5,7 @@ import com.fast.system.domain.Menu;
 import com.fast.system.service.IMenuService;
 import com.fast.system.utils.SecurityUtils;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +24,13 @@ public class MenuController extends BaseController {
     public AjaxResult selectMenuList(Menu menu) {
         List<Menu> list = menuService.selectMenuList(menu, SecurityUtils.getUserId());
         return success(list);
+    }
+    /**
+     * 新增菜单
+     */
+    @PostMapping("/insertMenu")
+    public AjaxResult insertMenu( @RequestBody Menu menu) {
+        return toAjax(menuService.insertMenu(menu));
     }
 
 }

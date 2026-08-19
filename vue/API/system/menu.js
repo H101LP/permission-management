@@ -8,3 +8,12 @@ export function selectMenuList(quer) {
         params: quer //请求参数
     })
 }
+
+//新增菜单
+export function insertMenu(data) {
+    return request({
+        url: "/system/menu/insertMenu", //后端接口地址
+        method: "post",//请求方法(严格遵守后端)
+        data: data //请求参数
+    })
+}

@@ -14,6 +14,7 @@
         <result column="icon" property="icon"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
+
     <!-- 根据用户ID查询菜单列表 -->
     <select id="selectMenuListByUserId" resultMap="MenuResult" >
         select
@@ -38,5 +39,33 @@
         </if>
         </where>
     </select>
+    <!-- 新增菜单 -->
+    <!-- 新增菜单 -->
+    <insert id="insertMenu" parameterType="Menu" useGeneratedKeys="true" keyProperty="menuId">
+        insert into menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuId != null">menu_id,</if>
+            <if test="menuName != null and menuName != ''">menu_name,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="menuSort != null">menu_sort,</if>
+            <if test="path != null and path != ''">path,</if>
+            <if test="component != null and component != ''">component,</if>
+            <if test="menuType != null and menuType != ''">menu_type,</if>
+            <if test="icon != null and icon != ''">icon,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="menuId != null">#{menuId},</if>
+            <if test="menuName != null and menuName != ''">#{menuName},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="menuSort != null">#{menuSort},</if>
+            <if test="path != null and path != ''">#{path},</if>
+            <if test="component != null and component != ''">#{component},</if>
+            <if test="menuType != null and menuType != ''">#{menuType},</if>
+            <if test="icon != null and icon != ''">#{icon},</if>
+        </trim>
+    </insert>
+
+
+
 
 </mapper>

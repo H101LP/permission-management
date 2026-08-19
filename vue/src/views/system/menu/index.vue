@@ -111,7 +111,7 @@
       </template>
       <template #footer>
         <div>
-          <el-button type="primary" @click="">保存</el-button>
+          <el-button type="primary" @click="submitForm">保存</el-button>
           <el-button @click="Open = false">取消</el-button>
         </div>
       </template>
@@ -124,7 +124,7 @@
 
 
 import {onMounted, ref} from "vue";
-import {selectMenuList} from "~/API/system/menu.js";
+import {insertMenu, selectMenuList} from "~/API/system/menu.js";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import {VxeModal} from "vxe-pc-ui";
 import {ElMessage} from "element-plus";
@@ -241,7 +241,23 @@ const query = ref({
   menuName: null
 
 });
-
+//提交按钮
+const submitForm = () => {
+  menuRef.value.validate(valid =>{
+    if (valid){
+      if(form.value.menuId != null){
+        //调用修改API
+      }else {
+        //调用新增API
+        insertMenu(form.value).then(res=>{
+          ElMessage.success('新增成功');
+          Open.value = false;
+          getList();
+        })
+      }
+    }
+  })
+};
 
 
 

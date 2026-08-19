@@ -17,4 +17,11 @@ public interface IMenuService {
      * @return 菜单列表
      */
     List<Menu> selectMenuList(Menu menu, Long userId);
+
+    /**
+     * 新增菜单
+     * @param menu 菜单信息
+     * @return 结果
+     */
+    int insertMenu(Menu menu);
 }
