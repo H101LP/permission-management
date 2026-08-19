@@ -32,4 +32,6 @@ public class Menu {
     private String createTime;
     //子菜单
     private List<Menu> children = new ArrayList<Menu>();
+    //用户ID
+    private Long userId;
 }
