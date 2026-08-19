@@ -33,6 +33,85 @@
         </template>
       </el-table-column>
     </el-table>
+    <!--添加或修改用户对话框-->
+    <vxe-modal :title="title" v-model="Open"  width="40%" showFooter show-maximize resize>
+      <template #default>
+        <el-form ref="menuRef" :model="form" :rules="rules" label-width="80px">
+          <el-row >
+            <el-col :span="12">
+            <el-form-item label="上级菜单">
+              <el-tree-select
+                  v-model="form.parentId"
+                  :data="menuOptions"
+                  :props="{value: 'menuId', label: 'menuName', children: 'children'}"
+                  check-strictly
+                  value-key="menuId"
+                  placeholder="请选择上级菜单" />
+            </el-form-item>
+            </el-col>
+            <el-col :span="12">
+                <el-form-item label="菜单类型" prop="menuType">
+                  <el-radio-group v-model="form.menuType">
+                    <el-radio value="M">目录</el-radio>
+                    <el-radio value="C">菜单</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+            </el-col>
+          </el-row>
+<!--          -->
+          <el-row >
+            <el-col :span="12">
+              <el-form-item label="菜单图标" prop="icon">
+              <el-popover
+                  placement="bottom-start"
+                  width="550"
+                  trigger="click"
+              >
+                <template #reference>
+                 <el-input v-model="form.icon" placeholder="请输入菜单图标" @blur="">
+                   <template #prefix>
+
+                   </template>
+                 </el-input>
+                </template>
+              </el-popover>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="显示排序" prop="menuSort">
+                <el-input-number v-model="form.menuSort" min="0" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row >
+            <el-col :span="12">
+              <el-form-item label="菜单名称" prop="menuName">
+                <el-input v-model="form.menuName" placeholder="请输入菜单名称" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="form.menuType === 'C'">
+              <el-form-item label="路由地址" prop="path">
+                <el-input v-model="form.path" placeholder="请输入路由地址" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row  >
+            <el-col :span="12" v-if="form.menuType === 'C'">
+              <el-form-item label="组件路径" prop="component">
+                <el-input v-model="form.component" placeholder="请输入组件路径" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+        </el-form>
+      </template>
+      <template #footer>
+        <div>
+          <el-button type="primary" @click="">保存</el-button>
+          <el-button @click="Open = false">取消</el-button>
+        </div>
+      </template>
+    </vxe-modal>
 
 
   </div>
@@ -43,8 +122,73 @@
 import {onMounted, ref} from "vue";
 import {selectMenuList} from "~/API/system/menu.js";
 import SvgIcon from "@/components/SvgIcon/index.vue";
+import {VxeModal} from "vxe-pc-ui";
+import {ElMessage} from "element-plus";
+import {ElTreeSelect} from "element-plus";
 
+//title
+const title = ref('');
+//对话框
+const Open = ref(false);
+//表单实例
+const menuRef = ref();
+//表单数据
+const form = ref({
+  menuId:null,
+  parentId:null,
+  menuName: null,
+  icon: null,
+  menuType: 'M',
+  menuSort: null,
+  path: null,
+  component: null,
+});
+//表单校验
+const rules = ref({
+  menuName: [
+    { required: true, message: '请输入菜单名', trigger: 'blur' }
+  ],
+  menuSort: [
+    { required: true, message: '请输入菜单顺序', trigger: 'blur' }
+  ],
+  path: [
+    { required: true, message: '请输入路由地址', trigger: 'blur' }
+  ],
+  component: [
+    { required: true, message: '请输入组件路径', trigger: 'blur' }
+  ]
+})
+//新增按钮
+const handleInsert = () => {
+  form.value = {
+    menuId:null,
+    parentId:0,
+    menuName: null,
+    icon: null,
+    menuType: 'M',
+    menuSort: null,
+    path: null,
+    component: null,
+  };
+  getTreeSelect()
+  Open.value = true;
+  title.value = '新增菜单';
+};
 
+//菜单下拉树数据
+const menuOptions = ref([]);
+
+//查询菜单下拉树结构
+const getTreeSelect = () => {
+  selectMenuList().then(
+      res => {
+        const menu = {menuId : 0,menuName:'主层级',children:[]}
+        menu.children = buildTree(res.data,0)
+        menuOptions.value.push(menu)
+      }
+  )
+
+};
 //顶部查询表单实例
 const queryRef = ref();
 //搜索按钮
