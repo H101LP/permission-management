@@ -32,4 +32,10 @@ public interface IRoleService {
      * @return 结果
      */
     int updateRole(Role role);
+    /**
+     * 删除角色信息
+     * @param roleIds 角色ID
+     * @return 结果
+     */
+    int deleteRoleByRoleIds(Long[] roleIds);
 }

@@ -11,6 +11,7 @@
     </resultMap>
 
 
+
     <select id="selectRoleList" resultMap="RoleResult" parameterType="Role">
         select role_id, role_name, role_sort, create_time
         from role
@@ -57,5 +58,12 @@
         where role_id = #{roleId}
     </update>
 
+    <!-- 删除角色信息 -->
+    <delete id="deleteRoleByRoleIds">
+        delete from role where role_id in
+        <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
+            #{roleId}
+        </foreach>
+    </delete>
 
 </mapper>

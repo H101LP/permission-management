@@ -53,4 +53,13 @@ public class RoleServiceImpl implements IRoleService {
     public int updateRole(Role role) {
         return roleMapper.updateRole(role);
     }
+    /**
+     * 删除角色信息
+     * @param roleIds 角色ID
+     * @return 结果
+     */
+    @Override
+    public int deleteRoleByRoleIds(Long[] roleIds) {
+        return roleMapper.deleteRoleByRoleIds(roleIds);
+    }
 }

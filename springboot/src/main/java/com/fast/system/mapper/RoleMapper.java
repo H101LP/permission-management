@@ -36,4 +36,11 @@ public interface RoleMapper {
      * @return 结果
      */
     int updateRole(Role role);
+
+    /**
+     * 删除角色信息
+     * @param roleIds
+     * @return
+     */
+    int deleteRoleByRoleIds(Long[] roleIds);
 }

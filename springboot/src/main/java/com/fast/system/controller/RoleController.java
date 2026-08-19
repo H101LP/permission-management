@@ -54,4 +54,16 @@ public class RoleController extends BaseController {
     public AjaxResult updateRole(@RequestBody Role role) {
         return toAjax(roleService.updateRole(role));
     }
+    /**
+     * 删除角色信息
+     */
+    @DeleteMapping("/deleteRoleByRoleIds/{roleIds}")
+    public AjaxResult deleteRoleByRoleIds(@PathVariable Long[] roleIds) {
+        for (Long roleId : roleIds) {
+            if (roleId == 1L || roleId == 2L)
+                return error("不能删除超级管理员和普通用户角色");
+        }
+        return toAjax(roleService.deleteRoleByRoleIds(roleIds));
+    }
+
 }

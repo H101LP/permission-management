@@ -41,3 +41,11 @@ export function updateRole(data) {
         data: data //请求参数
     })
 }
+
+//删除角色信息
+export function deleteRoleByRoleIds(roleIds) {
+    return request({
+        url: "/system/role/deleteRoleByRoleIds/" + roleIds, //后端接口地址
+        method: "delete",//请求方法(严格遵守后端)
+    })
+}

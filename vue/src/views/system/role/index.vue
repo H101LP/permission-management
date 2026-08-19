@@ -64,11 +64,11 @@
 
 import {onMounted, ref} from "vue";
 import {selectUserList} from "~/API/system/user.js";
-import {insertRole, selectRoleById, selectRoleList, updateRole} from "~/API/system/role.js";
+import {deleteRoleByRoleIds, insertRole, selectRoleById, selectRoleList, updateRole} from "~/API/system/role.js";
 import defaultAvatar from "@/assets/images/profile.jpg";
 import Pagination from "@/components/Pagination/index.vue";
 import {VxeModal} from "vxe-pc-ui";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 //定义数据
 const query = ref({
   pageNum: 1,
@@ -125,6 +125,36 @@ const handleUpdate = (row) => {
 
   })
 }
+//删除按钮
+const handleDelete = (row) => {
+  const roleIds = row.roleId || ids.value
+  ElMessageBox.confirm(
+      '是否确认删除角色',
+      '系统提示',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  )
+      .then(() => {
+        //调用删除API
+        deleteRoleByRoleIds(roleIds).then(res=>{
+          ElMessage.success('删除成功')
+          getList()
+        })
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '已取消删除',
+        })
+      })
+
+}
+
+
+
 //保存按钮
 const submitForm = () => {
   roleRef.value.validate((valid) => {
