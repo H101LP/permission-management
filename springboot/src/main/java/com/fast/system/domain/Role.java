@@ -17,4 +17,6 @@ public class Role {
     // 创建时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private String createTime;
+    //菜单组
+    private Long[] menuIds;
 }
