@@ -23,4 +23,11 @@ public interface RoleMenuMapper {
      * @return 是否成功
      */
     int batchRoleMenu(ArrayList<RoleMenu> list);
+
+    /**
+     * 根据角色ID删除角色菜单关联
+     * @param roleIds 角色ID
+     * @return 是否成功
+     */
+    int deleteRoleMenuByRoleIds(Long[] roleIds);
 }

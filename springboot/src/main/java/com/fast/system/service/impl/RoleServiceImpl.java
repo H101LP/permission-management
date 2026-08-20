@@ -98,8 +98,11 @@ public class RoleServiceImpl implements IRoleService {
      * @param roleIds 角色ID
      * @return 结果
      */
+    @Transactional
     @Override
     public int deleteRoleByRoleIds(Long[] roleIds) {
+        //批量删除角色菜单关联信息
+        roleMenuMapper.deleteRoleMenuByRoleIds(roleIds);
         return roleMapper.deleteRoleByRoleIds(roleIds);
     }
 }
