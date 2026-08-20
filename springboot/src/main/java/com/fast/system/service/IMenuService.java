@@ -36,4 +36,17 @@ public interface IMenuService {
      * @return 结果
      */
     int updateMenu(Menu menu);
+    /**
+     * 删除菜单
+     * @param menuId 菜单ID
+     * @return 结果
+     */
+    int deleteMenuByMenuId(Long menuId);
+
+    /**
+     * 根据角色ID查询对应的菜单树
+     * @param roleId 角色ID
+     * @return 菜单列表
+     */
+    List<Long> selectMenuListByRoleId(Long roleId);
 }

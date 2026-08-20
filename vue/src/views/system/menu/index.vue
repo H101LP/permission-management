@@ -29,7 +29,7 @@
       <el-table-column label="操作" align="center" :width="200">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button link type="danger" icon="Delete" @click="">删除</el-button>
+          <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -58,7 +58,7 @@
                 </el-form-item>
             </el-col>
           </el-row>
-<!--          -->
+<!--           -->
           <el-row >
             <el-col :span="12">
               <el-form-item label="菜单图标" prop="icon">
@@ -124,10 +124,10 @@
 
 
 import {onMounted, ref} from "vue";
-import {insertMenu, selectMenuByMenuId, selectMenuList, updateMenu} from "~/API/system/menu.js";
+import {deleteMenuByMenuId, insertMenu, selectMenuByMenuId, selectMenuList, updateMenu} from "~/API/system/menu.js";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import {VxeModal} from "vxe-pc-ui";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import {ElTreeSelect} from "element-plus";
 import {Search} from "@element-plus/icons-vue";
 import IconSelect from "@/components/IconSelect/index.vue";
@@ -204,6 +204,40 @@ const handleUpdate = (row) => {
     title.value = '修改菜单';
   })
 }
+
+//删除按钮
+const handleDelete = (row) => {
+  const menuId = row.menuId
+  ElMessageBox.confirm(
+      '是否确认删除菜单',
+      '系统提示',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  )
+      .then(() => {
+        //调用删除API
+        deleteMenuByMenuId(menuId).then(res =>{
+          ElMessage.success('删除成功');
+          getList();
+        })
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '已取消删除',
+        })
+      })
+
+}
+
+
+
+
+
+
 //菜单下拉树数据
 const menuOptions = ref([]);
 

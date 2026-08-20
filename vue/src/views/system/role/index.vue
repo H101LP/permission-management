@@ -69,6 +69,7 @@ import defaultAvatar from "@/assets/images/profile.jpg";
 import Pagination from "@/components/Pagination/index.vue";
 import {VxeModal} from "vxe-pc-ui";
 import {ElMessage, ElMessageBox} from "element-plus";
+import {selectRoleMenuTree} from "~/API/system/menu.js";
 //定义数据
 const query = ref({
   pageNum: 1,
@@ -118,6 +119,11 @@ const handleInsert = () => {
 //修改按钮
 const handleUpdate = (row) => {
   const roleId = row.roleId || ids.value
+
+  selectRoleMenuTree(roleId).then(res => {
+
+
+  })
   selectRoleById(roleId).then(res=>{
     form.value = res.data;
     Open.value = true;

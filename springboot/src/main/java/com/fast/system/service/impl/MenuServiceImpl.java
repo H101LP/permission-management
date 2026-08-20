@@ -58,4 +58,22 @@ public class MenuServiceImpl implements IMenuService {
     public int updateMenu(Menu menu) {
         return menuMapper.updateMenu(menu);
     }
+
+    /**
+     * 删除菜单
+     */
+    @Override
+    public int deleteMenuByMenuId(Long menuId) {
+        return menuMapper.deleteMenuByMenuId(menuId);
+    }
+
+    /**
+     * 根据角色ID查询对应的菜单树
+     * @param roleId 角色ID
+     * @return 菜单列表
+     */
+    @Override
+    public List<Long> selectMenuListByRoleId(Long roleId) {
+        return menuMapper.selectMenuListByRoleId(roleId);
+    }
 }

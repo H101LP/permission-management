@@ -34,3 +34,19 @@ export function updateMenu(data) {
         data: data //请求参数
     })
 }
+
+//删除菜单
+export function deleteMenuByMenuId(menuId) {
+    return request({
+        url: "/system/menu/deleteMenuByMenuId/" + menuId, //后端接口地址
+        method: "delete",//请求方法(严格遵守后端)
+    })
+}
+
+//根据角色ID查询对应的菜单树
+export function selectRoleMenuTree(roleId) {
+    return request({
+        url: "/system/menu/selectRoleMenuTree/" + roleId, //后端接口地址
+        method: "get",//请求方法(严格遵守后端)
+    })
+}

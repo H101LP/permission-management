@@ -50,6 +50,25 @@ public class MenuController extends BaseController {
         }
          return toAjax(menuService.updateMenu(menu));
     }
+    /**
+     * 删除菜单
+     */
+    @DeleteMapping("/deleteMenuByMenuId/{menuId}")
+    public AjaxResult deleteMenuByMenuId(@PathVariable Long menuId) {
+        return toAjax(menuService.deleteMenuByMenuId(menuId));
+    }
+    /**
+     * 根据角色ID查询对应的菜单树
+     *
+     */
+    @GetMapping("/selectRoleMenuTree/{roleId}")
+    public AjaxResult selectRoleMenuTree(@PathVariable Long roleId) {
+       //根据角色ID查询对应的菜单树
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("checkedKeys", menuService.selectMenuListByRoleId(roleId));
+        System.out.println(ajax);
+        return ajax;
+    }
 
 
 }
