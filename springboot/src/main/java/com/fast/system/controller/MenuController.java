@@ -32,5 +32,13 @@ public class MenuController extends BaseController {
     public AjaxResult insertMenu( @RequestBody Menu menu) {
         return toAjax(menuService.insertMenu(menu));
     }
+    /**
+     * 根据菜单ID查询菜单信息
+     */
+    @GetMapping("/selectMenuByMenuId/{menuId}")
+    public AjaxResult selectMenuByMenuId(@PathVariable Long menuId) {
+        return success(menuService.selectMenuByMenuId(menuId));
+    }
+
 
 }

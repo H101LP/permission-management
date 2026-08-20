@@ -43,4 +43,12 @@ public class MenuServiceImpl implements IMenuService {
     public int insertMenu(Menu menu) {
         return menuMapper.insertMenu(menu);
     }
+
+    /**
+     * 根据菜单ID查询菜单信息
+     */
+    @Override
+    public Menu selectMenuByMenuId(Long menuId) {
+        return menuMapper.selectMenuByMenuId(menuId);
+    }
 }

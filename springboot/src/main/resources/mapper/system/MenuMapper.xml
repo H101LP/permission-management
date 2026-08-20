@@ -39,7 +39,27 @@
         </if>
         </where>
     </select>
-    <!-- 新增菜单 -->
+
+    <!-- 根据菜单ID查询菜单 -->
+    <select id="selectMenuByMenuId" resultMap="MenuResult">
+        select
+            menu_id,
+            menu_name,
+            parent_id,
+            menu_sort,
+            path,
+            component,
+            menu_type,
+            icon,
+            create_time
+        from menu
+        where menu_id = #{menuId}
+    </select>
+
+
+
+
+
     <!-- 新增菜单 -->
     <insert id="insertMenu" parameterType="Menu" useGeneratedKeys="true" keyProperty="menuId">
         insert into menu

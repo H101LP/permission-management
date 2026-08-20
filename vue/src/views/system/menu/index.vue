@@ -124,7 +124,7 @@
 
 
 import {onMounted, ref} from "vue";
-import {insertMenu, selectMenuList} from "~/API/system/menu.js";
+import {insertMenu, selectMenuByMenuId, selectMenuList} from "~/API/system/menu.js";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import {VxeModal} from "vxe-pc-ui";
 import {ElMessage} from "element-plus";
@@ -204,7 +204,7 @@ const getTreeSelect = () => {
       res => {
         const menu = {menuId : 0,menuName:'主层级',children:[]}
         menu.children = buildTree(res.data,0)
-        menuOptions.value.push(menu)
+        menuOptions.value = [menu]
       }
   )
 
@@ -286,6 +286,7 @@ const buildTree = (data, parentId) => {
   //返回当前层级的所有菜单项
   return result;
 };
+
 
 
 
