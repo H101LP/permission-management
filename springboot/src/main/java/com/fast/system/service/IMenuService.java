@@ -26,6 +26,14 @@ public interface IMenuService {
     int insertMenu(Menu menu);
     /**
      * 根据菜单ID查询菜单信息
+      * @param menuId 菜单ID
+      * @return 菜单信息
      */
     Menu selectMenuByMenuId(Long menuId);
+    /**
+     * 修改菜单
+     * @param menu 菜单信息
+     * @return 结果
+     */
+    int updateMenu(Menu menu);
 }

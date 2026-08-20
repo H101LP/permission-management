@@ -30,4 +30,10 @@ public interface MenuMapper {
       * @return 菜单信息
      */
     Menu selectMenuByMenuId(Long menuId);
+    /**
+     * 修改菜单
+     * @param menu 菜单信息
+     * @return 结果
+     */
+    int updateMenu(Menu menu);
 }

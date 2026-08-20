@@ -39,6 +39,17 @@ public class MenuController extends BaseController {
     public AjaxResult selectMenuByMenuId(@PathVariable Long menuId) {
         return success(menuService.selectMenuByMenuId(menuId));
     }
+    /**
+     * 修改菜单
+     */
+    @PutMapping("/updateMenu")
+    public AjaxResult updateMenu(@RequestBody Menu menu) {
+        //上级菜单不能选择自己
+        if (menu.getParentId().equals(menu.getMenuId())) {
+            return error("上级菜单不能选择自己");
+        }
+         return toAjax(menuService.updateMenu(menu));
+    }
 
 
 }

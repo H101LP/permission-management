@@ -51,4 +51,11 @@ public class MenuServiceImpl implements IMenuService {
     public Menu selectMenuByMenuId(Long menuId) {
         return menuMapper.selectMenuByMenuId(menuId);
     }
+    /**
+     * 修改菜单
+     */
+    @Override
+    public int updateMenu(Menu menu) {
+        return menuMapper.updateMenu(menu);
+    }
 }

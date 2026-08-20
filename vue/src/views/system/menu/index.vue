@@ -28,7 +28,7 @@
       <el-table-column prop="component" label="组件路径" align="center" width="160" />
       <el-table-column label="操作" align="center" :width="200">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="">修改</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
           <el-button link type="danger" icon="Delete" @click="">删除</el-button>
         </template>
       </el-table-column>
@@ -124,7 +124,7 @@
 
 
 import {onMounted, ref} from "vue";
-import {insertMenu, selectMenuByMenuId, selectMenuList} from "~/API/system/menu.js";
+import {insertMenu, selectMenuByMenuId, selectMenuList, updateMenu} from "~/API/system/menu.js";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import {VxeModal} from "vxe-pc-ui";
 import {ElMessage} from "element-plus";
@@ -194,7 +194,16 @@ const handleInsert = () => {
   Open.value = true;
   title.value = '新增菜单';
 };
-
+//修改按钮
+const handleUpdate = (row) => {
+  const menuId = row.menuId
+  getTreeSelect();
+  selectMenuByMenuId(menuId).then(res=>{
+    form.value = res.data;
+    Open.value = true;
+    title.value = '修改菜单';
+  })
+}
 //菜单下拉树数据
 const menuOptions = ref([]);
 
@@ -247,6 +256,11 @@ const submitForm = () => {
     if (valid){
       if(form.value.menuId != null){
         //调用修改API
+        updateMenu(form.value).then(res=>{
+          ElMessage.success('修改成功');
+          Open.value = false;
+          getList();
+        })
       }else {
         //调用新增API
         insertMenu(form.value).then(res=>{
