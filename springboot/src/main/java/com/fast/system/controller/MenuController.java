@@ -63,10 +63,13 @@ public class MenuController extends BaseController {
      */
     @GetMapping("/selectRoleMenuTree/{roleId}")
     public AjaxResult selectRoleMenuTree(@PathVariable Long roleId) {
+        List<Menu> menus = menuService.selectMenuList(new Menu(), SecurityUtils.getUserId());
        //根据角色ID查询对应的菜单树
         AjaxResult ajax = AjaxResult.success();
+        //根据角色ID查询菜单树信息
         ajax.put("checkedKeys", menuService.selectMenuListByRoleId(roleId));
-        System.out.println(ajax);
+        //构建前端所需要的下拉树结构
+        ajax.put("menus",menuService.buildMenuTreeSelect(menus));
         return ajax;
     }
 

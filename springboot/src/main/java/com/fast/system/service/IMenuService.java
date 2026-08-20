@@ -1,6 +1,7 @@
 package com.fast.system.service;
 
 import com.fast.system.domain.Menu;
+import com.fast.system.domain.TreeSelect;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,4 +50,11 @@ public interface IMenuService {
      * @return 菜单列表
      */
     List<Long> selectMenuListByRoleId(Long roleId);
+
+    /**
+     *  构建前端所需要的下拉树结构
+     * @param menus 菜单列表
+     * @return 下拉树结构列表
+     */
+    List<TreeSelect> buildMenuTreeSelect(List<Menu> menus);
 }
