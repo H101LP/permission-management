@@ -80,7 +80,7 @@ import defaultAvatar from "@/assets/images/profile.jpg";
 import Pagination from "@/components/Pagination/index.vue";
 import {VxeModal} from "vxe-pc-ui";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {selectRoleMenuTree} from "~/API/system/menu.js";
+import {selectRoleMenusTree, selectRoleMenuTree} from "~/API/system/menu.js";
 
 
 //菜单权限表单实例
@@ -132,8 +132,14 @@ const handleInsert = () => {
     roleSort: null,
     menuIds: []
   }
-  Open.value = true;
-  title.value = '新增角色'
+  selectRoleMenusTree().then(
+      (res) => {
+        menuOptions.value = res.data;
+        Open.value = true;
+        title.value = '新增角色'
+      }
+  )
+
 }
 //修改按钮
 const handleUpdate = (row) => {
@@ -232,6 +238,7 @@ const submitForm = () => {
         })
       } else {
         // 新增角色
+        form.value.menuIds = getMenuAllCheckedKeys()
         insertRole(form.value).then((res) => {
           ElMessage.success('新增成功')
           Open.value = false

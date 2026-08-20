@@ -72,6 +72,14 @@ public class MenuController extends BaseController {
         ajax.put("menus",menuService.buildMenuTreeSelect(menus));
         return ajax;
     }
+    /**
+     * 查询前端所需要的菜单下拉树结构
+     */
+    @GetMapping("/selectRoleMenusTree")
+    public AjaxResult selectMenusTree() {
+        List<Menu> menus = menuService.selectMenuList(new Menu(), SecurityUtils.getUserId());
+        return success(menuService.buildMenuTreeSelect(menus));
+    }
 
 
 }
