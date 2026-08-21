@@ -2,6 +2,7 @@ package com.fast.system.controller;
 
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.Menu;
+import com.fast.system.domain.vo.RouterVo;
 import com.fast.system.service.IMenuService;
 import com.fast.system.utils.SecurityUtils;
 import jakarta.annotation.Resource;
@@ -79,6 +80,18 @@ public class MenuController extends BaseController {
     public AjaxResult selectMenusTree() {
         List<Menu> menus = menuService.selectMenuList(new Menu(), SecurityUtils.getUserId());
         return success(menuService.buildMenuTreeSelect(menus));
+    }
+    /**
+     * 获取路由信息（菜单权限）
+     * 功能: 获取当前用户的菜单权限 用于前端动态生成路由
+     */
+    @GetMapping("/getRouters")
+    public AjaxResult getRouters() {
+       //获取当前用户的ID
+        long userId = SecurityUtils.getUserId();
+        //查询当前用户的菜单树 并且构建成前端所需要的路由格式
+        List<RouterVo> routers = menuService.selectMenuTreeRouterByUserId(userId);
+        return success(routers);
     }
 
 

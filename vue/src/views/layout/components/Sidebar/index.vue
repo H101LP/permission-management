@@ -13,9 +13,15 @@
 import {computed, ref} from "vue";
 import {useRoute} from "vue-router";
 import Sidebaritem from "@/views/layout/components/Sidebar/Sidebaritem.vue";
+import useRouteStore from "@/stores/modules/routeStore.js";
 const route = useRoute();
 
-//模拟静态路由数据
+const routeStore = useRouteStore();
+
+
+//动态路由数据
+const sidebarRoutes = computed(()=> routeStore.sidebarRoutes)
+/*//模拟静态路由数据
 const sidebarRoutes = ref([
     {
       path: '/index',
@@ -39,7 +45,7 @@ const sidebarRoutes = ref([
       },
     ]
   },
-])
+])*/
 
 
 

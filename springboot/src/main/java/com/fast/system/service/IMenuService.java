@@ -2,6 +2,7 @@ package com.fast.system.service;
 
 import com.fast.system.domain.Menu;
 import com.fast.system.domain.TreeSelect;
+import com.fast.system.domain.vo.RouterVo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,4 +58,11 @@ public interface IMenuService {
      * @return 下拉树结构列表
      */
     List<TreeSelect> buildMenuTreeSelect(List<Menu> menus);
+
+    /**
+     * 根据用户ID查询菜单树用于路由生成
+     * @param userId 用户ID
+     * @return 路由列表
+     */
+    List<RouterVo> selectMenuTreeRouterByUserId(long userId);
 }

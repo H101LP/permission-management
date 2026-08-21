@@ -58,3 +58,11 @@ export function selectRoleMenusTree() {
         method: "get",//请求方法(严格遵守后端)
     })
 }
+
+//获取当前用户的菜单权限
+export function getRouters() {
+    return request({
+        url: "/system/menu/getRouters", //后端接口地址
+        method: "get",//请求方法(严格遵守后端)
+    })
+}
