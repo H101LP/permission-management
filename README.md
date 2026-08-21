@@ -1,57 +1,42 @@
-<div align="center">
-
 # 🚀 RBAC 权限管理系统
 
-**基于 Spring Boot 3 + Vue 3 的前后端分离权限管理系统**
+**基于 Spring Boot 3 + Vue 3 的前后端分离 RBAC 权限管理系统**
 
 用户 · 角色 · 菜单 · 权限 · 动态路由 · JWT
 
-<br>
+<div align="center">
 
-<img src="https://img.shields.io/badge/Spring%20Boot-3.5.9-brightgreen?style=flat-square&logo=springboot">
-<img src="https://img.shields.io/badge/Vue-3.5.40-4FC08D?style=flat-square&logo=vuedotjs">
-<img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql">
-<img src="https://img.shields.io/badge/Spring%20Security-6.x-6DB33F?style=flat-square&logo=springsecurity">
-<img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square">
-
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.9-brightgreen?style=flat-square\&logo=springboot)
+![Vue](https://img.shields.io/badge/Vue-3.5.40-4FC08D?style=flat-square\&logo=vuedotjs)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square\&logo=mysql)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-6.x-6DB33F?style=flat-square\&logo=springsecurity)
 </div>
 
 ---
 
 ## 📖 项目简介
 
-这是一个基于 **Spring Boot 3 + Vue 3** 开发的前后端分离 RBAC 权限管理系统。
+本项目是一套基于 **Spring Boot 3 + Vue 3** 的前后端分离 RBAC 权限管理系统。
 
-项目主要用于学习和实践：
+采用 **用户 → 角色 → 菜单** 的权限模型，实现用户认证、角色管理、菜单权限、动态路由等功能。
 
-* Spring Boot
-* Spring Security
-* JWT
-* MyBatis
-* MySQL
-* Vue 3
-* Vue Router
-* Pinia
-* 前后端分离
-* RBAC 权限模型
-
-系统采用 **用户 → 角色 → 菜单** 的权限管理方式，实现不同用户登录后拥有不同的菜单和访问权限。
+> 个人学习实践项目，主要用于学习 Spring Boot、Spring Security、MyBatis、Vue 3 及 RBAC 权限设计。
 
 ---
 
-## ✨ 功能
+## ✨ 功能特性
 
 | 模块         | 功能                     |
-| :--------- | :--------------------- |
-| 👤 用户管理    | 用户增删改查、分页、角色分配         |
-| 🔐 角色管理    | 角色增删改查、菜单权限分配          |
-| 📋 菜单管理    | 菜单树、增删改查、图标选择          |
-| 🔑 登录认证    | JWT 登录、Token 校验、401 处理 |
+| ---------- | ---------------------- |
+| 👤 用户管理    | 增删改查、分页查询、角色分配         |
+| 🔐 角色管理    | 增删改查、菜单权限分配            |
+| 📋 菜单管理    | 树形菜单、增删改查、图标选择         |
+| 🔑 登录认证    | JWT 登录、Token 校验、401 拦截 |
 | 🛡️ 权限控制   | Spring Security 认证与授权  |
 | 🧭 动态路由    | 根据用户权限动态生成路由           |
-| 👨‍💻 个人中心 | 修改个人信息、密码、头像           |
+| 👨‍💻 个人中心 | 信息、密码、头像管理             |
 | 📄 分页查询    | PageHelper 分页          |
-| 📝 日志      | 日志记录及滚动                |
+| 📝 日志系统    | 异步日志、按天滚动、错误日志独立记录     |
 
 ---
 
@@ -61,26 +46,22 @@
 
 * Spring Boot 3.5.9
 * Spring Security 6.x
+* MyBatis 3.0
 * JJWT 0.11.5
-* MyBatis
-* PageHelper
-* Druid
+* PageHelper 1.4.7
+* Druid 1.2.23
+* MySQL 8.0
 * Lombok
-* Maven
 
 ### 前端
 
 * Vue 3.5.40
-* Vite
-* Vue Router
-* Pinia
+* Vite 8.1.5
+* Pinia 4.0.2
+* Vue Router 5.2.0
 * Element Plus
 * VxeUI
 * Axios
-
-### 数据库
-
-* MySQL 8.0
 
 ---
 
@@ -88,33 +69,37 @@
 
 ```text
 rbac-permission-system/
-├── backend/                 # Spring Boot 后端
-│   ├── src/main/java/
-│   │   └── com/fast/system/
-│   │       ├── config/      # 配置
-│   │       ├── controller/  # Controller
-│   │       ├── domain/      # 实体类
-│   │       ├── mapper/      # MyBatis Mapper
-│   │       ├── service/     # 业务层
-│   │       ├── exception/   # 异常处理
-│   │       └── utils/       # 工具类
+├── backend/                    # Spring Boot 后端
+│   ├── src/main/java/com/fast/system/
+│   │   ├── config/             # 配置
+│   │   ├── controller/         # 控制器
+│   │   ├── domain/             # 实体类、VO
+│   │   ├── mapper/             # MyBatis Mapper
+│   │   ├── service/            # 业务层
+│   │   ├── exception/          # 异常处理
+│   │   └── utils/              # 工具类
 │   ├── src/main/resources/
+│   │   ├── application.yml
+│   │   ├── logback.xml
+│   │   └── mapper/
 │   └── pom.xml
 │
-├── frontend/                # Vue 3 前端
+├── frontend/                   # Vue 3 前端
 │   ├── src/
-│   │   ├── api/             # API
-│   │   ├── components/      # 公共组件
-│   │   ├── router/          # 路由
-│   │   ├── stores/          # Pinia
-│   │   ├── utils/           # 工具
-│   │   └── views/           # 页面
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── router/
+│   │   ├── stores/
+│   │   ├── utils/
+│   │   └── views/
+│   ├── .env.development
+│   ├── .env.production
+│   ├── vite.config.js
 │   ├── package.json
-│   └── vite.config.js
+│   └── index.html
 │
-├── docs/                    # 项目文档
-├── README.md
-└── .gitignore
+├── docs/
+└── README.md
 ```
 
 ---
@@ -123,78 +108,45 @@ rbac-permission-system/
 
 ### 环境要求
 
-* JDK 17+
-* Maven 3.8+
-* Node.js 18+
-* MySQL 8.0+
+| 工具      | 版本   |
+| ------- | ---- |
+| JDK     | 17+  |
+| Maven   | 3.8+ |
+| Node.js | 18+  |
+| MySQL   | 8.0+ |
 
-### 1. 克隆项目
+## 🔐 核心模块
 
-```bash
-git clone https://github.com/your-username/rbac-permission-system.git
-cd rbac-permission-system
-```
+| 模块     | 关键实现                                           |
+| ------ | ---------------------------------------------- |
+| JWT 认证 | `TokenService`、`JwtAuthenticationTokenFilter`  |
+| 权限拦截   | `SecurityConfig`、`JwtAuthenticationEntryPoint` |
+| 动态路由   | `RouterVo`、`routeStore.js`                     |
+| 分页查询   | `BaseController.startPage()`                   |
+| 树形菜单   | `buildMenuTree()`、`TreeSelect`                 |
+| 请求封装   | `utils/request.js`                             |
+| 状态管理   | `userStore.js`、`routeStore.js`                 |
 
-### 2. 创建数据库
+---
 
-```sql
-CREATE DATABASE fast
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
-```
+## 📦 部署
 
-然后执行项目数据库 SQL。
-
-### 3. 配置数据库
-
-修改：
-
-```text
-backend/src/main/resources/application.yml
-```
-
-配置 MySQL 用户名和密码。
-
-### 4. 启动后端
+### 后端
 
 ```bash
 cd backend
-mvn spring-boot:run
+mvn clean package -DskipTests
+java -jar target/*.jar
 ```
 
-后端默认地址：
-
-```text
-http://localhost:8080
-```
-
-### 5. 启动前端
+### 前端
 
 ```bash
 cd frontend
-npm install
-npm run dev
+npm run build
 ```
 
-前端默认地址：
-
-```text
-http://localhost:90
-```
-
----
-
-## 📚 项目说明
-
-本项目为个人学习实践项目，开发过程中参考了 **B 站相关技术教程**，主要用于学习 Spring Boot、Spring Security、Vue 3 以及 RBAC 权限管理。
-
-**本项目仅用于学习和技术交流，不用于商业用途。**
-
----
-
-## 📄 License
-
-本项目采用 **MIT License**。
+将生成的 `dist/` 部署到 Nginx。
 
 ---
 
