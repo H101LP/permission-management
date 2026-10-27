@@ -192,7 +192,7 @@ const quickActions = ref([
     label: '个人中心',
     icon: 'Setting',
     bg: '#43e97b',
-    handler: () => router.push('/user/profile')
+    handler: () => router.push('/profile/user')
   }
 ])
 

@@ -149,7 +149,7 @@ const quickActions = ref([
   {
     label: '个人中心',
     type: 'primary',
-    handler: () => router.push('/user/profile')
+    handler: () => router.push('/profile/user')
   },
   {
     label: '修改密码',

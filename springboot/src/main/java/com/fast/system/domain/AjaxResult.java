@@ -44,6 +44,12 @@ public class AjaxResult<T>{
     public static <T> AjaxResult<T> error(String msg) {
         return error(ResultCode.SYSTEM_ERROR, msg);
     }
-
+    // 新增：兼容直接传 Integer 状态码的情况（比如业务异常类抛出来的 code）
+    public static <T> AjaxResult<T> error(Integer code, String msg) {
+        AjaxResult<T> result = new AjaxResult<>();
+        result.setCode(code);
+        result.setMsg(msg);
+        return result;
+    }
 
 }

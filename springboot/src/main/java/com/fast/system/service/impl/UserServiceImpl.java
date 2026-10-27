@@ -2,6 +2,7 @@ package com.fast.system.service.impl;
 
 import com.fast.system.constants.RoleIdConstants;
 import com.fast.system.domain.User;
+import com.fast.system.exception.BusinessException;
 import com.fast.system.mapper.UserMapper;
 import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IUserService;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements IUserService {
         //根据用户名查询用户信息
         User user = userMapper.selectByUserName(newUser.getUserName());
         if (user != null) {
-           throw new RuntimeException("用户名已存在");
+           throw new BusinessException("用户名已存在");
         }
         int i = userMapper.insertUser(newUser);
         userRoleMapper.insertUserRole(newUser.getUserId(), RoleIdConstants.USER_ROLE_ID);
