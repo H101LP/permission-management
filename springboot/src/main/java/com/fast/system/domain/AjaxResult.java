@@ -1,107 +1,49 @@
 package com.fast.system.domain;
 
-import java.util.HashMap;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * 操作消息提醒
+ * 统一返回响应体
  */
-public class AjaxResult extends HashMap<String,Object> {
-    /**
-     * 初始化 表示一个空消息
-     */
-    public AjaxResult() {
-
+@Data
+@NoArgsConstructor
+public class AjaxResult<T>{
+    private Integer code;
+    private String msg;
+    private T data;
+    private Long timestamp = System.currentTimeMillis();
+    // 成功静态工厂
+    public static <T> AjaxResult<T> success(T data) {
+        AjaxResult<T> result = new AjaxResult<>();
+        result.setCode(ResultCode.SUCCESS.getCode());
+        result.setMsg(ResultCode.SUCCESS.getMsg());
+        result.setData(data);
+        return result;
     }
-    /**
-     * 新建一个对象 用来表示一个消息
-     * @param code 状态码
-     * @param msg 消息
-     */
-    public AjaxResult(int code, String msg){
-        super.put("code",code);
-        super.put("msg",msg);
-    }
-    /**
-     * 新建一个对象 用来表示一个消息
-     * @param code 状态码
-     * @param msg 消息
-     * @param data 数据
-     */
-    public AjaxResult(int code, String msg,Object data){
-        super.put("code",code);
-        super.put("msg",msg);
-        if(data!=null){
-            super.put("data",data);
-        }
+    public static <T> AjaxResult<T> successMsg(String msg) {
+        AjaxResult<T> result = new AjaxResult<>();
+        result.setCode(ResultCode.SUCCESS.getCode());
+        result.setMsg(msg);
+        return result;
     }
 
-    /**
-     * 返回成功消息
-     * @param msg 返回内容
-     * @param data 数据对象
-     * @return 成功消息
-     */
-    public  static AjaxResult success(String msg,Object data){
-        return new AjaxResult(200,msg,data);
-    }
-    /**
-     * 返回成功消息
-     * @return 成功消息
-     */
-    public  static  AjaxResult success(){
-        return AjaxResult.success("操作成功");
+    public static <T> AjaxResult<T> success() {
+        return success(null);
     }
 
-    /**
-     * 返回成功数据
-     * @param data 数据对象
-     * @return 数据
-     */
-    public  static  AjaxResult success(Object data){
-        return AjaxResult.success("操作成功", data);
-    }
-    /**
-     * 返回成功消息
-     * @param msg 提示信息
-     * @return 提示消息
-     */
-    public static AjaxResult success(String msg){
-        return  AjaxResult.success(msg,null);
+    // 失败静态工厂
+    public static <T> AjaxResult<T> error(ResultCode code, String msg) {
+        AjaxResult<T> result = new AjaxResult<>();
+        result.setCode(code.getCode());
+        result.setMsg(msg);
+        return result;
     }
 
-    /**
-     * 返回错误消息
-     * @return 错误消息
-     */
-    public static AjaxResult error(){
-        return  AjaxResult.error("操作失败");
+    public static <T> AjaxResult<T> error(String msg) {
+        return error(ResultCode.SYSTEM_ERROR, msg);
     }
 
-    /**
-     * 返回错误消息
-     * @param msg 提示信息
-     * @return 错误消息
-     */
-    public static AjaxResult error(String msg){
-        return  AjaxResult.error(msg,null);
-    }
-    public static AjaxResult error(String msg,Object data){
-        return new AjaxResult(500,msg,data);
-    }
-
-    /**
-     * 返回错误消息
-     * @param code
-     * @param msg
-     * @return
-     */
-    public static AjaxResult error(int code,String msg){
-        return  new AjaxResult(code,msg,null);
-    }
-    @Override
-    public AjaxResult put(String key, Object value) {
-        super.put(key, value);
-        return this;
-    }
 
 }

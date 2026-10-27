@@ -20,8 +20,8 @@ const useUserStore = defineStore(
             login(userInfo) {
                 return new Promise((resolve, reject) => {
                     login(userInfo).then(res => {
-                        setToken(res.token)
-                         this.token = res.token;
+                        setToken(res.data.token)
+                         this.token = res.data.token;
                         // 必须等getInfo完成之后再 resolve
                         this.getInfo()
                             .then(() => {

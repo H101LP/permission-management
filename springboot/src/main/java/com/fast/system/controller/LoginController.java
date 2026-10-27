@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 登录控制器
  */
@@ -43,7 +46,8 @@ public class LoginController extends BaseController {
         //生成JWT令牌
         String token = tokenService.createToken(loginUser);
         //返回成功结果 包含token
-        return success().put("token",token);
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", token); return success(map);
 
     }
 

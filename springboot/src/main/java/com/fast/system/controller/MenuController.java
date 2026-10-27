@@ -2,6 +2,7 @@ package com.fast.system.controller;
 
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.Menu;
+import com.fast.system.domain.vo.RoleMenuTreeVO;
 import com.fast.system.domain.vo.RouterVo;
 import com.fast.system.service.IMenuService;
 import com.fast.system.utils.SecurityUtils;
@@ -64,14 +65,14 @@ public class MenuController extends BaseController {
      */
     @GetMapping("/selectRoleMenuTree/{roleId}")
     public AjaxResult selectRoleMenuTree(@PathVariable Long roleId) {
+        // 1. 查询所有菜单
         List<Menu> menus = menuService.selectMenuList(new Menu(), SecurityUtils.getUserId());
-       //根据角色ID查询对应的菜单树
-        AjaxResult ajax = AjaxResult.success();
-        //根据角色ID查询菜单树信息
-        ajax.put("checkedKeys", menuService.selectMenuListByRoleId(roleId));
-        //构建前端所需要的下拉树结构
-        ajax.put("menus",menuService.buildMenuTreeSelect(menus));
-        return ajax;
+        //封装返回结果
+        RoleMenuTreeVO roleMenuTreeVO = new RoleMenuTreeVO();
+        roleMenuTreeVO.setCheckedKeys(menuService.selectMenuListByRoleId(roleId));
+        roleMenuTreeVO.setMenus(menuService.buildMenuTreeSelect(menus));
+
+        return success(roleMenuTreeVO);
     }
     /**
      * 查询前端所需要的菜单下拉树结构

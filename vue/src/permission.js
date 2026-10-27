@@ -1,90 +1,55 @@
-//导入路由实例
+// permission.js 完整重写（vue-router 5：不再使用 next()，全部 return）
+
 import router from './router'
-import {getToken} from "@/utils/auth.js";
-import useUserStore from "@/stores/modules/userStore.js";
-import {isReLogin} from "@/utils/requst.js";
-import {ElMessage} from "element-plus";
-import useRouteStore from "@/stores/modules/routeStore.js";
-//白名单 定义不需要登录就可以访问的界面
+import { getToken } from "@/utils/auth.js"
+import useUserStore from "@/stores/modules/userStore.js"
+import { isReLogin } from "@/utils/requst.js"
+import { ElMessage } from "element-plus"
+import useRouteStore from "@/stores/modules/routeStore.js"
+
 const whiteList = ['/login', '/register']
 
-//判断是否在白名单
-function isWhiteList(path) {
-  return whiteList.includes(path)
-}
-//全局路由守卫
-router.beforeEach((to, from, next) => {
- //先检查用户是否有token
-  if(getToken()){
-    //情况1.1 ：用户有token
-    if(to.path === '/login' || to.path === '/register'){
-      //已经登录还要去登录页
-      next({path:'/'})
-    }
-    //1.2 访问白名单页面
-    else if(isWhiteList(to.path)){
-      next();//允许访问
-    }
-    //情况1.3 用户已登录 访问需要权限的页面
-    else{
-      if(useRouteStore().sidebarRoutes.length === 0){
-        //用户信息为空 需要先获取用户信息
-        //设置正在重新登录的标志
-        isReLogin.show = true;
-        //调用获取用户信息的方法
-        useUserStore().getInfo().then(res =>{
-          //清除标志
-          isReLogin.show = false;
-// 调用路由状态工具方法（只调用一次）
-          useRouteStore().generateRoutes().then(accessRoutes => {
-            // 动态添加路由
-            accessRoutes.forEach(route => {
-              router.addRoute(route)
-            })
+router.beforeEach(async (to) => {
+  const token = getToken()
 
-            // ✅ 获取角色名称（根据你的实际数据结构调整）
-            // 如果你在 userStore.getInfo 里已经剥过层了，直接用 res.roleName
-            // 如果没剥过，用 res.data.roleName
-            const useRoleName = res.roleName || res.data?.roleName || 'user'
+  // ---------- 1. 未登录 ----------
+  if (!token) {
+    if (whiteList.includes(to.path)) return true          // 白名单放行
+    return { path: '/login', query: { redirect: to.fullPath }, replace: true }
+  }
 
-            // 根据角色确定跳转路径
-            let redirectPath = to.path
-            if (to.path === '/' || to.path === '/index') {
-              // 目前 admin 和 user 都跳转 /index，后续可以根据角色扩展
-              redirectPath = '/index'
-            }
+  // ---------- 2. 已登录还去登录/注册页 ----------
+  if (to.path === '/login' || to.path === '/register') {
+    return { path: '/', replace: true }                   // 回首页（守卫会按角色二次跳转）
+  }
 
-            // ✅ 只调用一次 next！
-            if (redirectPath !== to.path) {
-              next({ path: redirectPath, replace: true })
-            } else {
-              next({ ...to, replace: true })
-            }
-          })
+  // ---------- 3. 首次进入：拉用户信息 + 动态路由 ----------
+  const routeStore = useRouteStore()
+  if (routeStore.sidebarRoutes.length === 0) {
+    isReLogin.show = true
+    try {
+      const userInfo = await useUserStore().getInfo()
+      const accessRoutes = await routeStore.generateRoutes()
+      accessRoutes.forEach(route => router.addRoute(route)) // 动态添加（追加到末尾）
 
-        }).catch(err =>{
-          //获取用户信息失败 token可能过期
-          useUserStore().logOut().then(() => {
-            ElMessage.error(err);
-            //跳转到登录页
-            next({path: '/login'})
-          })
-
-        })
-      }else {
-        //用户信息已存在
-        next();
+      // 默认页按角色跳转（替代原来 permission.js 里那套 redirectPath 死代码）
+      if (to.path === '/' || to.path === '') {
+        const roleName = userInfo.roleName || userInfo.data?.roleName || 'user'
+        return { path: roleName === 'admin' ? '/index' : '/userPage/home', replace: true }
       }
-    }
 
-  }else{
-    //没token
-    //在不在白名单
-    if(isWhiteList(to.path)){
-      next();
-    }else{
-      //不在白名单 跳转到登录页
-      next({path: '/login'})
+      // 关键：路由刚添加完，用 fullPath 重新导航到当前目标。
+      // 不要用 next({ ...to })，展开 to 会把 matched/meta 等内部字段带进 location，容易解析异常
+      return to.fullPath
+    } catch (err) {
+      await useUserStore().logOut()
+      ElMessage.error('登录状态已过期，请重新登录')
+      return { path: '/login', replace: true }
+    } finally {
+      isReLogin.show = false
     }
   }
+
+  // ---------- 4. 已加载过动态路由 ----------
+  return true
 })

@@ -128,7 +128,7 @@ service.interceptors.response.use(
         const errMap = {
             'Network Error': '网络错误',
             'timeout': '接口请求超时',
-            'Request failed with status code': '系统接口' +message.substr(message,length -3 )+'异常',
+            'Request failed with status code': '系统接口异常',
         }
         //匹配错误信息
         Object.keys(errMap).forEach(key=>{

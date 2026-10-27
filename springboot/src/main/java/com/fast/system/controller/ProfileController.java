@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -34,7 +36,7 @@ public class ProfileController extends BaseController {
      * 头像上传接口
      */
     @PostMapping("/avatar")
-    public AjaxResult avatar(@RequestParam MultipartFile file) throws IOException {
+    public AjaxResult<Map<String, Object>> avatar(@RequestParam MultipartFile file) throws IOException {
         //第一步 检查文件是否为空
         if (!file.isEmpty()) {
             //获取当前登录用户的信息
@@ -76,11 +78,12 @@ public class ProfileController extends BaseController {
                 //返回成功
                 AjaxResult ajax = AjaxResult.success();
                 //在响应数据中 添加头像地址
-                ajax.put("imgUrl", avatar);
+                Map<String, Object> map = new HashMap<>();
+                map.put("imgUrl", avatar);
                 //更新缓存中的用户头像
                 loginUser.getUser().setAvatar(avatar);
                 //返回成功响应给前端
-                return ajax;
+                return success(map);
             }
 
 
@@ -94,7 +97,7 @@ public class ProfileController extends BaseController {
      * 修改个人信息
      */
     @PutMapping
-    public AjaxResult updateProfile(@RequestBody User user) {
+    public AjaxResult<Void> updateProfile(@RequestBody User user) {
         //获取当前用户数据
         LoginUser loginUser = SecurityUtils.getLoginUser();
         //提取用户数据
@@ -111,7 +114,7 @@ public class ProfileController extends BaseController {
      * 重置密码
      */
     @PutMapping("/updatePwd")
-    public AjaxResult updatePwd(@RequestBody SubmitPwdBody submitPwdBody) {
+    public AjaxResult<Void> updatePwd(@RequestBody SubmitPwdBody submitPwdBody) {
         String oldPassword = submitPwdBody.getOldPassword();
         String newPassword = submitPwdBody.getNewPassword();
         //获取当前用户数据

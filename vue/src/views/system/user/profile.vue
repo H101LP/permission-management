@@ -214,7 +214,7 @@ const beforeUpload = (file) => {
 //上传成功处理
 const handleAvatarSuccess = (res) => {
  if(res.code === 200){
-   userStore.avatar = import.meta.env.VITE_APP_BASE_API + res.imgUrl
+   userStore.avatar = import.meta.env.VITE_APP_BASE_API + res.data.imgUrl
  }else {
    ElMessage.error(res.msg ||修改失败);
  }

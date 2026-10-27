@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * 表格分页数据对象
  */
+@Deprecated
 @Data
 public class TableDataInfo {
     //数据总数

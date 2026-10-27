@@ -53,12 +53,17 @@ public class UserServiceImpl implements IUserService {
     @Override
     public int updateUser(User user)
     {
-        //修改用户信息
-        userMapper.updateUser(user);
-        //先删除用户之前的角色关联
-        userRoleMapper.deleteUserRoleByUserId(user.getUserId());
-        //新增用户和角色关联
-        return userRoleMapper.insertUserRole(user.getUserId(), user.getRoleId());
+        if(user.getRoleId() == null){
+            //修改用户信息
+            return userMapper.updateUser(user);
+        }else {
+            //先删除用户之前的角色关联
+            userRoleMapper.deleteUserRoleByUserId(user.getUserId());
+            //新增用户和角色关联
+            return userRoleMapper.insertUserRole(user.getUserId(), user.getRoleId());
+        }
+
+
     }
 
     @Override

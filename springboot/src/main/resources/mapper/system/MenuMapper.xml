@@ -15,31 +15,31 @@
         <result column="create_time" property="createTime"/>
     </resultMap>
 
-
-
     <!-- 根据用户ID查询菜单列表 -->
+    <!-- ⚠️ 修改点：在 select 后面加上了 distinct -->
     <select id="selectMenuListByUserId" resultMap="MenuResult" >
-        select
-            m.menu_id,
-            m.menu_name,
-            m.parent_id,
-            m.menu_sort,
-            m.path,
-            m.component,
-            m.menu_type,
-            m.icon,
-            m.create_time
+        select distinct
+        m.menu_id,
+        m.menu_name,
+        m.parent_id,
+        m.menu_sort,
+        m.path,
+        m.component,
+        m.menu_type,
+        m.icon,
+        m.create_time
         from menu m
         left join role_menu rm on m.menu_id = rm.menu_id
         left join user_role ur on rm.role_id = ur.role_id
         <where>
             <if test="userId != null">
-               and ur.user_id = #{userId}
+                and ur.user_id = #{userId}
             </if>
-        <if test="menuName != null and menuName != ''">
-            and m.menu_name like CONCAT('%', #{menuName}, '%')
-        </if>
+            <if test="menuName != null and menuName != ''">
+                and m.menu_name like CONCAT('%', #{menuName}, '%')
+            </if>
         </where>
+        order by m.menu_sort
     </select>
 
     <!-- 根据菜单ID查询菜单 -->
@@ -57,8 +57,6 @@
         from menu
         where menu_id = #{menuId}
     </select>
-
-
 
     <!-- 新增菜单 -->
     <insert id="insertMenu" parameterType="Menu" useGeneratedKeys="true" keyProperty="menuId">
@@ -84,7 +82,8 @@
             <if test="icon != null and icon != ''">#{icon},</if>
         </trim>
     </insert>
-<!-- 修改菜单 -->
+
+    <!-- 修改菜单 -->
     <update id="updateMenu" parameterType="Menu">
         update menu
         <trim prefix="set" suffixOverrides=",">
@@ -99,17 +98,17 @@
         where menu_id = #{menuId}
     </update>
 
-
     <!-- 删除菜单 -->
     <delete id="deleteMenuByMenuId" parameterType="Long">
         delete from menu where menu_id = #{menuId}
     </delete>
 
     <!-- 根据角色ID查询菜单列表 -->
+    <!-- ⚠️ 修改点：同样加上了 distinct -->
     <select id="selectMenuListByRoleId" resultType="Long">
-        select m.menu_id
+        select distinct m.menu_id
         from menu m
-        left join role_menu rm on m.menu_id = rm.menu_id
+                 left join role_menu rm on m.menu_id = rm.menu_id
         where rm.role_id = #{roleId}
         order by m.parent_id, m.menu_sort
     </select>

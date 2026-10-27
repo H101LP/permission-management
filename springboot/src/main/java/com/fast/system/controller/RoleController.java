@@ -1,8 +1,9 @@
 package com.fast.system.controller;
 
 import com.fast.system.domain.AjaxResult;
+import com.fast.system.domain.PageResult;
 import com.fast.system.domain.Role;
-import com.fast.system.domain.TableDataInfo;
+
 import com.fast.system.service.IRoleService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class RoleController extends BaseController {
      * 查询角色列表
      */
     @GetMapping("/selectRoleList")
-    public TableDataInfo selectRoleList(Role role) {
+    public AjaxResult<PageResult<Role>> selectRoleList(Role role) {
         startPage();
         List<Role> list = roleService.selectRoleList(role);
         return getDataTable(list);

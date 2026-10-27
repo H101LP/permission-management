@@ -53,6 +53,7 @@
                 default-expand-all
                 ref="menuRef"
                 node-key="id"
+                check-strictly
                 :props="{ label: 'label', children: 'children' }"
             />
           </el-form-item>
@@ -141,55 +142,54 @@ const handleInsert = () => {
   )
 
 }
-//修改按钮
+// 修改按钮
 const handleUpdate = (row) => {
-  if(menuRef.value){
-    menuRef.value.setCheckedKeys([])
+  // 1. 清空上一次的勾选
+  if (menuRef.value) {
+    menuRef.value.setCheckedKeys([]);
   }
-  const roleId = row.roleId || ids.value
-  form.value = {
-    roleId: null,
-    roleName: null,
-    roleSort: null,
-    menuIds: []
-  }
-  //根据角色ID查询对应的菜单树
-  const roleMenu = getRoleMenuTreeSelect(roleId);
-  selectRoleById(roleId).then(res=>{
+
+  // 获取当前要修改的 roleId
+  const roleId = row ? row.roleId : ids.value[0];
+
+  // 2. 先查角色基本信息
+  selectRoleById(roleId).then(res => {
     form.value = res.data;
     Open.value = true;
-    title.value = '修改角色'
-    //等待DOM更新完成后执行菜单选中操作
-    nextTick(() => {
-      //等待菜单树渲染完成
-      roleMenu.then((res) =>{
-        //获取已选中的菜单ID
-        let checkedKeys = res.checkedKeys
-        //遍历已选中的菜单ID
-        checkedKeys.forEach((key) => {
-          //再次使用nextTick等待菜单树更新
-          nextTick(() => {
-            menuRef.value.setChecked(key, true, false)
-          })
-        })
-      })
-    })
-  })
+    title.value = '修改角色';
+
+    // 3. 再查对应的菜单树
+    selectRoleMenuTree(roleId).then(treeRes => {
+      // 赋值树的数据
+      menuOptions.value = treeRes.data.menus;
+      // 提取后端返回的已勾选的 key 数组
+      const checkedKeys = treeRes.data.checkedKeys;
+
+      // 4. 等弹窗和树渲染完毕后，一次性设置所有勾选
+      nextTick(() => {
+        if (menuRef.value) {
+          // 强制把 checkedKeys 里的所有元素转成数字
+          const numKeys = checkedKeys.map(item => Number(item));
+          menuRef.value.setCheckedKeys(numKeys);
+        }
+      });
+    });
+  });
 }
 //菜单树 数据
 const menuOptions = ref([])
 
 
-//根据角色ID查询对应的菜单树
+/*//根据角色ID查询对应的菜单树
 const getRoleMenuTreeSelect = (roleId) => {
    return selectRoleMenuTree(roleId).then(res => {
     // 重置菜单选项前先清空数组
      menuOptions.value = []
      // 将查询到的菜单数据赋值给菜单选项
-     menuOptions.value = res.menus
+     menuOptions.value = res.data.menus
      return res;
   })
-}
+}*/
 
 
 
@@ -266,8 +266,8 @@ const getMenuAllCheckedKeys = () => {
 //查询数据
 const getList = () => {
   selectRoleList(query.value).then(res=>{
-    roleList.value = res.rows; //赋值给roleList
-    total.value = res.total;
+    roleList.value = res.data.rows; //赋值给roleList
+    total.value = res.data.total;
   })
 }
 //已勾选的ID数组

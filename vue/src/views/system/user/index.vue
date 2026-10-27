@@ -197,8 +197,8 @@ const queryRef = ref()
 //查询数据
 const getList = () => {
   selectUserList(query.value).then(res=>{
-   userList.value = res.rows; //赋值给userList
-    total.value = res.total;
+   userList.value = res.data.rows; //赋值给userList
+    total.value = res.data.total;
   })
 }
 //多选时的触发方法

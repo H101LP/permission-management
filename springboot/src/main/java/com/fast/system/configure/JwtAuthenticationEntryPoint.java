@@ -1,6 +1,7 @@
 package com.fast.system.configure;
 
 import com.fast.system.domain.AjaxResult;
+import com.fast.system.domain.ResultCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +38,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         //设置字符集编码 UTF-8 避免中文乱码
         response.setCharacterEncoding("UTF-8");
         //返回构建统一错误响应
-        String jsonResponse = objectMapper.writeValueAsString(AjaxResult.error(401,"登录已过期，请重新登陆"));
+        String jsonResponse = objectMapper.writeValueAsString(AjaxResult.error(ResultCode.UNAUTHORIZED,"登录已过期，请重新登陆"));
         //JSON响应数据写回响应体
         response.getWriter().println(jsonResponse);
     }

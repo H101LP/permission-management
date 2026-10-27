@@ -1,7 +1,7 @@
 package com.fast.system.controller;
 
 import com.fast.system.domain.AjaxResult;
-import com.fast.system.domain.TableDataInfo;
+import com.fast.system.domain.PageResult;
 import com.fast.system.domain.User;
 import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IUserService;
@@ -24,7 +24,7 @@ public class UserController extends BaseController {
      * 查询用户列表
      */
     @GetMapping("/selectUserList")
-    public TableDataInfo selectUserList(User user) {
+    public AjaxResult<PageResult<User>> selectUserList(User user) {
         startPage();
         //查询用户列表
         List<User> list = userService.selectUserList(user);
