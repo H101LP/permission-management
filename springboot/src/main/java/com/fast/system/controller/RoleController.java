@@ -4,8 +4,11 @@ import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.PageResult;
 import com.fast.system.domain.Role;
 
+import com.fast.system.domain.group.AddGroup;
+import com.fast.system.domain.group.UpdateGroup;
 import com.fast.system.service.IRoleService;
 import jakarta.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,14 +48,14 @@ public class RoleController extends BaseController {
      * 新增角色信息
      */
     @PostMapping("/insertRole")
-    public AjaxResult insertRole(@RequestBody Role role) {
+    public AjaxResult insertRole(@Validated(AddGroup.class) @RequestBody Role role) {
         return toAjax(roleService.insertRole(role));
     }
     /**
      * 修改角色信息
      */
     @PostMapping("/updateRole")
-    public AjaxResult updateRole(@RequestBody Role role) {
+    public AjaxResult updateRole(@Validated(UpdateGroup.class) @RequestBody Role role) {
         return toAjax(roleService.updateRole(role));
     }
     /**

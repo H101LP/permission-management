@@ -3,9 +3,12 @@ package com.fast.system.controller;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.PageResult;
 import com.fast.system.domain.User;
+import com.fast.system.domain.group.AddGroup;
+import com.fast.system.domain.group.UpdateGroup;
 import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IUserService;
 import jakarta.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,14 +45,14 @@ public class UserController extends BaseController {
      * 新增用户
      */
     @PostMapping("insertUser")
-    public AjaxResult insertUser(@RequestBody User user){
+    public AjaxResult insertUser( @Validated(AddGroup.class) @RequestBody User user){
         return toAjax(userService.insertUser(user));
     }
     /**
      * 修改用户
      */
     @PutMapping("updateUser")
-    public AjaxResult updateUser(@RequestBody User user){
+    public AjaxResult updateUser(@Validated(UpdateGroup.class) @RequestBody User user){
         return toAjax(userService.updateUser(user));
     }
     /**

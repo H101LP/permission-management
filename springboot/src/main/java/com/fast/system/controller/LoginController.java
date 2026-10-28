@@ -8,6 +8,7 @@ import com.fast.system.domain.User;
 import com.fast.system.exception.BusinessException;
 import com.fast.system.service.IUserService;
 import jakarta.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,12 +29,7 @@ public class LoginController extends BaseController {
      * 登录接口
      */
     @PostMapping("/login")
-    public AjaxResult login(@RequestBody LoginBody loginBody){
-        //验证参数是否为空
-        if(loginBody.getUserName()==null||loginBody.getPassword()==null
-                || loginBody.getUserName().trim().isEmpty() || loginBody.getPassword().trim().isEmpty()){
-            throw new BusinessException("用户名或密码为空");
-        }
+    public AjaxResult login(@Validated @RequestBody LoginBody loginBody){
         //2验证用户是否存在
         User user = userService.selectByUserName(loginBody.getUserName());
         if(user == null){
