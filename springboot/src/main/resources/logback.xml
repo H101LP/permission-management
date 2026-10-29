@@ -5,8 +5,8 @@
     <!-- ====== 1. 定义变量 ====== -->
     <property name="LOG_PATH" value="./file/log"/>
     <property name="APP_NAME" value="permission"/>
-    <!-- 已去除 %L（行号）避免性能损耗 -->
-    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread] %cyan(%logger{50}) - %msg%n"/>
+    <!-- 已去除 %L（行号）避免性能损耗，加入 [%X{traceId:-}] 实现链路追踪 -->
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread] [%X{traceId:-}] %cyan(%logger{50}) - %msg%n"/>
 
     <!-- ====== 2. 控制台输出 ====== -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -20,7 +20,8 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/${APP_NAME}.log</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{50} - %msg%n</pattern>
+            <!-- 文件日志不需要彩色高亮，但需要带上 traceId -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-}] %logger{50} - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -35,10 +36,10 @@
     <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/${APP_NAME}-error.log</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{50} - %msg%n</pattern>
+            <!-- 同样加上 traceId -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-}] %logger{50} - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
-        <!-- 关键：正确类名，且使用 LevelFilter 精确匹配 -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
@@ -52,9 +53,8 @@
         </rollingPolicy>
     </appender>
 
-    <!-- ====== 5. 异步包装（提升性能，可选但强烈推荐） ====== -->
+    <!-- ====== 5. 异步包装（提升性能） ====== -->
     <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
-        <!-- 不丢失日志，队列满时阻塞 -->
         <discardingThreshold>0</discardingThreshold>
         <queueSize>512</queueSize>
         <appender-ref ref="FILE"/>
@@ -69,8 +69,9 @@
     <!-- ====== 6. 包级别日志 ====== -->
     <logger name="com.fast" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
-<!--        <appender-ref ref="ASYNC_FILE"/>      &lt;!&ndash; 异步写全量 &ndash;&gt;-->
-<!--        <appender-ref ref="ASYNC_ERROR"/>      异步写错误 -->
+        <!-- 如果你只想在控制台看，这两行就保持注释；想写文件就放开它们 -->
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_ERROR"/>
     </logger>
 
     <!-- 第三方框架降低日志级别 -->
@@ -81,8 +82,9 @@
     <!-- ====== 7. 根日志 ====== -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
-<!--        <appender-ref ref="ASYNC_FILE"/>-->
-<!--        <appender-ref ref="ASYNC_ERROR"/>-->
+        <!-- 同样，放开的话全量日志也会写入文件 -->
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_ERROR"/>
     </root>
 
 </configuration>
