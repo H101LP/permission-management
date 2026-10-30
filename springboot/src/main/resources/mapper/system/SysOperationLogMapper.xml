@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.system.mapper.SysOperationLogMapper">
+    <insert id="insertLog" parameterType="com.fast.system.domain.SysOperationLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into sys_operation_log (
+            user_id, user_name, module, business, oper_type,
+            request_uri, request_method, request_param, result,
+            cost_time, status, trace_id, oper_time
+        ) values (
+                     #{userId}, #{userName}, #{module}, #{business}, #{operType},
+                     #{requestUri}, #{requestMethod}, #{requestParam}, #{result},
+                     #{costTime}, #{status}, #{traceId}, now()
+                 )
+    </insert>
+</mapper>

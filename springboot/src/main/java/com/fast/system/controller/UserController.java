@@ -1,10 +1,12 @@
 package com.fast.system.controller;
 
+import com.fast.system.annotation.OperationLog;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.PageResult;
 import com.fast.system.domain.User;
 import com.fast.system.domain.group.AddGroup;
 import com.fast.system.domain.group.UpdateGroup;
+import com.fast.system.enums.OperType;
 import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IUserService;
 import jakarta.annotation.Resource;
@@ -44,6 +46,7 @@ public class UserController extends BaseController {
     /**
      * 新增用户
      */
+    @OperationLog(module = "用户管理", business = "新增用户", type = OperType.INSERT)
     @PostMapping("insertUser")
     public AjaxResult insertUser( @Validated(AddGroup.class) @RequestBody User user){
         return toAjax(userService.insertUser(user));
