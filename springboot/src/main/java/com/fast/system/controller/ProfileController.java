@@ -7,6 +7,8 @@ import com.fast.system.domain.SubmitPwdBody;
 import com.fast.system.domain.User;
 import com.fast.system.service.IUserService;
 import com.fast.system.utils.SecurityUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,7 @@ import java.util.UUID;
 /**
  * 个人信息
  */
+@Tag(name = "个人信息", description = "个人信息管理")
 @RestController
 @RequestMapping("/system/user/profile")
 public class ProfileController extends BaseController {
@@ -35,6 +38,7 @@ public class ProfileController extends BaseController {
     /**
      * 头像上传接口
      */
+    @Operation(summary = "头像上传接口", description = "头像上传接口")
     @PostMapping("/avatar")
     public AjaxResult<Map<String, Object>> avatar(@RequestParam MultipartFile file) throws IOException {
         //第一步 检查文件是否为空
@@ -96,6 +100,7 @@ public class ProfileController extends BaseController {
     /**
      * 修改个人信息
      */
+    @Operation(summary = "修改个人信息", description = "修改个人信息")
     @PutMapping
     public AjaxResult<Void> updateProfile(@RequestBody User user) {
         //获取当前用户数据
@@ -113,6 +118,7 @@ public class ProfileController extends BaseController {
     /**
      * 重置密码
      */
+    @Operation(summary = "重置密码", description = "重置密码")
     @PutMapping("/updatePwd")
     public AjaxResult<Void> updatePwd(@RequestBody SubmitPwdBody submitPwdBody) {
         String oldPassword = submitPwdBody.getOldPassword();

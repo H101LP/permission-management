@@ -55,3 +55,14 @@ pagehelper:
   support-methods-arguments: true
   #使用count查询获取数据总数
   params: count=countSql
+
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+knife4j:
+  enable: false
+  setting:
+    language: zh_cn

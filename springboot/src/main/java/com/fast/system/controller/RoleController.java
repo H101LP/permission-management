@@ -7,6 +7,8 @@ import com.fast.system.domain.Role;
 import com.fast.system.domain.group.AddGroup;
 import com.fast.system.domain.group.UpdateGroup;
 import com.fast.system.service.IRoleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 /**
  * 角色信息控制器
  */
+@Tag(name = "角色信息", description = "角色信息相关操作")
 @RestController
 @RequestMapping("/system/role")
 public class RoleController extends BaseController {
@@ -24,6 +27,7 @@ public class RoleController extends BaseController {
     /**
      * 查询所有角色列表
      */
+    @Operation(summary = "查询所有角色列表")
     @GetMapping("/selectAllRole")
     public AjaxResult selectAllRole() {
         return success(roleService.selectRoleList(new Role()));
@@ -31,6 +35,7 @@ public class RoleController extends BaseController {
     /**
      * 查询角色列表
      */
+    @Operation(summary = "查询角色列表")
     @GetMapping("/selectRoleList")
     public AjaxResult<PageResult<Role>> selectRoleList(Role role) {
         startPage();
@@ -40,6 +45,7 @@ public class RoleController extends BaseController {
     /**
      * 根据角色ID查询角色信息
      */
+    @Operation(summary = "根据角色ID查询角色信息")
     @GetMapping("/selectRoleById/{roleId}")
     public AjaxResult selectRoleById(@PathVariable Long roleId) {
         return success(roleService.selectRoleById(roleId));
@@ -47,6 +53,7 @@ public class RoleController extends BaseController {
     /**
      * 新增角色信息
      */
+    @Operation(summary = "新增角色信息")
     @PostMapping("/insertRole")
     public AjaxResult insertRole(@Validated(AddGroup.class) @RequestBody Role role) {
         return toAjax(roleService.insertRole(role));
@@ -54,6 +61,7 @@ public class RoleController extends BaseController {
     /**
      * 修改角色信息
      */
+    @Operation(summary = "修改角色信息")
     @PostMapping("/updateRole")
     public AjaxResult updateRole(@Validated(UpdateGroup.class) @RequestBody Role role) {
         return toAjax(roleService.updateRole(role));
@@ -61,6 +69,7 @@ public class RoleController extends BaseController {
     /**
      * 删除角色信息
      */
+    @Operation(summary = "删除角色信息")
     @DeleteMapping("/deleteRoleByRoleIds/{roleIds}")
     public AjaxResult deleteRoleByRoleIds(@PathVariable Long[] roleIds) {
         for (Long roleId : roleIds) {

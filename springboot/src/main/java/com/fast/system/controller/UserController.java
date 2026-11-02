@@ -9,6 +9,8 @@ import com.fast.system.domain.group.UpdateGroup;
 import com.fast.system.enums.OperType;
 import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 /**
  * 用户信息
  */
+@Tag(name = "用户管理")
 @RestController
 @RequestMapping("/system/user")
 public class UserController extends BaseController {
@@ -28,6 +31,7 @@ public class UserController extends BaseController {
     /**
      * 查询用户列表
      */
+    @Operation(summary = "查询用户列表")
     @GetMapping("/selectUserList")
     public AjaxResult<PageResult<User>> selectUserList(User user) {
         startPage();
@@ -38,6 +42,7 @@ public class UserController extends BaseController {
     /**
      * 根据用户ID查询用户信息
      */
+    @Operation(summary = "根据用户ID查询用户信息")
     @GetMapping("selectUserById/{userId}")
     public AjaxResult selectUserById(@PathVariable Long userId) {
         User user = userService.selectByUserUserId(userId);
@@ -46,6 +51,7 @@ public class UserController extends BaseController {
     /**
      * 新增用户
      */
+    @Operation(summary = "新增用户")
     @OperationLog(module = "用户管理", business = "新增用户", type = OperType.INSERT)
     @PostMapping("insertUser")
     public AjaxResult insertUser( @Validated(AddGroup.class) @RequestBody User user){
@@ -54,6 +60,7 @@ public class UserController extends BaseController {
     /**
      * 修改用户
      */
+    @Operation(summary = "修改用户")
     @PutMapping("updateUser")
     public AjaxResult updateUser(@Validated(UpdateGroup.class) @RequestBody User user){
         return toAjax(userService.updateUser(user));
@@ -61,6 +68,7 @@ public class UserController extends BaseController {
     /**
      *删除用户
      */
+    @Operation(summary = "删除用户")
     @DeleteMapping("/deleteUserByUserIds/{userIds}")
     public AjaxResult deleteUserByUserIds(@PathVariable Long[] userIds){
        return toAjax(userService.deleteUserByUserIds(userIds));
