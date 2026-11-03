@@ -49,4 +49,11 @@ public interface MenuMapper {
      * @return 菜单列表
      */
     List<Long> selectMenuListByRoleId(Long roleId);
+
+    /**
+     * 根据用户ID查询对应的菜单权限
+     * @param userId
+     * @return
+     */
+    List<String> selectMenuPermsByUserId(Long userId);
 }

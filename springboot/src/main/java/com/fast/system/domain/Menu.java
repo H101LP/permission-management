@@ -23,6 +23,8 @@ public class Menu {
     private String path;
     // 组件路径
     private String component;
+    // 权限标识
+    private String perms;
     // 菜单类型
     private String menuType;
     // 菜单图标

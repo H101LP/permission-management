@@ -191,6 +191,9 @@ public class MenuServiceImpl implements IMenuService {
         //4 构建路由结构
         return buildMenus(rootMenus);
     }
+
+
+
     /**
      * 构建前端需要的路由格式
      */
@@ -275,6 +278,16 @@ public class MenuServiceImpl implements IMenuService {
         //返回构建好的路由列表
         System.out.println(routers);
         return routers;
+    }
+
+    /**
+     * 根据用户ID查询菜单权限
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<String> selectMenuPermsByUserId(Long userId) {
+        return menuMapper.selectMenuPermsByUserId(userId);
     }
 
 }

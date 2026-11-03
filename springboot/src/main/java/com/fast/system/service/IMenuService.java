@@ -65,4 +65,8 @@ public interface IMenuService {
      * @return 路由列表
      */
     List<RouterVo> selectMenuTreeRouterByUserId(long userId);
+    /**
+     * 根据用户ID查询权限标识集合
+     */
+    List<String> selectMenuPermsByUserId(Long userId);
 }

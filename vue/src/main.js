@@ -25,10 +25,12 @@ import 'vxe-table/es/style.css'
 import Pagination from '@/components/Pagination'
 //图标选择组件
 import IconSelect from '@/components/IconSelect'
+//注册指令
+import hasPerm from '@/directive/hasPerm'
 
 const app = createApp(App)
 
-app.use(createPinia())
+// app.use(createPinia())
 app.use(router)
 app.use(store)
 app.use(VxeUIBase)
@@ -49,5 +51,6 @@ app.use(ElementPlus, {
 app.component('Pagination', Pagination)
 //注册图标选择组件
 app.component('IconSelect', IconSelect)
-
+//注册权限指令
+app.directive('has-perm', hasPerm)
 app.mount('#app')

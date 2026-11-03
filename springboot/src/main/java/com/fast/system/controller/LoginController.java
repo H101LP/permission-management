@@ -6,6 +6,7 @@ import com.fast.system.domain.LoginBody;
 import com.fast.system.domain.LoginUser;
 import com.fast.system.domain.User;
 import com.fast.system.exception.BusinessException;
+import com.fast.system.mapper.MenuMapper;
 import com.fast.system.service.IUserService;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -13,8 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 登录控制器
@@ -25,6 +25,8 @@ public class LoginController extends BaseController {
     private IUserService userService;
     @Resource
     private TokenService tokenService;
+    @Resource
+    private MenuMapper menuMapper;
     /**
      * 登录接口
      */
@@ -40,10 +42,22 @@ public class LoginController extends BaseController {
             throw new BusinessException("密码错误");
         }
         LoginUser loginUser = new LoginUser(user.getUserId(),user);
+        //查询用户的所有权限
+        List<String> permsList = menuMapper.selectMenuPermsByUserId(user.getUserId());
+        //转为Set
+        Set<String> permsSet = new HashSet<>();
+        if(permsList != null && !permsList.isEmpty()){
+            permsSet.addAll(permsList);
+        }
+        //装载到LoginUser中
+        loginUser.setPermissions(permsSet);
+
+        System.out.println("当前登录用户权限集合: " + permsSet);
         //生成JWT令牌
         String token = tokenService.createToken(loginUser);
         //返回成功结果 包含token
         Map<String, Object> map = new HashMap<>();
+        map.put("permissions", permsSet);
         map.put("token", token); return success(map);
 
     }

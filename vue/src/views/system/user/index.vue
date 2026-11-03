@@ -13,9 +13,9 @@
 <!--顶部按钮    -->
 <el-row :gutter="10" class="mb8">
   <el-col :span="1.5"/>
-  <el-button type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
-  <el-button :disabled="single" type="success" icon="Edit" @click="handleUpdate" plain>修改</el-button>
-  <el-button :disabled="multiple" type="danger" icon="Delete" @click="handleDelete" plain>删除</el-button>
+  <el-button v-has-perm="['system:role:add']"  type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
+  <el-button v-has-perm="['system:role:edit']" :disabled="single" type="success" icon="Edit" @click="handleUpdate" plain>修改</el-button>
+  <el-button v-has-perm="['system:role:remove']" :disabled="multiple" type="danger" icon="Delete" @click="handleDelete" plain>删除</el-button>
 
 </el-row>
 
@@ -40,8 +40,8 @@
 
       <el-table-column label="操作" align="center" width="200px">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button v-has-perm="['system:role:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button v-has-perm="['system:role:remove']" link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

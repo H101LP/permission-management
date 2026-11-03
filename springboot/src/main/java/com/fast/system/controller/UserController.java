@@ -1,6 +1,7 @@
 package com.fast.system.controller;
 
 import com.fast.system.annotation.OperationLog;
+import com.fast.system.annotation.PreAuthorizePerm;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.PageResult;
 import com.fast.system.domain.User;
@@ -51,6 +52,7 @@ public class UserController extends BaseController {
     /**
      * 新增用户
      */
+    @PreAuthorizePerm("system:user:add")
     @Operation(summary = "新增用户")
     @OperationLog(module = "用户管理", business = "新增用户", type = OperType.INSERT)
     @PostMapping("insertUser")

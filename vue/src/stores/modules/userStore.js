@@ -10,9 +10,10 @@ const useUserStore = defineStore(
         //第一部分 状态定义
         state: () => ({
             token: getToken(), //登录后的ID
-            id: '', //用户ID
-            name: '', //用户名
-            avatar: '',//用户头像地址
+            id: '',  //用户ID
+            name: '',  //用户名
+            avatar: '', //用户头像地址
+            permissions: [], //用户权限集合
         }),
         //第二部分:操作方法 （处理数据函数）
         actions: {
@@ -22,6 +23,7 @@ const useUserStore = defineStore(
                     login(userInfo).then(res => {
                         setToken(res.data.token)
                          this.token = res.data.token;
+                         this.permissions = res.data.permissions || [];
                         // 必须等getInfo完成之后再 resolve
                         this.getInfo()
                             .then(() => {
@@ -55,8 +57,8 @@ const useUserStore = defineStore(
                             }
                         }
                         //更新用户信息
-                        this.id = user.userId;           // ✅ 改这里：userId
-                        this.name = user.userName;       // ✅ 改这里：userName
+                        this.id = user.userId;
+                        this.name = user.userName;
                         this.avatar = avater;
                         //表示成功
                         resolve(res); //返回完整响应数据
@@ -74,6 +76,8 @@ const useUserStore = defineStore(
                         //退出成功
                         //清空token
                         this.token = '';
+                        //清空权限
+                        this.permissions = [];
                         //删除本地存储token
                         removeToken();
                         //调用成功

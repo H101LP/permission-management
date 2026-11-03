@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 登录用户身份类  封装登录用户信息
@@ -25,6 +26,8 @@ public class LoginUser implements UserDetails {
 
     //用户信息
     private User user;
+    //用户权限集合
+    private Set<String> permissions;
 
     //带参数的构造方法
     public LoginUser(Long userId,User user){
