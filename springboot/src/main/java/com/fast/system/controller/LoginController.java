@@ -49,10 +49,17 @@ public class LoginController extends BaseController {
         if(permsList != null && !permsList.isEmpty()){
             permsSet.addAll(permsList);
         }
+        if (user.getUserId() != null && user.getUserId() == 1L) {
+            permsSet.add("*:*:*");
+        }
         //装载到LoginUser中
         loginUser.setPermissions(permsSet);
 
         System.out.println("当前登录用户权限集合: " + permsSet);
+        //将用户部门ID装入LoginUser中
+        loginUser.setDeptId(user.getDeptId());
+        //判断是否为管理员级别
+        loginUser.setAdmin(user.getUserId() != null && user.getUserId() == 1L);
         //生成JWT令牌
         String token = tokenService.createToken(loginUser);
         //返回成功结果 包含token

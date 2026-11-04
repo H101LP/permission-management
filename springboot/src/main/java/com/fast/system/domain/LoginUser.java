@@ -28,6 +28,11 @@ public class LoginUser implements UserDetails {
     private User user;
     //用户权限集合
     private Set<String> permissions;
+    /** 部门ID */
+    private Long deptId;
+
+    /** 是否是超级管理员 */
+    private boolean isAdmin;
 
     //带参数的构造方法
     public LoginUser(Long userId,User user){

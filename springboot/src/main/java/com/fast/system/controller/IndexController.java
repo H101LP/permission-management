@@ -3,6 +3,7 @@ package com.fast.system.controller;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.LoginUser;
 import com.fast.system.domain.User;
+import com.fast.system.mapper.MenuMapper;
 import com.fast.system.service.IUserService;
 import com.fast.system.utils.SecurityUtils;
 import jakarta.annotation.Resource;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
 
@@ -22,6 +26,8 @@ import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
 public class IndexController extends BaseController {
     @Resource
     private IUserService userService;
+    @Resource
+    private MenuMapper menuMapper;
     @GetMapping
     public AjaxResult home() {
         return AjaxResult.success("恭喜你成功启动了后端");
@@ -46,6 +52,9 @@ public class IndexController extends BaseController {
         //根据用户ID查询用户信息
         User user1 = userService.selectByUserUserId(userId);
         //返回用户信息
-        return success(user1);
+        Map<String, Object> map = new HashMap<>();
+        map.put("user", user1);
+        map.put("permissions", menuMapper.selectMenuPermsByUserId(userId));
+        return success(map);
     }
 }

@@ -43,7 +43,8 @@ const useUserStore = defineStore(
                 return new Promise((resolve, reject) => {
                     //调用获取用户信息接口
                     getInfo().then(res => {
-                        const user = res.data;
+                        const data = res.data;
+                        const user = data.user;
                         //处理头像地址
                         let avater = user.avatar || "";
                         //判断头像地址是否完整
@@ -60,6 +61,7 @@ const useUserStore = defineStore(
                         this.id = user.userId;
                         this.name = user.userName;
                         this.avatar = avater;
+                        this.permissions = data.permissions || [];
                         //表示成功
                         resolve(res); //返回完整响应数据
                     }).catch(error => {

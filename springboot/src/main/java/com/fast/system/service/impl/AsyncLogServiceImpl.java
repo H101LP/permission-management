@@ -1,7 +1,9 @@
 package com.fast.system.service.impl;
 
 import com.fast.system.domain.SysOperationLog;
+import com.fast.system.domain.SysPermissionLog;
 import com.fast.system.mapper.SysOperationLogMapper;
+import com.fast.system.mapper.SysPermissionLogMapper;
 import com.fast.system.service.IAsyncLogService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,20 @@ public class AsyncLogServiceImpl implements IAsyncLogService {
             sysOperationLogMapper.insertLog(logEntity);
         } catch (Exception e) {
             log.error("异步保存审计日志失败", e);
+        }
+    }
+
+    @Resource
+    private SysPermissionLogMapper sysPermissionLogMapper;
+
+
+    @Async
+    @Override
+    public void savePermissionLog(SysPermissionLog permLog) {
+        try {
+            sysPermissionLogMapper.insertPermissionLog(permLog);
+        } catch (Exception e) {
+            log.error("异步保存权限变更日志失败", e);
         }
     }
 }

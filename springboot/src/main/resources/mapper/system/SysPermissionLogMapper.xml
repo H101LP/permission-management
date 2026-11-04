@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.system.mapper.SysPermissionLogMapper">
+
+    <insert id="insertPermissionLog" parameterType="com.fast.system.domain.SysPermissionLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into sys_permission_log (
+            oper_user_id, oper_user_name, target_role_id, target_role_name,
+            old_menus, new_menus, add_menus, remove_menus, oper_time, trace_id
+        ) values (
+                     #{operUserId}, #{operUserName}, #{targetRoleId}, #{targetRoleName},
+                     #{oldMenus}, #{newMenus}, #{addMenus}, #{removeMenus}, now(), #{traceId}
+                 )
+    </insert>
+
+</mapper>

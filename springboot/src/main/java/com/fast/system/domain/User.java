@@ -42,5 +42,7 @@ public class User {
     private Long roleId;
     //角色名称（用于显示角色信息）
     private String roleName;
+    //部门ID（用于显示部门信息）
+    private Long deptId;
 
 }

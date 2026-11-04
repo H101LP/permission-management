@@ -13,19 +13,20 @@
         <result column="create_time" property="createTime"/>
         <result column="role_id" property="roleId"/>
         <result column="role_name" property="roleName"/>
+        <result column="dept_id" property="deptId"/>
     </resultMap>
 
 
 
     <!-- 根据用户名查询用户 -->
     <select id="selectByUserName" resultMap="UserResult" parameterType="String">
-        select user_id,user_name,sex,avatar,password,create_time
+        select user_id,user_name,sex,avatar,password,create_time,dept_id
         from user where user_name = #{userName}
     </select>
     <!-- 根据用户ID查询用户 -->
     <select id="selectByUserUserId" resultMap="UserResult" parameterType="Long">
         select u.user_id,u.user_name,u.sex,u.avatar,u.password,u.create_time
-             ,ur.role_id,r.role_name
+            ,u.dept_id,ur.role_id,r.role_name
         from user u
         left join user_role ur on u.user_id = ur.user_id
         left join role r on ur.role_id = r.role_id
@@ -34,7 +35,7 @@
     <!--查询用户列表-->
     <select id="selectUserList" resultMap="UserResult" parameterType="User">
         select u.user_id,u.user_name,u.sex,u.avatar,u.password,u.create_time
-             ,ur.role_id,r.role_name
+            ,u.dept_id,ur.role_id,r.role_name
         from user u
         left join user_role ur on u.user_id = ur.user_id
         left join role r on ur.role_id = r.role_id

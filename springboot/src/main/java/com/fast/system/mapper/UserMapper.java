@@ -1,5 +1,6 @@
 package com.fast.system.mapper;
 
+import com.fast.system.annotation.DataScope;
 import com.fast.system.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -43,6 +44,12 @@ public interface UserMapper {
 
     int resetUserPwd(Long userId, String newPassword);
 
+    /**
+     * 根据用户查询用户列表
+     * @param user
+     * @return
+     */
+    @DataScope(deptAlias = "u")
     List<User> selectUserList(User user);
 
     /**
