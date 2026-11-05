@@ -4,6 +4,7 @@ import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.LoginUser;
 import com.fast.system.domain.User;
 import com.fast.system.mapper.MenuMapper;
+import com.fast.system.service.IPermCacheService;
 import com.fast.system.service.IUserService;
 import com.fast.system.utils.SecurityUtils;
 import jakarta.annotation.Resource;
@@ -28,6 +29,9 @@ public class IndexController extends BaseController {
     private IUserService userService;
     @Resource
     private MenuMapper menuMapper;
+    // 权限缓存服务
+    @Resource
+    private IPermCacheService permCacheService;
     @GetMapping
     public AjaxResult home() {
         return AjaxResult.success("恭喜你成功启动了后端");
@@ -54,7 +58,7 @@ public class IndexController extends BaseController {
         //返回用户信息
         Map<String, Object> map = new HashMap<>();
         map.put("user", user1);
-        map.put("permissions", menuMapper.selectMenuPermsByUserId(userId));
+        map.put("permissions", permCacheService.getOrLoad(userId).getPerms());
         return success(map);
     }
 }

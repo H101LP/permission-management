@@ -15,7 +15,30 @@ spring:
     user:
       name: admin
       password: 123456
+  # 配置redis数据库连接信息
+  data:
+    redis:
+      host: 192.168.52.129
+      port: 6379
+      password: abc123
+      database: 1
+      timeout: 3s
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
 
+# 权限缓存配置
+perm:
+  cache:
+    # 与 token.expireTime 一致：300 分钟 = 18000 秒
+    ttl-seconds: 18000
+    # 雪崩防护：±5 分钟随机偏移
+    ttl-random-seconds: 300
+    # 穿透防护：空值缓存 60 秒
+    empty-ttl-seconds: 60
 #环境配置
 server:
   port: 8080

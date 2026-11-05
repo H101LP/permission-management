@@ -134,7 +134,23 @@
 			<artifactId>jsqlparser</artifactId>
 			<version>4.7</version>
 		</dependency>
+		<!-- Redis 客户端Lettuce -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<!-- Redisson：分布式锁 防击穿  -->
+		<dependency>
+			<groupId>org.redisson</groupId>
+			<artifactId>redisson-spring-boot-starter</artifactId>
+			<version>3.45.0</version>
+		</dependency>
+
+
+
+
 	</dependencies>
+
 
 	<build>
 		<plugins>

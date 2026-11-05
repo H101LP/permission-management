@@ -1,10 +1,12 @@
 package com.fast.system.controller;
 
+import com.fast.system.annotation.PreAuthorizePerm;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.Menu;
 import com.fast.system.domain.vo.RoleMenuTreeVO;
 import com.fast.system.domain.vo.RouterVo;
 import com.fast.system.service.IMenuService;
+import com.fast.system.service.IPermCacheService;
 import com.fast.system.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +36,7 @@ public class MenuController extends BaseController {
     /**
      * 新增菜单
      */
+    @PreAuthorizePerm("system:menu:add")
     @Operation(summary = "新增菜单")
     @PostMapping("/insertMenu")
     public AjaxResult insertMenu( @RequestBody Menu menu) {
@@ -50,6 +53,7 @@ public class MenuController extends BaseController {
     /**
      * 修改菜单
      */
+    @PreAuthorizePerm("system:menu:edit")
     @Operation(summary = "修改菜单")
     @PutMapping("/updateMenu")
     public AjaxResult updateMenu(@RequestBody Menu menu) {
@@ -62,6 +66,7 @@ public class MenuController extends BaseController {
     /**
      * 删除菜单
      */
+    @PreAuthorizePerm("system:menu:remove")
     @Operation(summary = "删除菜单")
     @DeleteMapping("/deleteMenuByMenuId/{menuId}")
     public AjaxResult deleteMenuByMenuId(@PathVariable Long menuId) {
@@ -96,14 +101,15 @@ public class MenuController extends BaseController {
      * 获取路由信息（菜单权限）
      * 功能: 获取当前用户的菜单权限 用于前端动态生成路由
      */
+    @Resource
+    private IPermCacheService permCacheService;
     @Operation(summary = "获取路由信息（菜单权限）")
     @GetMapping("/getRouters")
     public AjaxResult getRouters() {
        //获取当前用户的ID
         long userId = SecurityUtils.getUserId();
-        //查询当前用户的菜单树 并且构建成前端所需要的路由格式
-        List<RouterVo> routers = menuService.selectMenuTreeRouterByUserId(userId);
-        return success(routers);
+        // 走缓存：命中直接返回，未命中查库并回写
+        return success(permCacheService.getOrLoad(userId).getRouters());
     }
 
 

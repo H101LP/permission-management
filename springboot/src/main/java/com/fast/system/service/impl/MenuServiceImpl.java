@@ -276,7 +276,7 @@ public class MenuServiceImpl implements IMenuService {
             routers.add(router);
         }
         //返回构建好的路由列表
-        System.out.println(routers);
+
         return routers;
     }
 

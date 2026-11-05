@@ -3,6 +3,8 @@ package com.fast.system.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 用户与角色关联 mapper
  */
@@ -36,4 +38,9 @@ public interface UserRoleMapper {
      * @return 角色ID
      */
     Long selectRoleIdByUserId(Long userId);
+    /**
+     * 根据角色ID查询绑定该角色的所有用户ID
+     */
+    List<Long> selectUserIdsByRoleId(Long roleId);
+
 }

@@ -1,6 +1,8 @@
 package com.fast.system.configure;
 
 import com.fast.system.domain.LoginUser;
+import com.fast.system.domain.vo.UserPermCacheVO;
+import com.fast.system.service.IPermCacheService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -26,6 +29,8 @@ import java.util.Objects;
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Resource
     private TokenService tokenService;
+    @Resource
+    private IPermCacheService permCacheService;
     /**
      * 拦截所有HTTP请求  过滤器核心方法   从请求头提取JWT token ,验证用户信息,设置security用户信息
      * @param request 请求对象
@@ -43,6 +48,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             try {
                 //3 验证token是否过期
                 tokenService.verifyToken(loginUser);
+                // ★ 用缓存里的最新权限覆盖 JWT 内旧快照，权限变更后无需重登即可生效
+                UserPermCacheVO permCache = permCacheService.getOrLoad(loginUser.getUserId());
+                loginUser.setPermissions(new HashSet<>(permCache.getPerms()));
                 //4 构建sercurity认证令牌
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
                 //5 设置认证详情

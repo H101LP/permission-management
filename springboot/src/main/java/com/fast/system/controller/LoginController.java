@@ -7,6 +7,7 @@ import com.fast.system.domain.LoginUser;
 import com.fast.system.domain.User;
 import com.fast.system.exception.BusinessException;
 import com.fast.system.mapper.MenuMapper;
+import com.fast.system.service.IPermCacheService;
 import com.fast.system.service.IUserService;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,8 @@ public class LoginController extends BaseController {
     private TokenService tokenService;
     @Resource
     private MenuMapper menuMapper;
+    @Resource
+    private IPermCacheService permCacheService;
     /**
      * 登录接口
      */
@@ -60,6 +63,9 @@ public class LoginController extends BaseController {
         loginUser.setDeptId(user.getDeptId());
         //判断是否为管理员级别
         loginUser.setAdmin(user.getUserId() != null && user.getUserId() == 1L);
+
+        permCacheService.evictByUserId(user.getUserId());
+
         //生成JWT令牌
         String token = tokenService.createToken(loginUser);
         //返回成功结果 包含token

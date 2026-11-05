@@ -9,6 +9,7 @@ import com.fast.system.domain.group.AddGroup;
 import com.fast.system.domain.group.UpdateGroup;
 import com.fast.system.enums.OperType;
 import com.fast.system.mapper.UserRoleMapper;
+import com.fast.system.service.IPermCacheService;
 import com.fast.system.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +30,8 @@ public class UserController extends BaseController {
     private IUserService userService;
     @Resource
     private UserRoleMapper userRoleMapper;
+    @Resource
+    private IPermCacheService permCacheService;
     /**
      * 查询用户列表
      */
@@ -65,7 +68,12 @@ public class UserController extends BaseController {
     @Operation(summary = "修改用户")
     @PutMapping("updateUser")
     public AjaxResult updateUser(@Validated(UpdateGroup.class) @RequestBody User user){
-        return toAjax(userService.updateUser(user));
+        int rows = userService.updateUser(user);
+        // 角色/部门可能变了，清掉该用户缓存，下次请求自动重建
+        if (user.getUserId() != null) {
+            permCacheService.evictByUserId(user.getUserId());
+        }
+        return toAjax(rows);
     }
     /**
      *删除用户
@@ -73,7 +81,14 @@ public class UserController extends BaseController {
     @Operation(summary = "删除用户")
     @DeleteMapping("/deleteUserByUserIds/{userIds}")
     public AjaxResult deleteUserByUserIds(@PathVariable Long[] userIds){
-       return toAjax(userService.deleteUserByUserIds(userIds));
+        int rows = userService.deleteUserByUserIds(userIds);
+        // 用户已删除，逐个清掉残留的权限缓存
+        if (userIds != null) {
+            for (Long userId : userIds) {
+                permCacheService.evictByUserId(userId);
+            }
+        }
+        return toAjax(rows);
     }
 
 

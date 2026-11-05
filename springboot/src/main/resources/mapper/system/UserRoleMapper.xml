@@ -26,4 +26,9 @@
     <select id="selectRoleIdByUserId" resultType="java.lang.Long">
         select role_id from user_role where user_id = #{userId}
     </select>
+    <!-- 根据角色ID查询用户ID -->
+    <select id="selectUserIdsByRoleId" resultType="java.lang.Long">
+        select user_id from user_role where role_id = #{roleId}
+    </select>
+
 </mapper>
