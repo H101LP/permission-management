@@ -3,11 +3,13 @@ package com.fast.system.controller;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.LoginUser;
 import com.fast.system.domain.User;
+import com.fast.system.domain.vo.UserPermCacheVO;
 import com.fast.system.mapper.MenuMapper;
 import com.fast.system.service.IPermCacheService;
 import com.fast.system.service.IUserService;
 import com.fast.system.utils.SecurityUtils;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,15 +52,17 @@ public class IndexController extends BaseController {
      * 获取当前用户信息
      */
     @GetMapping("/getInfo")
-    public AjaxResult getInfo(){
-        //获取当前用户ID
+    public AjaxResult getInfo(HttpServletRequest request){
         long userId = SecurityUtils.getUserId();
-        //根据用户ID查询用户信息
         User user1 = userService.selectByUserUserId(userId);
-        //返回用户信息
         Map<String, Object> map = new HashMap<>();
         map.put("user", user1);
-        map.put("permissions", permCacheService.getOrLoad(userId).getPerms());
+        // 复用 Filter 已查好的快照；取不到再兜底查（防御性，正常不会走到）
+        UserPermCacheVO snapshot = (UserPermCacheVO) request.getAttribute(IPermCacheService.REQUEST_SNAPSHOT_KEY);
+        if (snapshot == null) {
+            snapshot = permCacheService.getOrLoad(userId);
+        }
+        map.put("permissions", snapshot.getPerms());
         return success(map);
     }
 }

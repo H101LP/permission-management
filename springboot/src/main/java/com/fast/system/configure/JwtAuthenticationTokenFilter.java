@@ -48,9 +48,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             try {
                 //3 验证token是否过期
                 tokenService.verifyToken(loginUser);
-                // ★ 用缓存里的最新权限覆盖 JWT 内旧快照，权限变更后无需重登即可生效
+                // 用缓存里的最新权限覆盖 JWT 内旧快照，权限变更后无需重登即可生效
                 UserPermCacheVO permCache = permCacheService.getOrLoad(loginUser.getUserId());
                 loginUser.setPermissions(new HashSet<>(permCache.getPerms()));
+                // 完整快照（perms + routers）放进本次请求，Controller 直接复用，避免二次查询
+                request.setAttribute(IPermCacheService.REQUEST_SNAPSHOT_KEY, permCache);
                 //4 构建sercurity认证令牌
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
                 //5 设置认证详情

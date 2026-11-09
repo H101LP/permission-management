@@ -3,6 +3,9 @@ package com.fast.system.service;
 import com.fast.system.domain.vo.UserPermCacheVO;
 
 public interface IPermCacheService {
+    /** 请求级快照 attribute key：Filter 写入，Controller 复用，避免同一请求二次查询 */
+    String REQUEST_SNAPSHOT_KEY = "PERM_CACHE_SNAPSHOT";
+
     /** 读缓存，未命中则加锁重建（防击穿），Redis 异常自动降级查库 */
     UserPermCacheVO getOrLoad(Long userId);
 

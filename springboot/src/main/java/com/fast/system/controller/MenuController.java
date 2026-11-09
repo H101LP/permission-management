@@ -5,12 +5,14 @@ import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.Menu;
 import com.fast.system.domain.vo.RoleMenuTreeVO;
 import com.fast.system.domain.vo.RouterVo;
+import com.fast.system.domain.vo.UserPermCacheVO;
 import com.fast.system.service.IMenuService;
 import com.fast.system.service.IPermCacheService;
 import com.fast.system.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -105,11 +107,14 @@ public class MenuController extends BaseController {
     private IPermCacheService permCacheService;
     @Operation(summary = "获取路由信息（菜单权限）")
     @GetMapping("/getRouters")
-    public AjaxResult getRouters() {
-       //获取当前用户的ID
+    public AjaxResult getRouters(HttpServletRequest request) {
         long userId = SecurityUtils.getUserId();
-        // 走缓存：命中直接返回，未命中查库并回写
-        return success(permCacheService.getOrLoad(userId).getRouters());
+        // 复用 Filter 已查好的快照；取不到再兜底查
+        UserPermCacheVO snapshot = (UserPermCacheVO) request.getAttribute(IPermCacheService.REQUEST_SNAPSHOT_KEY);
+        if (snapshot == null) {
+            snapshot = permCacheService.getOrLoad(userId);
+        }
+        return success(snapshot.getRouters());
     }
 
 

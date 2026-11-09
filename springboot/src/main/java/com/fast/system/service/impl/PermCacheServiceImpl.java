@@ -6,6 +6,7 @@ import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IMenuService;
 import com.fast.system.service.IPermCacheService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -16,7 +17,7 @@ import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +28,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class PermCacheServiceImpl implements IPermCacheService {
-
+    @PostConstruct
+    public void init() {
+        log.info(">>> 权限缓存开关 perm.cache.enabled = {}", cacheEnabled);
+    }
     private static final String KEY_PREFIX = "perm:user:";
     private static final String LOCK_PREFIX = "lock:perm:user:";
 
@@ -48,9 +52,13 @@ public class PermCacheServiceImpl implements IPermCacheService {
     private long ttlRandomSeconds;
     @Value("${perm.cache.empty-ttl-seconds:60}")
     private long emptyTtlSeconds;
-
+    @Value("${perm.cache.enabled:true}")
+    private boolean cacheEnabled;
     @Override
     public UserPermCacheVO getOrLoad(Long userId) {
+        if (!cacheEnabled) {
+            return loadFromDb(userId);   // 对照组：完全走 DB
+        }
         String key = KEY_PREFIX + userId;
 
         // 1. 先查缓存（命中空值标记也直接返回，防穿透）
