@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -28,6 +30,16 @@ public class SecurityConfig {
     //认证入口点
     @Resource
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    /**
+     * 密码加密
+     * @return
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // strength=10 是默认值 单次加密约 50~100ms 防暴力破解的代价
+        return new BCryptPasswordEncoder();
+    }
     /**
      * 认证过滤器链
      * 1.跨域检查->取消CSRF 防护->响应头配置->禁用Session-使用无状态认证（JWT）->构建

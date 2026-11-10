@@ -1,5 +1,5 @@
 package com.fast.system.domain;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -57,6 +57,7 @@ public class LoginUser implements UserDetails {
      * 获取密码
      * @return
      */
+    @JsonIgnore
     @Override
     public String getPassword() {
         return user.getPassword();

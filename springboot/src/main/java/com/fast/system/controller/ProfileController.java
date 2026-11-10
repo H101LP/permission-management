@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +36,8 @@ public class ProfileController extends BaseController {
     private FastConfig fastConfig;
     @Resource
     private IUserService userService;
+    @Resource
+    private PasswordEncoder passwordEncoder;
     /**
      * 头像上传接口
      */
@@ -110,6 +113,9 @@ public class ProfileController extends BaseController {
         //设置要更新的用户信息
         currentUser.setUserName(user.getUserName());
         currentUser.setSex(user.getSex());
+        // 只改资料不改密码：库里 password 是 BCrypt 密文，
+        // 不清空会被 updateUser 再 encode 一次，导致该用户下次登录失败
+        currentUser.setPassword(null);
         //调用服务层更新用户信息
         return toAjax(userService.updateUser(currentUser));
 
@@ -125,19 +131,21 @@ public class ProfileController extends BaseController {
         String newPassword = submitPwdBody.getNewPassword();
         //获取当前用户数据
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        User user = loginUser.getUser();
-        //修改前密码
+        // 以库中最新密文为准：迁移期 token 里的 user 快照可能还是明文，
+        // 直接拿它做 matches 会把"旧密码正确"误判成错误
+        User user = userService.selectByUserUserId(loginUser.getUserId());
+        //修改前密码（BCrypt 密文）
         String password = user.getPassword();
-        if (newPassword.equals(password)){
+        if (passwordEncoder.matches(newPassword, password)){
             return error("新密码不能与旧密码相同");
         }
-        if(!oldPassword.equals(password)){
+        if(!passwordEncoder.matches(oldPassword, password)){
             return error("旧密码不正确");
         }
         //修改密码
         if (userService.resetUserPwd(user.getUserId(), newPassword) > 0){
-            //更新用户缓存密码
-            loginUser.getUser().setPassword(newPassword);
+            //更新当前会话内的密码（存密文，保持与库一致）
+            loginUser.getUser().setPassword(passwordEncoder.encode(newPassword));
             return success("密码修改成功");
         }
 
