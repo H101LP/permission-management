@@ -16,10 +16,9 @@
     </resultMap>
 
     <!-- 根据用户ID查询菜单列表 -->
-    <!-- ⚠️ 修改点：在 select 后面加上了 distinct -->
-    <select id="selectMenuListByUserId" resultMap="MenuResult" >
-        select distinct
-        m.menu_id,
+    <!-- MenuMapper.xml：替换原有 selectMenuListByUserId -->
+    <select id="selectMenuListByUserId" resultMap="MenuResult">
+        SELECT m.menu_id,
         m.menu_name,
         m.parent_id,
         m.menu_sort,
@@ -28,19 +27,23 @@
         m.menu_type,
         m.icon,
         m.create_time
-        from menu m
-        left join role_menu rm on m.menu_id = rm.menu_id
-        left join user_role ur on rm.role_id = ur.role_id
+        FROM menu m
         <where>
             <if test="userId != null">
-                and ur.user_id = #{userId}
+                AND EXISTS (
+                SELECT 1
+                FROM role_menu rm
+                INNER JOIN user_role ur ON rm.role_id = ur.role_id
+                WHERE rm.menu_id = m.menu_id
+                AND ur.user_id = #{userId}
+                )
             </if>
             <if test="menuName != null and menuName != ''">
-                and m.menu_name like CONCAT('%', #{menuName}, '%')
+                AND m.menu_name LIKE CONCAT('%', #{menuName}, '%')
             </if>
-            and m.menu_type in ('M', 'C')
+            AND m.menu_type IN ('M', 'C')
         </where>
-        order by m.menu_sort
+        ORDER BY m.menu_sort
     </select>
 
     <!-- 根据菜单ID查询菜单 -->
@@ -116,9 +119,9 @@
     <!-- 根据用户ID查询权限列表 -->
     <select id="selectMenuPermsByUserId" resultType="java.lang.String">
         SELECT DISTINCT m.perms
-        FROM menu m
-                 LEFT JOIN role_menu rm ON m.menu_id = rm.menu_id
-                 LEFT JOIN user_role ur ON rm.role_id = ur.role_id
+        FROM user_role ur
+                 INNER JOIN role_menu rm ON ur.role_id = rm.role_id
+                 INNER JOIN menu m ON rm.menu_id = m.menu_id
         WHERE ur.user_id = #{userId}
           AND m.perms IS NOT NULL
           AND m.perms != ''

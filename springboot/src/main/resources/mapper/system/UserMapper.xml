@@ -34,20 +34,32 @@
     </select>
     <!--查询用户列表-->
     <select id="selectUserList" resultMap="UserResult" parameterType="User">
-        select u.user_id,u.user_name,u.sex,u.avatar,u.password,u.create_time
-            ,u.dept_id,ur.role_id,r.role_name
-        from user u
-        left join user_role ur on u.user_id = ur.user_id
-        left join role r on ur.role_id = r.role_id
+        SELECT u.user_id,
+        u.user_name,
+        u.sex,
+        u.avatar,
+        u.password,
+        u.create_time,
+        u.dept_id,
+        (SELECT ur.role_id
+        FROM user_role ur
+        WHERE ur.user_id = u.user_id
+        LIMIT 1) AS role_id,
+        (SELECT r.role_name
+        FROM user_role ur
+        INNER JOIN role r ON ur.role_id = r.role_id
+        WHERE ur.user_id = u.user_id
+        LIMIT 1) AS role_name
+        FROM user u
         <where>
-          <if test="userId != null">
-            and u.user_id = #{userId}
-          </if>
-          <if test="userName != null and userName != ''">
-            and u.user_name like CONCAT('%', #{userName}, '%')
-          </if>
+            <if test="userId != null">
+                AND u.user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND u.user_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
         </where>
-        order by u.user_id asc
+        ORDER BY u.user_id ASC
     </select>
     <!-- 新增用户 -->
     <!--
