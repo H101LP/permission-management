@@ -41,7 +41,7 @@
             <if test="menuName != null and menuName != ''">
                 AND m.menu_name LIKE CONCAT('%', #{menuName}, '%')
             </if>
-            AND m.menu_type IN ('M', 'C')
+            AND m.menu_type IN ('M', 'C','F')
         </where>
         ORDER BY m.menu_sort
     </select>
