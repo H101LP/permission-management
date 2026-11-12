@@ -1,5 +1,6 @@
 package com.fast.system.controller;
 
+import com.fast.system.annotation.PreAuthorizePerm;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.PageResult;
 import com.fast.system.domain.Role;
@@ -53,6 +54,7 @@ public class RoleController extends BaseController {
     /**
      * 新增角色信息
      */
+    @PreAuthorizePerm("system:role:add")
     @Operation(summary = "新增角色信息")
     @PostMapping("/insertRole")
     public AjaxResult insertRole(@Validated(AddGroup.class) @RequestBody Role role) {
@@ -61,6 +63,7 @@ public class RoleController extends BaseController {
     /**
      * 修改角色信息
      */
+    @PreAuthorizePerm("system:role:edit")
     @Operation(summary = "修改角色信息")
     @PostMapping("/updateRole")
     public AjaxResult updateRole(@Validated(UpdateGroup.class) @RequestBody Role role) {
@@ -69,6 +72,7 @@ public class RoleController extends BaseController {
     /**
      * 删除角色信息
      */
+    @PreAuthorizePerm("system:role:remove")
     @Operation(summary = "删除角色信息")
     @DeleteMapping("/deleteRoleByRoleIds/{roleIds}")
     public AjaxResult deleteRoleByRoleIds(@PathVariable Long[] roleIds) {

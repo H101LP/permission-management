@@ -61,16 +61,14 @@ public class LoginController extends BaseController {
         List<String> permsList = menuMapper.selectMenuPermsByUserId(user.getUserId());
         //转为Set
         Set<String> permsSet = new HashSet<>();
-        if(permsList != null && !permsList.isEmpty()){
-            permsSet.addAll(permsList);
-        }
         if (user.getUserId() != null && user.getUserId() == 1L) {
             permsSet.add("*:*:*");
+        }else if(permsList != null && !permsList.isEmpty()){
+            permsSet.addAll(permsList);
         }
+
         //装载到LoginUser中
         loginUser.setPermissions(permsSet);
-
-        System.out.println("当前登录用户权限集合: " + permsSet);
         //将用户部门ID装入LoginUser中
         loginUser.setDeptId(user.getDeptId());
         //判断是否为管理员级别

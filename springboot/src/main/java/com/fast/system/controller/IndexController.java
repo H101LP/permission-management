@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
 
 /**
  * 首页控制器 用于处理根路径请求

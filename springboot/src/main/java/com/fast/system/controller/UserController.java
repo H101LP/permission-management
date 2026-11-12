@@ -65,6 +65,7 @@ public class UserController extends BaseController {
     /**
      * 修改用户
      */
+    @PreAuthorizePerm("system:user:edit")
     @Operation(summary = "修改用户")
     @PutMapping("updateUser")
     public AjaxResult updateUser(@Validated(UpdateGroup.class) @RequestBody User user){
@@ -78,6 +79,7 @@ public class UserController extends BaseController {
     /**
      *删除用户
      */
+    @PreAuthorizePerm("system:user:remove")
     @Operation(summary = "删除用户")
     @DeleteMapping("/deleteUserByUserIds/{userIds}")
     public AjaxResult deleteUserByUserIds(@PathVariable Long[] userIds){
