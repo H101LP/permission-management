@@ -41,6 +41,10 @@ public class DataScopeInterceptor implements Interceptor {
         String mappedStatementId = mappedStatement.getId();
         String className = mappedStatementId.substring(0, mappedStatementId.lastIndexOf("."));
         String methodName = mappedStatementId.substring(mappedStatementId.lastIndexOf(".") + 1);
+        // PageHelper 的 count 语句 id 形如 selectUserList_COUNT，剥离后缀以复用主语句上的注解
+        if (methodName.endsWith("_COUNT")) {
+            methodName = methodName.substring(0, methodName.length() - "_COUNT".length());
+        }
 
         Class<?> clazz = Class.forName(className);
         Method[] methods = clazz.getMethods();

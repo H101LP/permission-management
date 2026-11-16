@@ -54,6 +54,7 @@
                   <el-radio-group v-model="form.menuType">
                     <el-radio value="M">目录</el-radio>
                     <el-radio value="C">菜单</el-radio>
+                    <el-radio value="F">按钮</el-radio>
                   </el-radio-group>
                 </el-form-item>
             </el-col>
