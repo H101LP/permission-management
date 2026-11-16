@@ -1,8 +1,10 @@
 package com.fast.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 @Data
 public class Dept {
@@ -21,7 +23,8 @@ public class Dept {
     //部门状态
     private String status;
     //创建时间
-    private String createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
     //子部门列表 用于生成树形列表
     private List<Dept> children = new ArrayList<Dept>();
 }
