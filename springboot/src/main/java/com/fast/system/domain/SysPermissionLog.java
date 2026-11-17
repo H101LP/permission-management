@@ -42,4 +42,15 @@ public class SysPermissionLog {
 
     /** 链路追踪ID */
     private String traceId;
+
+    /**
+     * 查询专用：开始时间（字符串形式，如 2026-11-17）。
+     * 不是表字段，insert 时不会被用到，只在查询的 where 条件里出现。
+     */
+    private String beginTime;
+
+    /**
+     * 查询专用：结束时间（字符串形式）。
+     */
+    private String endTime;
 }

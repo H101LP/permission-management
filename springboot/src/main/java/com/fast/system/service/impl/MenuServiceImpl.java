@@ -172,11 +172,17 @@ public class MenuServiceImpl implements IMenuService {
         for (Menu m : menus) {
             menuMap.put(m.getMenuId(), m); //将菜单ID作为key 菜单对象作为value
         }
-        //3 构建属性结构
+        //3 构建树结构
+        // 关键：必须"先统一清空所有节点的 children，再统一挂载子节点"。
+        // 如果把 setChildren(new ArrayList<>()) 写在下面那个挂载循环里，
+        // 一旦子节点的 menu_sort 小于父节点（例如父 sort=4、子 sort=1/2），
+        // 子节点会先被 add 进父节点的 children，随后父节点被遍历到时又把 children 清空，
+        // 结果父节点丢掉全部子节点（表现为侧边栏目录点进去空白）。
         List<Menu> rootMenus = new ArrayList<>(); // 顶级菜单列表
         for (Menu m : menus) {
-            //清空children列表 避免重复添加
             m.setChildren(new ArrayList<>());
+        }
+        for (Menu m : menus) {
             //如果菜单的父ID为空 或者 父ID为0 则认为是顶级菜单
             if (m.getParentId() == null || m.getParentId() == 0) {
                 rootMenus.add(m);

@@ -3,6 +3,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fast.system.mapper.SysPermissionLogMapper">
 
+    <!-- 本项目未开启驼峰映射，必须显式写 resultMap -->
+    <resultMap id="PermissionLogResult" type="com.fast.system.domain.SysPermissionLog">
+        <id     column="log_id"           property="logId"/>
+        <result column="oper_user_id"     property="operUserId"/>
+        <result column="oper_user_name"   property="operUserName"/>
+        <result column="target_role_id"   property="targetRoleId"/>
+        <result column="target_role_name" property="targetRoleName"/>
+        <result column="old_menus"        property="oldMenus"/>
+        <result column="new_menus"        property="newMenus"/>
+        <result column="add_menus"        property="addMenus"/>
+        <result column="remove_menus"     property="removeMenus"/>
+        <result column="oper_time"        property="operTime"/>
+        <result column="trace_id"         property="traceId"/>
+    </resultMap>
+
+    <!-- 写入（已有，不动） -->
     <insert id="insertPermissionLog" parameterType="com.fast.system.domain.SysPermissionLog" useGeneratedKeys="true" keyProperty="logId">
         insert into sys_permission_log (
             oper_user_id, oper_user_name, target_role_id, target_role_name,
@@ -12,5 +28,34 @@
                      #{oldMenus}, #{newMenus}, #{addMenus}, #{removeMenus}, now(), #{traceId}
                  )
     </insert>
+
+    <!--
+      查询列表。
+      注意：权限日志没有 status 字段，别照抄操作日志的条件。
+      时间范围用 concat 补时分秒，避免"选 11-17 查不到 11-17 当天数据"。
+      limit 交给 PageHelper 拦截，这里不写。
+    -->
+    <select id="selectPermissionLogList"
+            parameterType="com.fast.system.domain.SysPermissionLog"
+            resultMap="PermissionLogResult">
+        select log_id, oper_user_id, oper_user_name, target_role_id, target_role_name,
+               old_menus, new_menus, add_menus, remove_menus, oper_time, trace_id
+        from sys_permission_log
+        <where>
+            <if test="operUserName != null and operUserName != ''">
+                and oper_user_name like concat('%', #{operUserName}, '%')
+            </if>
+            <if test="targetRoleName != null and targetRoleName != ''">
+                and target_role_name like concat('%', #{targetRoleName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and oper_time &gt;= concat(#{beginTime}, ' 00:00:00')
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and oper_time &lt;= concat(#{endTime}, ' 23:59:59')
+            </if>
+        </where>
+        order by oper_time desc
+    </select>
 
 </mapper>
