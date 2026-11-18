@@ -15,12 +15,17 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;                          // @Slf4j
+import org.springframework.beans.factory.annotation.Value; // @Value
+import org.springframework.data.redis.core.StringRedisTemplate;
+import java.util.concurrent.TimeUnit;                        // TimeUnit
 
 import java.util.*;
 
 /**
  * 登录控制器
  */
+@Slf4j
 @RestController
 public class LoginController extends BaseController {
     @Resource
@@ -33,6 +38,20 @@ public class LoginController extends BaseController {
     private IPermCacheService permCacheService;
     @Resource
     private PasswordEncoder passwordEncoder;
+    /*
+     * Redis 操作模板
+     */
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    /** 连续失败多少次后锁定，默认 5 */
+    @Value("${login.fail.max-count:5}")
+    private int maxFailCount;
+
+    /** 锁定分钟数，默认 15 */
+    @Value("${login.fail.lock-minutes:15}")
+    private int lockMinutes;
+
     /**
      * 登录接口
      */
@@ -42,6 +61,13 @@ public class LoginController extends BaseController {
         User user = userService.selectByUserName(loginBody.getUserName());
         if(user == null){
             throw new BusinessException("用户不存在");
+        }
+        // 失败锁定判断
+        // 用 DB 里的规范用户名做 key，避免 Admin / admin 各算一套额度
+        String failKey = "login:fail:" + user.getUserName();
+        int failCount = readFailCount(failKey);
+        if (failCount >= maxFailCount) {
+            throw new BusinessException("密码错误次数过多，账号已锁定 " + lockMinutes + " 分钟");
         }
         //验证密码是否正确
         String rawPwd = loginBody.getPassword();
@@ -53,9 +79,13 @@ public class LoginController extends BaseController {
                 // resetUserPwd 内部会 encode 一次，这里必须传明文，否则会二次加密导致下次登录永久失败
                 userService.resetUserPwd(user.getUserId(), rawPwd);
             } else {
+                // 记一次失败（固定 15 分钟窗口）
+                recordFail(failKey);
                 throw new BusinessException("密码错误");
             }
         }
+        // 密码正确，清零失败计数
+        clearFail(failKey);
         // 密码校验通过后判状态：避免"密码错的人也能探测账号是否被停用"
         if ("1".equals(user.getStatus())) {
             throw new BusinessException("账号已停用，请联系管理员");
@@ -88,5 +118,57 @@ public class LoginController extends BaseController {
         map.put("token", token); return success(map);
 
     }
+    /**
+     * 读取失败次数。
+     * Redis 不可用时降级为 0：宁可放过一次爆破，也不能让全站登录不可用。
+     */
+    private int readFailCount(String failKey) {
+        try {
+            String value = stringRedisTemplate.opsForValue().get(failKey);
+            if (value == null || value.isEmpty()) {
+                return 0;
+            }
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            log.warn("读取登录失败计数异常，降级为 0，key={}", failKey, e);
+            return 0;
+        }
+    }
+
+    /**
+     * 记录一次密码错误。
+     * 首次失败用 SET NX EX 原子创建（自带 TTL），后续只累加、不重置 TTL —— 固定窗口：
+     * 从第一次失败起算 15 分钟，不随重试延长，避免"一直被试就一直锁着"。
+     *
+     * 注意：不要改回 stringRedisTemplate.expire(...)。当前依赖组合（spring-data-redis 3.4.5）
+     * 下 expire 会走到 DefaultedRedisConnection.pExpire 的自递归，抛 StackOverflowError；
+     * StackOverflowError 属于 Error 而非 Exception，catch(Exception) 抓不住，会直接冒到
+     * 全局兜底变成"系统繁忙，请稍后重试"，同时 key 因为没有 TTL 会永久留存。
+     */
+    private void recordFail(String failKey) {
+        try {
+            // 首次失败：SET key 1 NX EX 900，一条原子命令同时完成"创建 + 设 TTL"，不经过 pExpire
+            Boolean created = stringRedisTemplate.opsForValue()
+                    .setIfAbsent(failKey, "1", lockMinutes, TimeUnit.MINUTES);
+            // 已存在：只累加。Redis 的 INCR 只改 value，原 TTL 保持不变，固定窗口语义不变
+            if (!Boolean.TRUE.equals(created)) {
+                stringRedisTemplate.opsForValue().increment(failKey);
+            }
+        } catch (Exception e) {
+            log.warn("写入登录失败计数异常，忽略本次计数，key={}", failKey, e);
+        }
+    }
+
+    /**
+     * 登录成功后清零。
+     */
+    private void clearFail(String failKey) {
+        try {
+            stringRedisTemplate.delete(failKey);
+        } catch (Exception e) {
+            log.warn("清除登录失败计数异常，key={}", failKey, e);
+        }
+    }
+
 
 }

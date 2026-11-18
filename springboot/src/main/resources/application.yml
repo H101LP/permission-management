@@ -89,3 +89,11 @@ knife4j:
   enable: false
   setting:
     language: zh_cn
+
+# 登录失败锁定
+login:
+  fail:
+    # 连续失败多少次后锁定
+    max-count: 5
+    # 锁定时长（分钟）
+    lock-minutes: 15
