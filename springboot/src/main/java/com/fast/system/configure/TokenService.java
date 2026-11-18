@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,6 +44,9 @@ public class TokenService {
     //JSON处理器
     @Resource
     private ObjectMapper objectMapper;
+    //令牌黑名单服务
+    @Resource
+    private TokenBlacklistService tokenBlacklistService;
 
 
     //系统启动时初始化密钥
@@ -67,6 +71,7 @@ public class TokenService {
 
         //准备JWT的声明数据
         HashMap<String, Object> claims = new HashMap<>();
+        claims.put("jti", UUID.randomUUID().toString());
         //将登录信息转换为JSON字符串
         try {
             claims.put("user_key", objectMapper.writeValueAsString(loginUser));
@@ -96,6 +101,14 @@ public class TokenService {
         try {
             //解析token获取声明数据
             Claims claims = parseToken(token);
+            // 登出校验：jti 存在且已在黑名单 → 视为未登录
+            // jti == null 时放行，是给"加 jti 之前签发的老令牌"留的灰度口子，
+            // 等老令牌全部过期后，这段可以改成 jti == null 直接拒绝
+            String jti = claims.get("jti", String.class);
+            if (jti != null && tokenBlacklistService.contains(jti)) {
+                log.info("token 已登出，拒绝访问，jti={}", jti);
+                return null;
+            }
             //将声明数据转换为JSON字符串
             String userjson = claims.get("user_key", String.class);
             //将JSON字符串反序列化
@@ -112,7 +125,7 @@ public class TokenService {
      * 解析令牌
      * 功能:根据令牌获取声明数据
      */
-    private Claims parseToken(String token) {
+    public Claims parseToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey) //设置签名密钥
                 .build()

@@ -65,7 +65,7 @@ public class SecurityConfig {
                 //6 路径权限配置
                 .authorizeHttpRequests(req ->req
                         //公开接口
-                                .requestMatchers("/login","/register","/profile/**").permitAll().requestMatchers(
+                                .requestMatchers("/login","/logout","/register","/profile/**").permitAll().requestMatchers(
                                         "/doc.html",
                                         "/webjars/**",
                                         "/v3/api-docs/**",
@@ -75,10 +75,12 @@ public class SecurityConfig {
                         //其他接口需要认证
                                 .anyRequest().authenticated()
                         )
-                //退出登录处理
-                .logout(logout -> logout.logoutUrl("/logout").    //退出成功返回 200状态码
-                        logoutSuccessHandler((req,res,auth)->res.setStatus(200))
-                )
+                // ⚠️ 必须显式 disable，仅仅"不写 .logout(...)"是不够的：
+                // Spring Security 6 的 LogoutConfigurer 默认启用，LogoutFilter 依然挂在过滤器链上，
+                // 会抢在 DispatcherServlet 之前处理 /logout 并 302 到 /login?logout，
+                // 导致 LoginController 里的自定义登出（写 jti 黑名单）永远执行不到。
+                // 实测：只注释掉 .logout(...) 时，POST /logout 返回 302，Redis 里没有 token:blacklist:* 键。
+                .logout(AbstractHttpConfigurer::disable)
                 //添加JWT的过滤器
                 .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 

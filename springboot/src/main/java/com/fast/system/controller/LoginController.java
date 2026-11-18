@@ -1,5 +1,6 @@
 package com.fast.system.controller;
 
+import com.fast.system.configure.TokenBlacklistService;
 import com.fast.system.configure.TokenService;
 import com.fast.system.domain.AjaxResult;
 import com.fast.system.domain.LoginBody;
@@ -9,8 +10,11 @@ import com.fast.system.exception.BusinessException;
 import com.fast.system.mapper.MenuMapper;
 import com.fast.system.service.IPermCacheService;
 import com.fast.system.service.IUserService;
+import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +42,9 @@ public class LoginController extends BaseController {
     private IPermCacheService permCacheService;
     @Resource
     private PasswordEncoder passwordEncoder;
+    /** token 黑名单（登出主动失效） */
+    @Resource
+    private TokenBlacklistService tokenBlacklistService;
     /*
      * Redis 操作模板
      */
@@ -118,6 +125,37 @@ public class LoginController extends BaseController {
         map.put("token", token); return success(map);
 
     }
+    /**
+     * 登出接口
+     *
+     * 设计要点：
+     * 1. 幂等 —— 没带 token、token 已过期、token 已拉黑，一律返回成功，
+     *    绝不返回 401（否则前端会弹"登录已过期"，退出流程死循环）
+     * 2. 只拉黑"这一张"令牌 —— 黑名单粒度是 jti 不是 userId，
+     *    所以 A 设备登出不会踢掉 B 设备
+     * 3. 返回前不清理任何服务端缓存 —— 权限缓存下次登录时 login() 里会 evict
+     */
+    @PostMapping("/logout")
+    public AjaxResult logout(HttpServletRequest request) {
+        String token = tokenService.getToken(request);
+        // 没带 token：视为已经退出过，直接成功
+        if (!StringUtils.hasText(token)) {
+            return success();
+        }
+        try {
+            Claims claims = tokenService.parseToken(token);
+            String jti = claims.get("jti", String.class);
+            // TTL = 该令牌剩余寿命，过期即自动从 Redis 消失
+            long ttl = claims.getExpiration().getTime() - System.currentTimeMillis();
+            tokenBlacklistService.add(jti, ttl);
+        } catch (Exception e) {
+            // token 已过期 / 签名不对 / 格式损坏：它本来就已经不可用了，无需拉黑
+            // 这里必须吞掉异常，保证 /logout 永远 200
+            log.info("登出时解析 token 失败，按已失效处理：{}", e.getMessage());
+        }
+        return success();
+    }
+
     /**
      * 读取失败次数。
      * Redis 不可用时降级为 0：宁可放过一次爆破，也不能让全站登录不可用。
