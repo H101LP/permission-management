@@ -8,6 +8,7 @@ import com.fast.system.domain.User;
 import com.fast.system.domain.group.AddGroup;
 import com.fast.system.domain.group.UpdateGroup;
 import com.fast.system.enums.OperType;
+import com.fast.system.exception.BusinessException;
 import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IPermCacheService;
 import com.fast.system.service.IUserService;
@@ -90,6 +91,23 @@ public class UserController extends BaseController {
                 permCacheService.evictByUserId(userId);
             }
         }
+        return toAjax(rows);
+    }
+    /**
+     * 修改用户状态（启用 / 停用）
+     * 单独接口，不挂 @Validated(UpdateGroup)：避免被"用户名不能为空"卡住
+     */
+    @PreAuthorizePerm("system:user:edit")
+    @Operation(summary = "修改用户状态")
+    @OperationLog(module = "用户管理", business = "修改用户状态", type = OperType.UPDATE)
+    @PutMapping("/changeStatus")
+    public AjaxResult changeStatus(@RequestBody User user) {
+        if (user.getUserId() == null || user.getStatus() == null) {
+            throw new BusinessException("用户ID与状态不能为空");
+        }
+        int rows = userService.changeStatus(user);
+        // 状态变了，清掉该用户权限缓存，让下次请求重新加载
+        permCacheService.evictByUserId(user.getUserId());
         return toAjax(rows);
     }
 

@@ -58,4 +58,9 @@ public interface UserMapper {
       * @return 是否删除成功
      */
     int deleteUserByUserIds(@Param("userIdArray")Long[] userIds);
+
+    /**
+     * 仅更新用户状态（停用/启用）
+     */
+    int updateUserStatus(User user);
 }

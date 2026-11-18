@@ -14,19 +14,22 @@
         <result column="role_id" property="roleId"/>
         <result column="role_name" property="roleName"/>
         <result column="dept_id" property="deptId"/>
+        <result column="status"      property="status"/>
+        <result column="update_time" property="updateTime"/>
+
     </resultMap>
 
 
 
     <!-- 根据用户名查询用户 -->
     <select id="selectByUserName" resultMap="UserResult" parameterType="String">
-        select user_id,user_name,sex,avatar,password,create_time,dept_id
+        select user_id,user_name,sex,avatar,password,create_time,dept_id,status
         from user where user_name = #{userName}
     </select>
     <!-- 根据用户ID查询用户 -->
     <select id="selectByUserUserId" resultMap="UserResult" parameterType="Long">
         select u.user_id,u.user_name,u.sex,u.avatar,u.password,u.create_time
-            ,u.dept_id,ur.role_id,r.role_name
+             ,u.dept_id,u.status,u.update_time,ur.role_id,r.role_name
         from user u
         left join user_role ur on u.user_id = ur.user_id
         left join role r on ur.role_id = r.role_id
@@ -41,6 +44,8 @@
         u.password,
         u.create_time,
         u.dept_id,
+        u.status,
+        u.update_time,
         (SELECT ur.role_id
         FROM user_role ur
         WHERE ur.user_id = u.user_id
@@ -70,18 +75,20 @@
     <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
         insert into user
         <trim prefix="(" suffix=")" suffixOverrides=",">
-        <if test="userId !=null">user_id,</if>
-        <if test="userName !=null and userName != ''">user_name,</if>
-        <if test="sex !=null">sex,</if>
-        <if test="avatar !=null and avatar != ''">avatar,</if>
-        <if test="password !=null and password != ''">password,</if>
+            <if test="userId !=null">user_id,</if>
+            <if test="userName !=null and userName != ''">user_name,</if>
+            <if test="sex !=null">sex,</if>
+            <if test="avatar !=null and avatar != ''">avatar,</if>
+            <if test="password !=null and password != ''">password,</if>
+            <if test="status !=null and status != ''">status,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-        <if test="userId !=null">#{userId},</if>
-        <if test="userName !=null and userName != ''">#{userName},</if>
-        <if test="sex !=null">#{sex},</if>
-        <if test="avatar !=null and avatar != ''">#{avatar},</if>
-        <if test="password !=null and password != ''">#{password},</if>
+            <if test="userId !=null">#{userId},</if>
+            <if test="userName !=null and userName != ''">#{userName},</if>
+            <if test="sex !=null">#{sex},</if>
+            <if test="avatar !=null and avatar != ''">#{avatar},</if>
+            <if test="password !=null and password != ''">#{password},</if>
+            <if test="status !=null and status != ''">#{status},</if>
         </trim>
 
 
@@ -94,9 +101,11 @@
     <update id="updateUser" parameterType="User">
         update user
         <set>
-        <if test="userName != null and userName != ''">user_name = #{userName},</if>
-        <if test="sex != null">sex = #{sex},</if>
-        <if test="password != null and password != ''">password = #{password},</if>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            update_time = NOW()
         </set>
         where user_id = #{userId}
     </update>
@@ -114,6 +123,13 @@
             #{userId}
         </foreach>
     </delete>
+    <!--更新用户状态-->
+    <update id="updateUserStatus" parameterType="User">
+        update user
+        set status = #{status}, update_time = now()
+        where user_id = #{userId}
+    </update>
+
     
     
     

@@ -37,7 +37,16 @@
         </template>
       </el-table-column>
       <el-table-column prop="roleName" label="对应角色" align="center" />
-
+      <el-table-column label="状态" align="center" width="100">
+        <template #default="scope">
+          <el-switch
+              v-model="scope.row.status"
+              active-value="0"
+              inactive-value="1"
+              :before-change="() => handleStatusChange(scope.row)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="200px">
         <template #default="scope">
           <el-button v-has-perm="['system:user:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
@@ -96,6 +105,7 @@
 <script setup>
 import Pagination from "@/components/Pagination/index.vue";
 import {onMounted, ref} from "vue";
+import { changeUserStatus} from "~/API/system/user.js"
 import {deleteUserByUserIds, insertUser, selectUserById, selectUserList, updateUser} from "~/API/system/user.js";
 //引入默认头像
 import defaultAvatar from "@/assets/images/profile.jpg";
@@ -262,6 +272,23 @@ const total = ref(0); //数据总数
 
 //角色列表数据
 const roleList = ref([])
+// 状态开关：先发请求，成功才让开关切换（失败保持原样）
+const handleStatusChange = (row) => {
+  const target = row.status === '0' ? '1' : '0'
+  return new Promise((resolve) => {
+    changeUserStatus({ userId: row.userId, status: target })
+        .then(() => {
+          ElMessage.success(target === '0' ? '启用成功' : '停用成功')
+          resolve(true)          // 返回 true → 开关切换
+        })
+        .catch(() => {
+          ElMessage.error('状态修改失败')
+          resolve(false)         // 返回 false → 开关弹回原位
+        })
+  })
+}
+
+
 
 
 onMounted(() => {

@@ -87,6 +87,9 @@ public class UserServiceImpl implements IUserService {
     @Transactional//事务管理
     @Override
     public int insertUser(User user) {
+        if (user.getStatus() == null || user.getStatus().isEmpty()) {
+            user.setStatus("0");
+        }
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
@@ -99,5 +102,14 @@ public class UserServiceImpl implements IUserService {
         //批量删除用户与角色的关联信息
         userRoleMapper.deleteUserRoles(userIds);
         return userMapper.deleteUserByUserIds(userIds);
+    }
+    /**
+     * 修改用户状态
+     * @param user 用户对象
+     * @return 结果
+     */
+    @Override
+    public int changeStatus(User user) {
+        return userMapper.updateUserStatus(user);
     }
 }

@@ -56,6 +56,10 @@ public class LoginController extends BaseController {
                 throw new BusinessException("密码错误");
             }
         }
+        // 密码校验通过后判状态：避免"密码错的人也能探测账号是否被停用"
+        if ("1".equals(user.getStatus())) {
+            throw new BusinessException("账号已停用，请联系管理员");
+        }
         LoginUser loginUser = new LoginUser(user.getUserId(),user);
         //查询用户的所有权限
         List<String> permsList = menuMapper.selectMenuPermsByUserId(user.getUserId());

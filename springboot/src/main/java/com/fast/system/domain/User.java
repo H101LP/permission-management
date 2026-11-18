@@ -44,5 +44,10 @@ public class User {
     private String roleName;
     //部门ID（用于显示部门信息）
     private Long deptId;
+    /** 状态（0 正常 1 停用） */
+    private String status;
+    /** 更新时间（由后端维护） */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime;
 
 }

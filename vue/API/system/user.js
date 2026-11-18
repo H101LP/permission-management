@@ -60,3 +60,11 @@ export function deleteUserByUserIds(userIds){
         method:"delete",//请求方法(严格遵守后端)
     })
 }
+//修改用户状态
+export function changeUserStatus(data){
+    return request({
+        url:"/system/user/changeStatus",
+        method:"put",
+        data:data
+    })
+}

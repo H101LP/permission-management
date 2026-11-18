@@ -72,4 +72,8 @@ public interface IUserService {
      * @return 结果
      */
     int deleteUserByUserIds(Long[] userIds);
+    /**
+     * 修改用户状态
+     */
+    int changeStatus(User user);
 }
