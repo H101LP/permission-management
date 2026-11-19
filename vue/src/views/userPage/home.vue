@@ -5,7 +5,7 @@
       <div class="welcome-content">
         <div class="welcome-text">
           <h1>{{ greeting }}，{{ userStore.name || '用户' }} 👋</h1>
-          <p class="welcome-sub">欢迎来到 {{ siteTitle }}，今日好心情！</p>
+          <p class="welcome-sub">欢迎来到 {{ siteTitle }}，今日好心情！ 这里是普通用户</p>
         </div>
         <div class="welcome-extra">
           <el-tag type="success" size="large" effect="light">

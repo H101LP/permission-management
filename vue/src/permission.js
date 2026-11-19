@@ -28,15 +28,16 @@ router.beforeEach(async (to) => {
   if (routeStore.sidebarRoutes.length === 0) {
     isReLogin.show = true
     try {
-      const userInfo = await useUserStore().getInfo()
+      await useUserStore().getInfo()   // 只取副作用（写入 store），不再需要返回值
       const accessRoutes = await routeStore.generateRoutes()
       accessRoutes.forEach(route => router.addRoute(route)) // 动态添加（追加到末尾）
 
-      // 默认页按角色跳转（替代原来 permission.js 里那套 redirectPath 死代码）
-      if (to.path === '/' || to.path === '') {
-        const roleName = userInfo.roleName || userInfo.data?.roleName || 'user'
-        return { path: roleName === 'admin' ? '/index' : '/userPage/home', replace: true }
-      }
+      // 所有角色统一进后台（/index），不再按角色分流到前台装饰页。
+      // 三层隔离各自独立生效：
+      //   菜单级 —— /getRouters 按 role_menu 过滤，无权限的菜单不进侧边栏
+      //   数据级 —— DataScopeInterceptor 按 role.data_scope 过滤行
+      //   按钮级 —— v-has-perm 把无权限的按钮从 DOM 摘掉
+      // 这样普通用户看到的是"同一套后台界面，但只有他能用的那部分"。
 
       // 关键：路由刚添加完，用 fullPath 重新导航到当前目标。
       // 不要用 next({ ...to })，展开 to 会把 matched/meta 等内部字段带进 location，容易解析异常
