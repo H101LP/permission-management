@@ -30,7 +30,8 @@ public class LoginUser implements UserDetails {
     private Set<String> permissions;
     /** 部门ID */
     private Long deptId;
-
+    /** 数据范围：1全部 2本部门 3本部门及以下 */
+    private Integer dataScope;
     /** 是否是超级管理员 */
     private boolean isAdmin;
 

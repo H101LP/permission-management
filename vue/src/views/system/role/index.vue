@@ -45,6 +45,13 @@
           <el-form-item label="角色顺序" prop="roleSort">
             <el-input v-model="form.roleSort" placeholder="请输入角色顺序"></el-input>
           </el-form-item>
+          <el-form-item label="数据范围" prop="dataScope">
+            <el-select v-model="form.dataScope" placeholder="请选择数据范围" style="width:100%">
+              <el-option label="全部数据" :value="1"/>
+              <el-option label="本部门数据" :value="2"/>
+              <el-option label="本部门及以下" :value="3"/>
+            </el-select>
+          </el-form-item>
           <el-form-item label="菜单权限" >
             <el-tree
                 style="width:100%"
@@ -114,6 +121,7 @@ const form = ref({
   roleId: null,
   roleName: null,
   roleSort: null,
+  dataScope: 1,
   menuIds: []
 })
 //表单校验
@@ -125,12 +133,13 @@ const rules = ref({
     { required: true, message: '请输入角色排序', trigger: 'blur' }
   ]
 })
-//新增按钮
+// 新增按钮
 const handleInsert = () => {
   form.value = {
     roleId: null,
     roleName: null,
     roleSort: null,
+    dataScope: 1,
     menuIds: []
   }
   selectRoleMenusTree().then(

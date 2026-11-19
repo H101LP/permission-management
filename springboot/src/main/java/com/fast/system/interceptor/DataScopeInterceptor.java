@@ -83,10 +83,30 @@ public class DataScopeInterceptor implements Interceptor {
             PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
 
             // 7. 构建我们要拼接的条件
-            // 假设当前用户是部门管理员，只能看本部门数据
-            // 拼接：AND u.dept_id = 1
             String deptAlias = dataScope.deptAlias();
-            String conditionSql = deptAlias + ".dept_id = " + loginUser.getDeptId();
+            Long deptId = loginUser.getDeptId();
+            Integer scope = loginUser.getDataScope();
+
+            // 老 token 反序列化后 dataScope 为 null（加字段前签发的票）：
+            // 必须 fail-close 按"本部门"处理，绝不能当"全部"放行
+            if (scope == null) {
+                scope = 2;
+            }
+
+            String conditionSql;
+            if (scope == 1) {
+                // 全部数据：不拼条件，直接放行
+                return invocation.proceed();
+            } else if (scope == 2) {
+                // 本部门
+                conditionSql = deptAlias + ".dept_id = " + deptId;
+            } else {
+                // 本部门及以下：dept 2 自身 + 所有 ancestors 含 2 的子孙部门
+                conditionSql = deptAlias + ".dept_id IN ("
+                        + "SELECT dept_id FROM sys_dept"
+                        + " WHERE dept_id = " + deptId
+                        + " OR FIND_IN_SET(" + deptId + ", ancestors))";
+            }
 
             Expression sqlExpression = CCJSqlParserUtil.parseCondExpression(conditionSql);
 

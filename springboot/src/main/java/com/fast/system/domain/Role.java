@@ -22,6 +22,8 @@ public class Role {
     private String roleName;
     //显示顺序
     private Integer roleSort;
+    // 数据范围（1全部 2本部门 3本部门及以下）
+    private Integer dataScope;
     // 创建时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private String createTime;

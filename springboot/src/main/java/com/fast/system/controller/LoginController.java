@@ -2,13 +2,12 @@ package com.fast.system.controller;
 
 import com.fast.system.configure.TokenBlacklistService;
 import com.fast.system.configure.TokenService;
-import com.fast.system.domain.AjaxResult;
-import com.fast.system.domain.LoginBody;
-import com.fast.system.domain.LoginUser;
-import com.fast.system.domain.User;
+import com.fast.system.domain.*;
 import com.fast.system.exception.BusinessException;
 import com.fast.system.mapper.MenuMapper;
+import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IPermCacheService;
+import com.fast.system.service.IRoleService;
 import com.fast.system.service.IUserService;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
@@ -40,8 +39,15 @@ public class LoginController extends BaseController {
     private MenuMapper menuMapper;
     @Resource
     private IPermCacheService permCacheService;
+    /* 密码加密组件 */
     @Resource
     private PasswordEncoder passwordEncoder;
+    /* 用户角色映射表 */
+    @Resource
+    private UserRoleMapper userRoleMapper;
+    /* 角色服务 */
+    @Resource
+    private IRoleService roleService;
     /** token 黑名单（登出主动失效） */
     @Resource
     private TokenBlacklistService tokenBlacklistService;
@@ -114,6 +120,11 @@ public class LoginController extends BaseController {
         loginUser.setDeptId(user.getDeptId());
         //判断是否为管理员级别
         loginUser.setAdmin(user.getUserId() != null && user.getUserId() == 1L);
+
+        // 数据范围在 createToken 之前赋值
+        Long roleId = userRoleMapper.selectRoleIdByUserId(user.getUserId());
+        Role role = roleId == null ? null : roleService.selectRoleById(roleId);
+        loginUser.setDataScope(role == null || role.getDataScope() == null ? 1 : role.getDataScope());
 
         permCacheService.evictByUserId(user.getUserId());
 
