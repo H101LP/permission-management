@@ -190,7 +190,9 @@ const editUserInfo = () => {
 //获取用户信息
 const getUser = () =>{
   getInfo().then(res =>{
-    state.user = res.data;
+    // /getInfo 返回的是 { user: {...}, permissions: [...] }
+    // 之前直接取 res.data，导致 userName/sex 取到 undefined（性别空白、弹窗用户名为空）
+    state.user = res.data.user || {};
     //初始化表单
     form.value={
       userName: state.user.userName,
@@ -216,7 +218,7 @@ const handleAvatarSuccess = (res) => {
  if(res.code === 200){
    userStore.avatar = import.meta.env.VITE_APP_BASE_API + res.data.imgUrl
  }else {
-   ElMessage.error(res.msg ||修改失败);
+   ElMessage.error(res.msg || '修改失败');
  }
 }
 
