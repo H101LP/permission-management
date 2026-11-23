@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.system.mapper.TicketMapper">
+
+    <resultMap id="TicketResult" type="com.fast.system.domain.Ticket">
+        <id column="ticket_id" property="ticketId"/>
+        <result column="ticket_no" property="ticketNo"/>
+        <result column="ticket_title" property="ticketTitle"/>
+        <result column="ticket_type" property="ticketType"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="owner_user_id" property="ownerUserId"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 列表：@DataScope(deptAlias="t") 会追加 t.dept_id 条件 -->
+    <select id="selectTicketList" parameterType="Ticket" resultMap="TicketResult">
+        SELECT t.ticket_id, t.ticket_no, t.ticket_title, t.ticket_type, t.dept_id,
+        t.owner_user_id, t.status, t.remark, t.create_time
+        FROM biz_ticket t
+        <where>
+            <if test="ticketNo != null and ticketNo != ''">
+                AND t.ticket_no LIKE CONCAT('%', #{ticketNo}, '%')
+            </if>
+            <if test="ticketTitle != null and ticketTitle != ''">
+                AND t.ticket_title LIKE CONCAT('%', #{ticketTitle}, '%')
+            </if>
+            <if test="ticketType != null">
+                AND t.ticket_type = #{ticketType}
+            </if>
+            <if test="status != null">
+                AND t.status = #{status}
+            </if>
+        </where>
+        ORDER BY t.ticket_id ASC
+    </select>
+
+    <select id="selectTicketById" parameterType="Long" resultMap="TicketResult">
+        SELECT t.ticket_id, t.ticket_no, t.ticket_title, t.ticket_type, t.dept_id,
+               t.owner_user_id, t.status, t.remark, t.create_time
+        FROM biz_ticket t
+        WHERE t.ticket_id = #{ticketId}
+    </select>
+
+    <insert id="insertTicket" parameterType="Ticket" useGeneratedKeys="true" keyProperty="ticketId">
+        INSERT INTO biz_ticket (ticket_no, ticket_title, ticket_type, dept_id,
+                                owner_user_id, status, remark)
+        VALUES (#{ticketNo}, #{ticketTitle}, #{ticketType}, #{deptId},
+                #{ownerUserId}, #{status}, #{remark})
+    </insert>
+
+    <update id="updateTicket" parameterType="Ticket">
+        UPDATE biz_ticket
+        <set>
+            ticket_title = #{ticketTitle},
+            <if test="ticketNo != null">ticket_no = #{ticketNo},</if>
+            <if test="ticketType != null">ticket_type = #{ticketType},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="ownerUserId != null">owner_user_id = #{ownerUserId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </set>
+        WHERE ticket_id = #{ticketId}
+    </update>
+
+    <delete id="deleteTicketById" parameterType="Long">
+        DELETE FROM biz_ticket WHERE ticket_id = #{ticketId}
+    </delete>
+</mapper>
