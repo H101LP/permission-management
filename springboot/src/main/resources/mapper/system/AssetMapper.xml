@@ -57,7 +57,6 @@
             <if test="status != null">status = #{status},</if>
             <if test="price != null">price = #{price},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_time = NOW()
         </set>
         WHERE asset_id = #{assetId}
     </update>
