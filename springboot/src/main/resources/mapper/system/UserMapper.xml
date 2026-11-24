@@ -81,6 +81,7 @@
             <if test="avatar !=null and avatar != ''">avatar,</if>
             <if test="password !=null and password != ''">password,</if>
             <if test="status !=null and status != ''">status,</if>
+            <if test="deptId != null">dept_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId !=null">#{userId},</if>
@@ -89,6 +90,7 @@
             <if test="avatar !=null and avatar != ''">#{avatar},</if>
             <if test="password !=null and password != ''">#{password},</if>
             <if test="status !=null and status != ''">#{status},</if>
+            <if test="deptId != null">#{deptId},</if>
         </trim>
 
 
@@ -105,6 +107,7 @@
             <if test="sex != null">sex = #{sex},</if>
             <if test="password != null and password != ''">password = #{password},</if>
             <if test="status != null and status != ''">status = #{status},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
             update_time = NOW()
         </set>
         where user_id = #{userId}

@@ -51,6 +51,15 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 // 用缓存里的最新权限覆盖 JWT 内旧快照，权限变更后无需重登即可生效
                 UserPermCacheVO permCache = permCacheService.getOrLoad(loginUser.getUserId());
                 loginUser.setPermissions(new HashSet<>(permCache.getPerms()));
+                // deptId / dataScope 也要跟进：JWT 里存的是签发那一刻的快照，
+                // 管理员改了某人的部门或角色，对方不重新登录就永远用旧值过滤。
+                // 判空是为了兼容"加这两个字段之前"写进 Redis 的老缓存，缺字段时保持 token 原值。
+                if (permCache.getDeptId() != null) {
+                    loginUser.setDeptId(permCache.getDeptId());
+                }
+                if (permCache.getDataScope() != null) {
+                    loginUser.setDataScope(permCache.getDataScope());
+                }
                 // 完整快照（perms + routers）放进本次请求，Controller 直接复用，避免二次查询
                 request.setAttribute(IPermCacheService.REQUEST_SNAPSHOT_KEY, permCache);
                 //4 构建sercurity认证令牌

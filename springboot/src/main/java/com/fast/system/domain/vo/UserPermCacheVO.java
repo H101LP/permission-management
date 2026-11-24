@@ -16,4 +16,8 @@ public class UserPermCacheVO {
     private List<String> perms = new ArrayList<>();
     /** 空值标记：用户不存在时置 true，配合 60 秒短 TTL 防穿透 */
     private boolean empty;
+    /** 用户所在部门（数据权限过滤用，随缓存一起重建） */
+    private Long deptId;
+    /** 数据范围：1全部 2本部门 3本部门及以下（随缓存一起重建） */
+    private Integer dataScope;
 }

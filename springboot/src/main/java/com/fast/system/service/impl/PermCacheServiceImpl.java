@@ -1,7 +1,11 @@
 package com.fast.system.service.impl;
 
+import com.fast.system.domain.Role;
+import com.fast.system.domain.User;
 import com.fast.system.domain.vo.RouterVo;
 import com.fast.system.domain.vo.UserPermCacheVO;
+import com.fast.system.mapper.RoleMapper;
+import com.fast.system.mapper.UserMapper;
 import com.fast.system.mapper.UserRoleMapper;
 import com.fast.system.service.IMenuService;
 import com.fast.system.service.IPermCacheService;
@@ -45,6 +49,10 @@ public class PermCacheServiceImpl implements IPermCacheService {
     private IMenuService menuService;
     @Resource
     private UserRoleMapper userRoleMapper;
+    @Resource
+    private UserMapper userMapper;
+    @Resource
+    private RoleMapper roleMapper;
 
     @Value("${perm.cache.ttl-seconds:18000}")
     private long ttlSeconds;
@@ -133,6 +141,16 @@ public class PermCacheServiceImpl implements IPermCacheService {
         // 动态路由树
         List<RouterVo> routers = menuService.selectMenuTreeRouterByUserId(userId);
         vo.setRouters(routers == null ? new ArrayList<>() : routers);
+
+        // 部门 + 数据范围：取值口径与 LoginController 登录时保持一致
+        // （登录时 deptId 取 user.dept_id，dataScope 取该角色 data_scope，角色为空按 1 处理）。
+        // 放进缓存的目的：管理员改某人部门/角色后，下一个请求就能按新值过滤，
+        // 不必等对方重新登录——JWT 里的 deptId 是签发时快照，不会自己变。
+        User dbUser = userMapper.selectByUserUserId(userId);
+        vo.setDeptId(dbUser == null ? null : dbUser.getDeptId());
+        Long roleId = userRoleMapper.selectRoleIdByUserId(userId);
+        Role dbRole = roleId == null ? null : roleMapper.selectRoleById(roleId);
+        vo.setDataScope(dbRole == null || dbRole.getDataScope() == null ? 1 : dbRole.getDataScope());
 
         // 用户查不到任何权限和菜单 → 视为空值（60 秒短缓存）
         vo.setEmpty(vo.getPerms().isEmpty() && vo.getRouters().isEmpty());
