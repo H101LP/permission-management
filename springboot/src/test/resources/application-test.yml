@@ -1,0 +1,25 @@
+# ============================================================
+# P3-1 集成测试专用配置（profile = test）
+# 只覆盖 application.yml 里那些依赖环境变量的项，
+# 其余（数据源 URL / Redis / MyBatis / PageHelper）全部沿用主配置。
+#
+# 主配置里的 ${DB_USERNAME} / ${DB_PASSWORD} / ${JWT_SECRET}
+# 在本机没有对应环境变量，不覆盖的话 Spring 启动会直接
+# 报 "Could not resolve placeholder"，测试一个都跑不起来。
+# ============================================================
+spring:
+  datasource:
+    username: root
+    password: abc123
+
+token:
+  # HS256 要求密钥 >= 256 bit，这里 64 个字符足够
+  secret: it-test-only-secret-rbac-p31-0123456789abcdef0123456789abcdef
+
+logging:
+  level:
+    com.fast: info
+    # 数据权限拦截器每次查询都会 info 打印「原 SQL / 追加后 SQL」，
+    # 6 个用例几十次查询会把控制台刷满，测试期间压到 warn
+    com.fast.system.interceptor.DataScopeInterceptor: warn
+    org.springframework: warn
