@@ -19,7 +19,7 @@
     <div style="display: flex;align-items: center;">
       <span style="margin-right: 15px">您好:{{ userStore.name }}</span>
 
-      <el-button type="text" @click="logout" style="display: flex;padding: 0 20px;align-items: center;">
+      <el-button link @click="logout" style="display: flex;padding: 0 20px;align-items: center;">
         <SvgIcon icon-class="logout" />
         <span>退出登录</span>
       </el-button>
@@ -137,5 +137,44 @@ watch(()=> route.path,()=>{
 
 
 <style scoped>
+:deep(.el-header) {
+  height: var(--app-header-height) !important;          /* 覆盖内联 50px */
+  background: rgba(255, 255, 255, 0.94) !important;     /* 覆盖内联 #ffffff */
+  box-shadow: none !important;                          /* 覆盖内联阴影 */
+  border-bottom: 1px solid var(--border-default);
+  z-index: 1000;
+  padding: 0 24px;
+}
 
+/* 覆盖内联 width/height: 40px */
+:deep(.el-header) > div:first-child > img {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 9px;
+}
+
+/* 覆盖内联 font-size: 28px; font-weight: bold */
+:deep(.el-header) > div:first-child > span {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+:deep(.el-header .el-dropdown img) {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 覆盖内联 top: 50px; margin-left: 240px */
+main {
+  top: var(--app-header-height) !important;
+  margin-left: var(--app-sidebar-width) !important;
+  min-height: calc(100vh - var(--app-header-height));
+  background: var(--bg-page);
+}
+
+/* 覆盖内联 top: 51px */
+:deep(.el-aside) {
+  top: var(--app-header-height) !important;
+  background: #111827;
+}
 </style>

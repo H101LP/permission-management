@@ -58,8 +58,19 @@ const handleCurrentChange = (val) => {
 
 <style scoped>
 .container{
-  padding: 30px 15px;
+  padding: 16px 15px;
   display: flex;
   justify-content: flex-end;
+  border-top: 1px solid var(--border-default);
+}
+
+.container :deep(.el-pagination .el-pager li.is-active) {
+  background-color: var(--brand-500);
+  color: #ffffff;
+}
+
+.container :deep(.el-pagination .el-pager li:not(.is-active):hover) {
+  background-color: var(--brand-50);
+  color: var(--brand-500);
 }
 </style>

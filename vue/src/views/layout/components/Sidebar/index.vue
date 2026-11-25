@@ -64,15 +64,37 @@ const activeMenu = computed(() => {
   padding: 8px 0;
   border-right: none;
 }
-.sidebar-menu :deep(.el-menu-item){
-  color: #666;
-  height: 55px;
+
+/* 以下替换原 67-77 行 */
+.sidebar-menu :deep(.el-menu-item),
+.sidebar-menu :deep(.el-sub-menu__title) {
+  height: 44px;
+  line-height: 44px;
+  margin: 4px 0;
+  border-radius: 8px;
+  color: #d5dce8;
 }
-.sidebar-menu :deep(.el-menu-item).is-active{
-  background: var(--el-color-primary) !important;
-  color: white;
+
+.sidebar-menu :deep(.el-menu-item.is-active) {
+  background: #334155;
+  color: #ffffff;
   position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  border-radius: 3px;
+}
+
+.sidebar-menu :deep(.el-menu-item.is-active)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: #93c5fd;
+}
+
+/* ⚠️ 这一条不能加 .sidebar-menu 前缀：
+   el-scrollbar 是 .sidebar-menu（el-menu 自身）的父级，不是它的后代 */
+:deep(.el-scrollbar__wrap) {
+  background: transparent;
 }
 </style>

@@ -1,66 +1,117 @@
 <template>
-  <div class="app-container">
-<!--顶部查询区域    -->
-    <el-form :model="query" ref="queryRef" label-width="80px" inline>
-      <el-form-item label="用户名称" prop="userName">
-        <el-input v-model="query.userName" placeholder="请输入用户名称"/>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button  icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-<!--顶部按钮    -->
-<el-row :gutter="10" class="mb8">
-  <el-col :span="1.5"/>
-  <el-button v-has-perm="['system:user:add']"  type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
-  <el-button v-has-perm="['system:user:edit']" :disabled="single" type="success" icon="Edit" @click="handleUpdate" plain>修改</el-button>
-  <el-button v-has-perm="['system:user:remove']" :disabled="multiple" type="danger" icon="Delete" @click="handleDelete" plain>删除</el-button>
+  <div class="management-page">
+    <header class="page-heading">
+      <div class="heading-main">
+        <div class="heading-icon">
+          <el-icon><User /></el-icon>
+        </div>
+        <div>
+          <h1>用户管理</h1>
+          <p>维护用户账号、角色分配与启用状态</p>
+        </div>
+      </div>
+      <div class="heading-stat">
+        <span class="live-dot"></span>
+        <span>用户总数</span>
+        <strong>{{ total }}</strong>
+        <span>个</span>
+      </div>
+    </header>
 
-</el-row>
+    <section class="query-panel">
+      <el-form :model="query" ref="queryRef" label-width="80px" inline class="query-form">
+        <el-form-item label="用户名称" prop="userName" class="field-lg">
+          <el-input v-model="query.userName" placeholder="请输入用户名称" clearable/>
+        </el-form-item>
+        <div class="query-actions">
+          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        </div>
+      </el-form>
+    </section>
 
-<!--列表    -->
-    <el-table :data="userList" style="width: 100%" border @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column prop="userId" label="用户编号" width="180" align="center" />
-      <el-table-column prop="userName" label="用户名" width="180" align="center" />
-      <el-table-column label="性别" align="center" >
-        <template #default="scope" align="center">
-          <span v-if="scope.row.sex === 0">男</span>
-          <span v-else-if="scope.row.sex === 1">女</span>
-          <span v-else>未设置</span>
+    <section class="table-panel">
+      <div class="table-toolbar">
+        <div class="table-title">
+          <h2>用户列表</h2>
+          <span class="record-count">共 {{ total }} 条记录</span>
+        </div>
+        <div class="table-actions">
+          <el-button v-has-perm="['system:user:add']" type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
+          <el-button v-has-perm="['system:user:edit']" :disabled="single" type="success" icon="Edit" @click="handleUpdate" plain>修改</el-button>
+          <el-button v-has-perm="['system:user:remove']" :disabled="multiple" type="danger" icon="Delete" @click="handleDelete" plain>删除</el-button>
+        </div>
+      </div>
+
+      <el-table :data="userList" class="data-table" border @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="用户编号" width="180" align="center">
+          <template #default="scope">
+            <span class="cell-code">{{ scope.row.userId }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="用户名" width="180" align="center">
+          <template #default="scope">
+            <span class="cell-main">{{ scope.row.userName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="性别" align="center">
+          <template #default="scope">
+            <span v-if="scope.row.sex === 0">男</span>
+            <span v-else-if="scope.row.sex === 1">女</span>
+            <span v-else>未设置</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="头像" width="90" align="center">
+          <template #default="scope">
+            <el-avatar :size="34" :src="scope.row.avatar? baseUrl+scope.row.avatar : defaultAvatar" class="user-avatar" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="roleName" label="对应角色" align="center" />
+        <el-table-column label="状态" align="center" width="100">
+          <template #default="scope">
+            <el-switch
+                v-model="scope.row.status"
+                active-value="0"
+                inactive-value="1"
+                :before-change="() => handleStatusChange(scope.row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="200" fixed="right">
+          <template #default="scope">
+            <div class="row-actions">
+              <el-button v-has-perm="['system:user:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
+              <el-button v-has-perm="['system:user:remove']" link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+
+        <template #empty>
+          <div class="empty-state">
+            <span class="empty-icon"><el-icon><Search /></el-icon></span>
+            <p>没有找到匹配的用户</p>
+            <span>请调整查询条件后再试</span>
+          </div>
         </template>
-      </el-table-column>
-      <el-table-column prop="avatar" label="头像" align="center" >
-        <template #default="scope">
-          <el-avatar :size="50" :src="scope.row.avatar? baseUrl+scope.row.avatar : defaultAvatar" />
-        </template>
-      </el-table-column>
-      <el-table-column prop="roleName" label="对应角色" align="center" />
-      <el-table-column label="状态" align="center" width="100">
-        <template #default="scope">
-          <el-switch
-              v-model="scope.row.status"
-              active-value="0"
-              inactive-value="1"
-              :before-change="() => handleStatusChange(scope.row)"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" width="200px">
-        <template #default="scope">
-          <el-button v-has-perm="['system:user:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button v-has-perm="['system:user:remove']" link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-<!--分页-->
-    <pagination :total="total"
-                v-model:page="query.pageNum"
-                v-model:limit="query.pageSize"
-                @pagination="getList"/>
+      </el-table>
+
+      <div class="table-footer">
+        <div class="footer-summary">
+          <span>第 {{ query.pageNum }} 页</span>
+          <span class="footer-dot">·</span>
+          <span>每页 {{ query.pageSize }} 条</span>
+        </div>
+        <pagination class="log-pagination"
+                    :total="total"
+                    v-model:page="query.pageNum"
+                    v-model:limit="query.pageSize"
+                    @pagination="getList"/>
+      </div>
+    </section>
+
     <!--添加或修改用户对话框-->
-    <vxe-modal :title="title" v-model="Open"  width="500px" showFooter show-maximize resize>
+    <vxe-modal class-name="form-modal" :title="title" v-model="Open" width="500px" showFooter show-maximize resize>
       <template #default>
         <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
           <el-form-item label="用户名" prop="userName">
@@ -302,5 +353,8 @@ onMounted(() => {
 
 
 <style scoped>
-
+.user-avatar {
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--border-default);
+}
 </style>

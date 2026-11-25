@@ -1,40 +1,83 @@
-<template class="app-container">
-  <div>
-    <!--顶部查询区域    -->
-    <el-form :model="query" ref="queryRef" label-width="80px" inline>
-      <el-form-item label="菜单名称" prop="menuName">
-        <el-input v-model="query.menuName" placeholder="请输入菜单名称"/>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button  icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-    <!--顶部按钮    -->
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5"/>
-      <el-button type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
-    </el-row>
-    <!--列表    -->
-    <el-table :data="menuList" style="width: 100%" border row-key="menuId"
-              :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-      <el-table-column prop="menuName" label="菜单名称" min-width="100" align="center" />
-      <el-table-column prop="icon" label="图标" align="center" >
-        <template #default="scope">
-          <svg-icon :icon-class="scope.row.icon" />
+<template>
+  <div class="management-page">
+    <header class="page-heading">
+      <div class="heading-main">
+        <div class="heading-icon">
+          <el-icon><Menu /></el-icon>
+        </div>
+        <div>
+          <h1>菜单管理</h1>
+          <p>维护目录、菜单与按钮权限结构</p>
+        </div>
+      </div>
+      <div class="heading-stat">
+        <span class="meta-dot"></span>
+        <span>树形菜单</span>
+      </div>
+    </header>
+
+    <section class="query-panel">
+      <el-form :model="query" ref="queryRef" label-width="80px" inline class="query-form">
+        <el-form-item label="菜单名称" prop="menuName" class="field-lg">
+          <el-input v-model="query.menuName" placeholder="请输入菜单名称" clearable/>
+        </el-form-item>
+        <div class="query-actions">
+          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        </div>
+      </el-form>
+    </section>
+
+    <section class="table-panel">
+      <div class="table-toolbar">
+        <div class="table-title">
+          <h2>菜单列表</h2>
+          <span class="record-count">当前 {{ menuList.length }} 个根节点</span>
+        </div>
+        <div class="table-actions">
+          <el-button type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
+        </div>
+      </div>
+
+      <el-table :data="menuList" class="data-table" border row-key="menuId"
+                :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+        <el-table-column label="菜单名称" min-width="180" align="center">
+          <template #default="scope">
+            <span class="cell-main">{{ scope.row.menuName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="图标" width="90" align="center">
+          <template #default="scope">
+            <svg-icon class="menu-icon" :icon-class="scope.row.icon || ''" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="menuSort" label="排序" align="center" width="60" />
+        <el-table-column label="组件路径" align="center" width="220" show-overflow-tooltip>
+          <template #default="scope">
+            <span class="cell-code">{{ scope.row.component || '—' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" :width="200" fixed="right">
+          <template #default="scope">
+            <div class="row-actions">
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+
+        <template #empty>
+          <div class="empty-state">
+            <span class="empty-icon"><el-icon><Search /></el-icon></span>
+            <p>没有找到匹配的菜单</p>
+            <span>请调整查询条件后再试</span>
+          </div>
         </template>
-      </el-table-column>
-      <el-table-column prop="menuSort" label="排序" align="center" width="60" />
-      <el-table-column prop="component" label="组件路径" align="center" width="160" />
-      <el-table-column label="操作" align="center" :width="200">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!--添加或修改用户对话框-->
-    <vxe-modal :title="title" v-model="Open"  width="40%" showFooter show-maximize resize>
+      </el-table>
+    </section>
+
+    <!--添加或修改菜单对话框-->
+    <vxe-modal class-name="form-modal" :title="title" v-model="Open" width="40%" showFooter show-maximize resize>
       <template #default>
         <el-form ref="menuRef" :model="form" :rules="rules" label-width="80px">
           <el-row >
@@ -117,8 +160,6 @@
         </div>
       </template>
     </vxe-modal>
-
-
   </div>
 </template>
 <script setup>
@@ -343,5 +384,9 @@ const buildTree = (data, parentId) => {
 
 
 <style scoped>
-
+.menu-icon {
+  color: var(--brand-500);
+  font-size: 18px;
+  vertical-align: middle;
+}
 </style>

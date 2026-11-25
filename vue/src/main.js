@@ -16,6 +16,7 @@ import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/SvgIcon'
 //引入全局样式
 import '@/assets/styles/all.css'
+import '@/assets/styles/pages.css'
 //ui
 import VxeUIBase from 'vxe-pc-ui'
 import 'vxe-pc-ui/es/style.css'

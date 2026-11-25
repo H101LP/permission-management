@@ -1,65 +1,113 @@
 <template>
-  <div class="app-container">
-    <!-- 搜索栏 -->
-    <el-form :model="query" ref="queryRef" label-width="80px" inline>
-      <el-form-item label="资产名称" prop="assetName">
-        <el-input v-model="query.assetName" placeholder="请输入资产名称" clearable
-                  style="width: 200px" @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="query.status" placeholder="全部" clearable
-                   :value-on-clear="null" style="width: 140px">
-          <el-option v-for="d in statusOptions" :key="d.value" :label="d.label" :value="d.value"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+  <div class="management-page">
+    <header class="page-heading">
+      <div class="heading-main">
+        <div class="heading-icon">
+          <el-icon><Box /></el-icon>
+        </div>
+        <div>
+          <h1>资产管理</h1>
+          <p>维护资产台账、归属部门与使用状态</p>
+        </div>
+      </div>
+      <div class="heading-stat">
+        <span class="live-dot"></span>
+        <span>当前结果</span>
+        <strong>{{ total }}</strong>
+        <span>条</span>
+      </div>
+    </header>
 
-    <!-- 顶部按钮 -->
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5"/>
-      <el-button v-has-perm="['business:asset:add']" type="primary" icon="Plus"
-                 plain @click="handleInsert">新增</el-button>
-    </el-row>
+    <section class="query-panel">
+      <el-form :model="query" ref="queryRef" inline class="query-form">
+        <el-form-item label="资产名称" prop="assetName" class="field-lg">
+          <el-input v-model="query.assetName" placeholder="请输入资产名称" clearable
+                    @keyup.enter="handleQuery"/>
+        </el-form-item>
+        <el-form-item label="状态" prop="status" class="field-md">
+          <el-select v-model="query.status" placeholder="全部" clearable :value-on-clear="null">
+            <el-option v-for="d in statusOptions" :key="d.value" :label="d.label" :value="d.value"/>
+          </el-select>
+        </el-form-item>
+        <div class="query-actions">
+          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        </div>
+      </el-form>
+    </section>
 
-    <!-- 列表 -->
-    <el-table :data="assetList" style="width: 100%" border>
-      <el-table-column prop="assetId" label="编号" width="90" align="center"/>
-      <el-table-column prop="assetName" label="资产名称" min-width="150" align="center" show-overflow-tooltip/>
-      <el-table-column prop="assetCode" label="资产编号" width="150" align="center"/>
-      <el-table-column label="归属部门" width="120" align="center">
-        <template #default="scope">{{ deptMap[scope.row.deptId] || scope.row.deptId }}</template>
-      </el-table-column>
-      <el-table-column label="状态" width="100" align="center">
-        <template #default="scope">
-          <el-tag :type="statusTagType(scope.row.status)">{{ statusText(scope.row.status) }}</el-tag>
+    <section class="table-panel">
+      <div class="table-toolbar">
+        <div class="table-title">
+          <h2>资产台账</h2>
+          <span class="record-count">共 {{ total }} 条记录</span>
+        </div>
+        <div class="table-actions">
+          <el-button v-has-perm="['business:asset:add']" type="primary" icon="Plus"
+                     plain @click="handleInsert">新增</el-button>
+        </div>
+      </div>
+
+      <el-table :data="assetList" class="data-table" border row-key="assetId">
+        <el-table-column prop="assetId" label="编号" width="90" align="center">
+          <template #default="scope"><span class="cell-code">{{ scope.row.assetId }}</span></template>
+        </el-table-column>
+        <el-table-column prop="assetName" label="资产名称" min-width="150" align="center" show-overflow-tooltip>
+          <template #default="scope"><span class="cell-main">{{ scope.row.assetName }}</span></template>
+        </el-table-column>
+        <el-table-column prop="assetCode" label="资产编号" width="150" align="center">
+          <template #default="scope"><span class="cell-code">{{ scope.row.assetCode }}</span></template>
+        </el-table-column>
+        <el-table-column label="归属部门" width="120" align="center">
+          <template #default="scope"><span class="cell-muted">{{ deptMap[scope.row.deptId] || scope.row.deptId }}</span></template>
+        </el-table-column>
+        <el-table-column label="状态" width="100" align="center">
+          <template #default="scope">
+            <el-tag :type="statusTagType(scope.row.status)" effect="plain" class="status-tag">
+              <span class="status-dot"></span>
+              {{ statusText(scope.row.status) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="原值" width="120" align="center">
+          <template #default="scope"><span class="cell-money">{{ formatMoney(scope.row.price) }}</span></template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="170" align="center"/>
+        <el-table-column label="操作" width="150" align="center" fixed="right">
+          <template #default="scope">
+            <div class="row-actions">
+              <el-button v-has-perm="['business:asset:edit']" link type="primary" icon="Edit"
+                         @click="handleUpdate(scope.row)">修改</el-button>
+              <el-button v-has-perm="['business:asset:remove']" link type="danger" icon="Delete"
+                         @click="handleDelete(scope.row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+
+        <template #empty>
+          <div class="empty-state">
+            <span class="empty-icon"><el-icon><Search /></el-icon></span>
+            <p>没有找到匹配的资产记录</p>
+            <span>请调整筛选条件或新增资产</span>
+          </div>
         </template>
-      </el-table-column>
-      <el-table-column label="原值" width="120" align="center">
-        <template #default="scope">{{ formatMoney(scope.row.price) }}</template>
-      </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="170" align="center"/>
-      <el-table-column label="操作" width="150" align="center">
-        <template #default="scope">
-          <el-button v-has-perm="['business:asset:edit']" link type="primary" icon="Edit"
-                     @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button v-has-perm="['business:asset:remove']" link type="danger" icon="Delete"
-                     @click="handleDelete(scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      </el-table>
 
-    <!-- 分页 -->
-    <pagination :total="total"
-                v-model:page="query.pageNum"
-                v-model:limit="query.pageSize"
-                @pagination="getList"/>
+      <div class="table-footer">
+        <div class="footer-summary">
+          <span>第 {{ query.pageNum }} 页</span>
+          <span class="footer-dot">·</span>
+          <span>每页 {{ query.pageSize }} 条</span>
+        </div>
+        <pagination class="log-pagination"
+                    :total="total"
+                    v-model:page="query.pageNum"
+                    v-model:limit="query.pageSize"
+                    @pagination="getList"/>
+      </div>
+    </section>
 
-    <!-- 新增 / 修改 -->
-    <vxe-modal :title="title" v-model="Open" width="520px" showFooter show-maximize resize>
+    <vxe-modal :title="title" v-model="Open" class-name="form-modal" width="520px" showFooter show-maximize resize>
       <template #default>
         <el-form ref="assetRef" :model="form" :rules="rules" label-width="90px">
           <el-form-item label="资产名称" prop="assetName">
@@ -69,18 +117,18 @@
             <el-input v-model="form.assetCode" placeholder="可不填"/>
           </el-form-item>
           <el-form-item label="归属部门" prop="deptId">
-            <el-select v-model="form.deptId" placeholder="不选则归入当前登录部门" style="width: 100%">
+            <el-select v-model="form.deptId" placeholder="不选则归入当前登录部门" class="full-width">
               <el-option v-for="d in deptOptions" :key="d.deptId" :label="d.deptName" :value="d.deptId"/>
             </el-select>
           </el-form-item>
           <el-form-item label="状态" prop="status">
-            <el-select v-model="form.status" style="width: 100%">
+            <el-select v-model="form.status" class="full-width">
               <el-option v-for="d in statusOptions" :key="d.value" :label="d.label" :value="d.value"/>
             </el-select>
           </el-form-item>
           <el-form-item label="原值" prop="price">
             <el-input-number v-model="form.price" :min="0" :precision="2" :step="100"
-                             controls-position="right" style="width: 100%"/>
+                             controls-position="right" class="full-width"/>
           </el-form-item>
           <el-form-item label="备注" prop="remark">
             <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="可不填"/>

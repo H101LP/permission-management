@@ -1,47 +1,49 @@
 <template>
   <div class="dashboard">
-    <!-- ======================== 第一行：欢迎区域 ======================== -->
+    <!-- 欢迎区域 -->
     <div class="welcome-area">
       <div class="welcome-text">
-        <h2>👋 欢迎回来，{{ userStore.name || '管理员' }}</h2>
-        <p class="sub-text">今天是个好日子，系统运行正常，一切都在掌控之中。 这是管理员界面</p>
+        <h2>欢迎回来，{{ userStore.name || '管理员' }}</h2>
+        <p class="sub-text">系统运行正常，可在这里查看数据概览与常用管理入口。</p>
       </div>
       <div class="welcome-actions">
-        <el-button type="primary" plain size="large">
+        <el-button type="primary" plain>
           <el-icon><Refresh /></el-icon> 刷新数据
         </el-button>
-        <el-button type="success" plain size="large">
+        <el-button plain>
           <el-icon><Setting /></el-icon> 系统设置
         </el-button>
       </div>
     </div>
 
-    <!-- ======================== 第二行：统计卡片 ======================== -->
+    <!-- 统计卡片 -->
     <el-row :gutter="20" class="stats-row">
       <el-col :xs="24" :sm="12" :lg="6" v-for="(item, idx) in statsData" :key="idx">
-        <el-card class="stat-card" shadow="hover" :body-style="{ padding: '20px' }">
+        <el-card class="stat-card" shadow="never">
           <div class="stat-content">
             <div class="stat-left">
               <div class="stat-label">{{ item.label }}</div>
               <div class="stat-value">{{ item.value }}</div>
-              <div class="stat-sub" style="color: #909399">{{ item.sub }}</div>
+              <div class="stat-sub">{{ item.sub }}</div>
             </div>
-            <div class="stat-icon" :style="{ background: item.bg }">
-              <el-icon :size="32"><component :is="item.icon" /></el-icon>
+            <div class="stat-icon">
+              <el-icon :size="28"><component :is="item.icon" /></el-icon>
             </div>
           </div>
         </el-card>
       </el-col>
     </el-row>
 
-    <!-- ======================== 第三行：图表概览 + 快捷功能 ======================== -->
+    <!-- 权限与快捷操作 -->
     <el-row :gutter="20" class="mid-row">
-      <!-- 左侧：通知与动态 -->
       <el-col :xs="24" :md="14">
         <el-card class="panel-card" shadow="never">
           <template #header>
             <div class="card-header">
-              <span class="card-title">🔐 我的权限</span>
+              <span class="card-title">
+                <el-icon><Setting /></el-icon>
+                我的权限
+              </span>
               <el-tag size="small" type="info">共 {{ permissionList.length }} 项</el-tag>
             </div>
           </template>
@@ -65,37 +67,48 @@
         </el-card>
       </el-col>
 
-      <!-- 右侧：快捷入口 -->
       <el-col :xs="24" :md="10">
         <el-card class="panel-card" shadow="never">
           <template #header>
-            <span class="card-title">⚡ 快捷操作</span>
+            <span class="card-title">
+              <el-icon><MenuIcon /></el-icon>
+              快捷操作
+            </span>
           </template>
           <div class="quick-grid">
-            <div
+            <button
                 v-for="action in quickActions"
                 :key="action.label"
+                type="button"
                 class="quick-item"
                 @click="action.handler"
             >
-              <div class="quick-icon" :style="{ background: action.bg }">
-                <el-icon :size="24"><component :is="action.icon" /></el-icon>
-              </div>
+              <span class="quick-icon">
+                <el-icon :size="22"><component :is="action.icon" /></el-icon>
+              </span>
               <span class="quick-label">{{ action.label }}</span>
-            </div>
+            </button>
           </div>
         </el-card>
       </el-col>
     </el-row>
 
-    <!-- ======================== 第四行：系统信息 ======================== -->
+    <!-- 系统信息 -->
     <el-row :gutter="20">
       <el-col :span="24">
         <el-card class="panel-card" shadow="never">
           <template #header>
-            <span class="card-title">🖥️ 系统信息</span>
+            <span class="card-title">
+              <el-icon><Monitor /></el-icon>
+              系统信息
+            </span>
           </template>
-          <el-descriptions :column="4" border size="small">
+          <el-descriptions
+              class="system-descriptions"
+              :column="4"
+              border
+              size="small"
+          >
             <el-descriptions-item label="系统名称">{{ sysInfo.name }}</el-descriptions-item>
             <el-descriptions-item label="版本号">{{ sysInfo.version }}</el-descriptions-item>
             <el-descriptions-item label="当前账号">{{ sysInfo.user }}</el-descriptions-item>
@@ -241,201 +254,324 @@ onMounted(() => {
 
 <style scoped>
 .dashboard {
+  min-height: 100%;
+  box-sizing: border-box;
   padding: 20px;
+  background: var(--bg-page);
 }
 
-/* -------------------- 欢迎区域 -------------------- */
+/* 欢迎区域 */
 .welcome-area {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: #ffffff;
-  padding: 24px 32px;
-  border-radius: 16px;
-  margin-bottom: 24px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
+  margin-bottom: 16px;
+  padding: 18px 22px;
+  border: 1px solid var(--border-default);
+  border-left: 3px solid var(--brand-500);
+  border-radius: var(--radius-card);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.welcome-text {
+  min-width: 0;
 }
 
 .welcome-text h2 {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 6px 0;
-  color: #1f2f3d;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.35;
 }
 
 .sub-text {
-  color: #909399;
-  font-size: 14px;
-  margin: 0;
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .welcome-actions {
   display: flex;
-  gap: 12px;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
-/* -------------------- 统计卡片 -------------------- */
-.stats-row {
-  margin-bottom: 24px;
+.welcome-actions :deep(.el-button) {
+  height: 34px;
+  margin: 0;
+  padding: 0 14px;
+  border-radius: var(--radius-control);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.welcome-actions :deep(.el-button .el-icon) {
+  margin-right: 6px;
+}
+
+/* 统计卡片 */
+.stats-row,
+.mid-row,
+.info-row {
+  row-gap: 16px;
+}
+
+.stats-row,
+.mid-row {
+  margin-bottom: 16px;
+}
+
+.stats-row :deep(.el-col),
+.mid-row :deep(.el-col) {
+  display: flex;
 }
 
 .stat-card {
-  border-radius: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card);
+}
+
+.stat-card :deep(.el-card__body) {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 18px;
 }
 
 .stat-content {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 72px;
 }
 
 .stat-left {
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
 }
 
 .stat-label {
-  font-size: 14px;
-  color: #909399;
   margin-bottom: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
 }
 
 .stat-value {
+  color: var(--text-primary);
   font-size: 28px;
-  font-weight: 600;
-  color: #1f2f3d;
-  line-height: 1.2;
+  font-weight: 650;
+  line-height: 1.15;
 }
 
 .stat-sub {
-  font-size: 13px;
   margin-top: 6px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  line-height: 1.4;
 }
 
-.stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
+.stat-icon,
+.quick-icon {
+  display: grid;
   flex-shrink: 0;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+  color: var(--brand-500);
+  background: var(--brand-50);
 }
 
-/* -------------------- 中间面板 -------------------- */
-.mid-row {
-  margin-bottom: 24px;
-}
-
+/* 权限与快捷操作面板 */
 .panel-card {
-  border-radius: 12px;
+  width: 100%;
   height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
 }
 
 .panel-card :deep(.el-card__header) {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 16px 20px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--bg-surface);
 }
 
 .panel-card :deep(.el-card__body) {
-  padding: 16px 20px;
+  padding: 18px;
 }
 
 .card-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .card-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #1f2f3d;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
-/* 权限点标签区 */
+.card-title .el-icon {
+  color: var(--brand-500);
+  font-size: 16px;
+}
+
 .perm-wrap {
   display: flex;
+  align-content: flex-start;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  min-height: 60px;
-  align-items: flex-start;
+  min-height: 72px;
+}
+
+.perm-wrap :deep(.el-empty) {
+  width: 100%;
+  padding: 4px 0;
 }
 
 .perm-tag {
+  max-width: 100%;
+  border-radius: 4px;
   font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
 }
 
-/* 快捷入口网格 */
 .quick-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .quick-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 16px 8px;
-  background: #f8f9fa;
-  border-radius: 12px;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-height: 94px;
+  padding: 14px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+  font: inherit;
+  text-align: center;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
 }
 
 .quick-item:hover {
-  background: #eef0f2;
-  transform: scale(1.02);
+  border-color: var(--border-strong);
+  background: var(--brand-50);
 }
 
 .quick-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  margin-bottom: 8px;
+  width: 38px;
+  height: 38px;
 }
 
 .quick-label {
-  font-size: 14px;
-  color: #1f2f3d;
-}
-
-/* -------------------- 时间线微调 -------------------- */
-.el-timeline {
-  padding-left: 0;
-}
-
-.el-timeline-item :deep(.el-timeline-item__timestamp) {
   font-size: 13px;
-  color: #aaa;
+  font-weight: 500;
 }
 
-/* -------------------- 响应式适配 -------------------- */
+/* 系统信息 */
+.system-descriptions {
+  --el-descriptions-table-border: 1px solid var(--border-default);
+  --el-descriptions-item-bordered-label-background: var(--bg-subtle);
+}
+
+.system-descriptions :deep(.el-descriptions__label) {
+  width: 96px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.system-descriptions :deep(.el-descriptions__content) {
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 768px) {
+  .dashboard {
+    padding: 14px;
+  }
+
   .welcome-area {
-    flex-direction: column;
     align-items: stretch;
+    flex-direction: column;
+    padding: 16px 18px;
   }
+
+  .welcome-text h2 {
+    font-size: 18px;
+  }
+
+  .stat-card :deep(.el-card__body),
+  .panel-card :deep(.el-card__body) {
+    padding: 16px;
+  }
+
   .stat-value {
-    font-size: 22px;
+    font-size: 24px;
   }
+
+  .stat-icon {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-actions {
+    width: 100%;
+  }
+
+  .welcome-actions :deep(.el-button) {
+    flex: 1;
+  }
+
+  .stat-content {
+    gap: 12px;
+  }
+
   .quick-grid {
-    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .quick-item {
+    min-height: 86px;
   }
 }
 </style>

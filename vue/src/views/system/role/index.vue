@@ -1,42 +1,94 @@
 <template>
-  <div class="app-container">
-    <!--顶部查询区域    -->
-    <el-form :model="query" ref="queryRef" label-width="80px" inline>
-      <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="query.roleName" placeholder="请输入角色名称"/>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button  icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-    <!--顶部按钮    -->
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5"/>
-      <el-button     type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
-      <el-button :disabled="single"  type="success" icon="Edit" @click="handleUpdate" plain>修改</el-button>
-      <el-button :disabled="multiple"  type="danger" icon="Delete" @click="handleDelete" plain>删除</el-button>
+  <div class="management-page">
+    <header class="page-heading">
+      <div class="heading-main">
+        <div class="heading-icon">
+          <el-icon><UserFilled /></el-icon>
+        </div>
+        <div>
+          <h1>角色管理</h1>
+          <p>维护角色信息、数据范围与菜单权限</p>
+        </div>
+      </div>
+      <div class="heading-stat">
+        <span class="live-dot"></span>
+        <span>角色总数</span>
+        <strong>{{ total }}</strong>
+        <span>个</span>
+      </div>
+    </header>
 
-    </el-row>
-    <!--列表    -->
-    <el-table :data="roleList" style="width: 100%" border @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column prop="roleId" label="角色编号" :width="200" align="center" />
-      <el-table-column prop="roleName" label="角色名" min-width="180" align="center" />
-      <el-table-column label="操作" align="center" :width="200">
-        <template #default="scope">
-          <el-button  link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button   link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+    <section class="query-panel">
+      <el-form :model="query" ref="queryRef" label-width="80px" inline class="query-form">
+        <el-form-item label="角色名称" prop="roleName" class="field-lg">
+          <el-input v-model="query.roleName" placeholder="请输入角色名称" clearable/>
+        </el-form-item>
+        <div class="query-actions">
+          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        </div>
+      </el-form>
+    </section>
+
+    <section class="table-panel">
+      <div class="table-toolbar">
+        <div class="table-title">
+          <h2>角色列表</h2>
+          <span class="record-count">共 {{ total }} 条记录</span>
+        </div>
+        <div class="table-actions">
+          <el-button type="primary" icon="Plus" @click="handleInsert" plain>新增</el-button>
+          <el-button :disabled="single" type="success" icon="Edit" @click="handleUpdate" plain>修改</el-button>
+          <el-button :disabled="multiple" type="danger" icon="Delete" @click="handleDelete" plain>删除</el-button>
+        </div>
+      </div>
+
+      <el-table :data="roleList" class="data-table" border @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="角色编号" :width="200" align="center">
+          <template #default="scope">
+            <span class="cell-code">{{ scope.row.roleId }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="角色名" min-width="180" align="center">
+          <template #default="scope">
+            <span class="cell-main">{{ scope.row.roleName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" :width="200" fixed="right">
+          <template #default="scope">
+            <div class="row-actions">
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+
+        <template #empty>
+          <div class="empty-state">
+            <span class="empty-icon"><el-icon><Search /></el-icon></span>
+            <p>没有找到匹配的角色</p>
+            <span>请调整查询条件后再试</span>
+          </div>
         </template>
-      </el-table-column>
-    </el-table>
-    <!--分页-->
-    <pagination :total="total"
-                v-model:page="query.pageNum"
-                v-model:limit="query.pageSize"
-                @pagination="getList"/>
+      </el-table>
+
+      <div class="table-footer">
+        <div class="footer-summary">
+          <span>第 {{ query.pageNum }} 页</span>
+          <span class="footer-dot">·</span>
+          <span>每页 {{ query.pageSize }} 条</span>
+        </div>
+        <pagination class="log-pagination"
+                    :total="total"
+                    v-model:page="query.pageNum"
+                    v-model:limit="query.pageSize"
+                    @pagination="getList"/>
+      </div>
+    </section>
+
     <!--添加或修改角色对话框-->
-    <vxe-modal :title="title" v-model="Open"  width="500px" showFooter show-maximize resize>
+    <vxe-modal class-name="form-modal" :title="title" v-model="Open" width="500px" showFooter show-maximize resize>
       <template #default>
         <el-form ref="roleRef" :model="form" :rules="rules" label-width="80px">
           <el-form-item label="角色名" prop="roleName">
@@ -46,15 +98,15 @@
             <el-input v-model="form.roleSort" placeholder="请输入角色顺序"></el-input>
           </el-form-item>
           <el-form-item label="数据范围" prop="dataScope">
-            <el-select v-model="form.dataScope" placeholder="请选择数据范围" style="width:100%">
+            <el-select v-model="form.dataScope" placeholder="请选择数据范围" class="full-width">
               <el-option label="全部数据" :value="1"/>
               <el-option label="本部门数据" :value="2"/>
               <el-option label="本部门及以下" :value="3"/>
             </el-select>
           </el-form-item>
-          <el-form-item label="菜单权限" >
+          <el-form-item label="菜单权限">
             <el-tree
-                style="width:100%"
+                class="full-width"
                 :data="menuOptions"
                 show-checkbox
                 default-expand-all
@@ -73,7 +125,6 @@
         </div>
       </template>
     </vxe-modal>
-
   </div>
 </template>
 

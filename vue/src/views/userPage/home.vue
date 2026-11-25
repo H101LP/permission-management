@@ -1,30 +1,30 @@
 <template>
   <div class="user-home">
-    <!-- ===================== 欢迎横幅 ===================== -->
+    <!-- 欢迎横幅 -->
     <div class="welcome-banner">
       <div class="welcome-content">
         <div class="welcome-text">
-          <h1>{{ greeting }}，{{ userStore.name || '用户' }} 👋</h1>
-          <p class="welcome-sub">欢迎来到 {{ siteTitle }}，今日好心情！ 这里是普通用户</p>
+          <h1>{{ greeting }}，{{ userStore.name || '用户' }}</h1>
+          <p class="welcome-sub">欢迎使用 {{ siteTitle }}，这里汇总了您的常用入口与系统动态。</p>
         </div>
         <div class="welcome-extra">
-          <el-tag type="success" size="large" effect="light">
+          <el-tag class="welcome-tag" type="primary" effect="light">
             角色：{{ userRole }}
           </el-tag>
-          <el-tag type="info" size="large" effect="light">
+          <el-tag class="welcome-tag" type="info" effect="light">
             {{ currentDate }}
           </el-tag>
         </div>
       </div>
     </div>
 
-    <!-- ===================== 数据总览卡片 ===================== -->
+    <!-- 数据总览卡片 -->
     <el-row :gutter="20" class="stats-row">
       <el-col :xs="24" :sm="12" :lg="6" v-for="(stat, idx) in stats" :key="idx">
-        <el-card class="stat-card" shadow="hover">
+        <el-card class="stat-card" shadow="never">
           <div class="stat-content">
-            <div class="stat-icon" :style="{ background: stat.color }">
-              <el-icon :size="28"><component :is="stat.icon" /></el-icon>
+            <div class="stat-icon">
+              <el-icon :size="24"><component :is="stat.icon" /></el-icon>
             </div>
             <div class="stat-info">
               <span class="stat-value">{{ stat.value }}</span>
@@ -35,26 +35,33 @@
       </el-col>
     </el-row>
 
-    <!-- ===================== 快捷入口 ===================== -->
-    <el-card class="quick-card" shadow="never">
+    <!-- 快捷入口 -->
+    <el-card class="panel-card quick-card" shadow="never">
       <template #header>
-        <span class="card-title">🚀 快捷入口</span>
+        <span class="card-title">
+          <el-icon><Setting /></el-icon>
+          快捷入口
+        </span>
       </template>
       <div class="quick-actions">
         <el-button v-for="act in quickActions" :key="act.label"
-                   :type="act.type" plain size="large"
-                   icon="el-icon-plus" @click="act.handler">
+                   class="quick-action"
+                   :type="act.type" plain
+                   @click="act.handler">
           {{ act.label }}
         </el-button>
       </div>
     </el-card>
 
-    <!-- ===================== 动态资讯 & 系统通知 ===================== -->
+    <!-- 动态资讯与系统通知 -->
     <el-row :gutter="20" class="info-row">
       <el-col :xs="24" :md="14">
-        <el-card shadow="never" class="info-card">
+        <el-card shadow="never" class="panel-card info-card">
           <template #header>
-            <span class="card-title">📰 最新动态</span>
+            <span class="card-title">
+              <el-icon><Document /></el-icon>
+              最新动态
+            </span>
           </template>
           <el-timeline>
             <el-timeline-item
@@ -70,9 +77,12 @@
         </el-card>
       </el-col>
       <el-col :xs="24" :md="10">
-        <el-card shadow="never" class="info-card">
+        <el-card shadow="never" class="panel-card info-card">
           <template #header>
-            <span class="card-title">📌 系统公告</span>
+            <span class="card-title">
+              <el-icon><Bell /></el-icon>
+              系统公告
+            </span>
           </template>
           <div class="notice-list">
             <div v-for="(notice, idx) in notices" :key="idx" class="notice-item">
@@ -149,7 +159,7 @@ const quickActions = ref([
   {
     label: '个人中心',
     type: 'primary',
-    handler: () => router.push('/profile/user')
+    handler: () => router.push('/userPage/self')
   },
   {
     label: '修改密码',
@@ -208,180 +218,307 @@ onMounted(() => {
 
 <style scoped>
 .user-home {
+  min-height: 100%;
+  box-sizing: border-box;
   padding: 20px;
+  background: var(--bg-page);
 }
 
-/* ---------- 欢迎横幅 ---------- */
+/* 欢迎横幅 */
 .welcome-banner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  padding: 32px 40px;
-  margin-bottom: 24px;
-  color: #fff;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  margin-bottom: 16px;
+  padding: 20px 24px;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-left: 4px solid var(--brand-600);
+  border-radius: var(--radius-card);
+  background: var(--brand-50);
+  box-shadow: var(--shadow-card);
 }
 
 .welcome-content {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 16px 24px;
+}
+
+.welcome-text {
+  min-width: 0;
 }
 
 .welcome-text h1 {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 1.35;
 }
 
 .welcome-sub {
-  font-size: 16px;
-  opacity: 0.85;
-  margin: 0;
+  margin: 7px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .welcome-extra {
   display: flex;
-  gap: 16px;
   flex-wrap: wrap;
+  gap: 8px;
 }
 
-.welcome-extra .el-tag {
-  font-size: 15px;
-  padding: 8px 18px;
+.welcome-tag {
+  height: 28px;
+  padding: 0 10px;
+  border-color: var(--border-default);
+  border-radius: var(--radius-control);
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  font-size: 12px;
+  line-height: 26px;
 }
 
-/* ---------- 统计卡片 ---------- */
+.welcome-tag.el-tag--primary {
+  border-color: var(--border-default);
+  color: var(--brand-600);
+}
+
+/* 统计卡片 */
 .stats-row {
-  margin-bottom: 24px;
+  row-gap: 16px;
+  margin-bottom: 16px;
+}
+
+.stats-row :deep(.el-col),
+.info-row :deep(.el-col) {
+  display: flex;
 }
 
 .stat-card {
-  border-radius: 12px;
-  transition: transform 0.2s;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.18s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
+  border-color: var(--border-strong);
+}
+
+.stat-card :deep(.el-card__body) {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 18px;
 }
 
 .stat-content {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
+  min-height: 60px;
 }
 
 .stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
+  display: grid;
   flex-shrink: 0;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+  color: var(--brand-500);
+  background: var(--brand-50);
 }
 
 .stat-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .stat-value {
+  color: var(--text-primary);
   font-size: 26px;
-  font-weight: 600;
-  color: #1f2f3d;
-  line-height: 1.2;
+  font-weight: 650;
+  line-height: 1.15;
 }
 
 .stat-label {
-  font-size: 14px;
-  color: #909399;
-  margin-top: 4px;
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
 }
 
-/* ---------- 快捷入口 ---------- */
+/* 快捷入口与信息面板 */
+.panel-card {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.panel-card :deep(.el-card__header) {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--bg-surface);
+}
+
+.panel-card :deep(.el-card__body) {
+  padding: 18px;
+}
+
 .quick-card {
-  border-radius: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.card-title .el-icon {
+  color: var(--brand-500);
+  font-size: 16px;
 }
 
 .quick-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 10px;
 }
 
-.quick-actions .el-button {
+.quick-actions :deep(.quick-action) {
+  --el-button-text-color: var(--brand-600);
+  --el-button-bg-color: var(--brand-50);
+  --el-button-border-color: var(--border-default);
+  --el-button-hover-text-color: var(--brand-600);
+  --el-button-hover-bg-color: var(--brand-50);
+  --el-button-hover-border-color: var(--brand-500);
+  --el-button-active-text-color: var(--brand-600);
+  --el-button-active-bg-color: var(--brand-50);
+  --el-button-active-border-color: var(--brand-600);
+  height: 36px;
   min-width: 120px;
-  justify-content: center;
-}
-
-/* ---------- 动态资讯 & 公告 ---------- */
-.info-row {
-  margin-top: 8px;
-}
-
-.info-card {
-  border-radius: 12px;
-  height: 100%;
-}
-
-.card-title {
-  font-size: 16px;
+  margin: 0;
+  padding: 0 16px;
+  border-radius: var(--radius-control);
+  font-size: 13px;
   font-weight: 500;
 }
 
-.el-timeline {
+.info-row {
+  row-gap: 16px;
+}
+
+.info-card :deep(.el-timeline) {
   padding-left: 0;
+}
+
+.info-card :deep(.el-timeline-item__node) {
+  border-color: var(--brand-500);
+  background: var(--brand-500);
+}
+
+.info-card :deep(.el-timeline-item__content) {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.info-card :deep(.el-timeline-item__timestamp) {
+  color: var(--text-tertiary);
+  font-size: 11px;
 }
 
 .notice-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
 }
 
 .notice-item {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  color: #1f2f3d;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.notice-item:first-child {
+  padding-top: 0;
 }
 
 .notice-item:last-child {
-  border-bottom: none;
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
 .notice-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #409EFF;
   flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: var(--brand-500);
 }
 
 .notice-text {
-  color: #606266;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-/* ---------- 响应式调整 ---------- */
 @media (max-width: 768px) {
-  .welcome-banner {
-    padding: 24px 20px;
+  .user-home {
+    padding: 14px;
   }
+
+  .welcome-banner {
+    padding: 18px;
+  }
+
   .welcome-text h1 {
+    font-size: 20px;
+  }
+
+  .stat-card :deep(.el-card__body),
+  .panel-card :deep(.el-card__body) {
+    padding: 16px;
+  }
+
+  .stat-value {
     font-size: 22px;
   }
-  .welcome-extra {
-    margin-top: 12px;
+
+  .stat-icon {
+    width: 42px;
+    height: 42px;
   }
-  .stat-value {
-    font-size: 20px;
+}
+
+@media (max-width: 480px) {
+  .welcome-content {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .quick-action {
+    flex: 1;
+    min-width: 104px;
   }
 }
 </style>

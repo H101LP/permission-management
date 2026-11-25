@@ -1,99 +1,149 @@
 <template>
-  <div class="app-container">
+  <div class="management-page">
+    <header class="page-heading">
+      <div class="heading-main">
+        <span class="heading-icon"><el-icon><Key /></el-icon></span>
+        <div>
+          <h1>权限日志</h1>
+          <p>追踪角色菜单授权变更与操作链路</p>
+        </div>
+      </div>
+      <div class="heading-stat">
+        <span class="live-dot"></span>
+        <span>变更记录</span>
+        <strong>{{ total }}</strong>
+        <span>条</span>
+      </div>
+    </header>
 
     <!-- 查询区：权限日志没有 module / operType / status，只留操作人 / 角色 / 时间 -->
-    <el-form :model="query" ref="queryRef" label-width="80px" inline>
-      <el-form-item label="操作人" prop="operUserName">
-        <el-input v-model="query.operUserName" placeholder="请输入操作人" clearable style="width: 150px"/>
-      </el-form-item>
+    <section class="query-panel">
+      <el-form :model="query" ref="queryRef" inline class="query-form">
+        <el-form-item label="操作人" prop="operUserName" class="field-md">
+          <el-input v-model="query.operUserName" placeholder="请输入操作人" clearable />
+        </el-form-item>
 
-      <el-form-item label="目标角色" prop="targetRoleName">
-        <el-input v-model="query.targetRoleName" placeholder="请输入角色名" clearable style="width: 150px"/>
-      </el-form-item>
+        <el-form-item label="目标角色" prop="targetRoleName" class="field-md">
+          <el-input v-model="query.targetRoleName" placeholder="请输入角色名" clearable />
+        </el-form-item>
 
-      <el-form-item label="操作时间">
-        <el-date-picker
-            v-model="dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="YYYY-MM-DD"
-            style="width: 260px"
-        />
-      </el-form-item>
+        <el-form-item label="操作时间" class="field-date">
+          <el-date-picker
+              v-model="dateRange"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="YYYY-MM-DD"
+          />
+        </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+        <div class="query-actions">
+          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        </div>
+      </el-form>
+    </section>
 
-    <!-- 列表 -->
-    <el-table :data="logList" style="width: 100%" border v-loading="loading">
-      <el-table-column prop="logId" label="日志编号" width="90" align="center"/>
-      <el-table-column prop="operUserName" label="操作人" width="120" align="center"/>
-      <el-table-column prop="targetRoleName" label="目标角色" width="120" align="center"/>
+    <section class="table-panel">
+      <div class="table-toolbar">
+        <div class="table-title">
+          <h2>授权变更记录</h2>
+          <span class="record-count">共 {{ total }} 条记录</span>
+        </div>
+      </div>
 
-      <!-- 变更前 -->
-      <el-table-column label="变更前" align="center" min-width="150">
-        <template #default="scope">
-          <el-tag v-for="id in parseMenus(scope.row.oldMenus)" :key="'old' + id"
-                  type="info" size="small" style="margin: 2px">
-            {{ menuLabel(id) }}
-          </el-tag>
-          <span v-if="parseMenus(scope.row.oldMenus).length === 0" class="empty-text">无</span>
+      <el-table :data="logList" class="data-table" border v-loading="loading">
+        <el-table-column prop="logId" label="日志编号" width="90" align="center" />
+        <el-table-column prop="operUserName" label="操作人" width="120" align="center" />
+        <el-table-column prop="targetRoleName" label="目标角色" width="120" align="center" />
+
+        <!-- 变更前 -->
+        <el-table-column label="变更前" align="center" min-width="150">
+          <template #default="scope">
+            <el-tag v-for="id in parseMenus(scope.row.oldMenus)" :key="'old' + id"
+                    type="info" size="small" class="permission-tag">
+              {{ menuLabel(id) }}
+            </el-tag>
+            <span v-if="parseMenus(scope.row.oldMenus).length === 0" class="cell-muted">无</span>
+          </template>
+        </el-table-column>
+
+        <!-- 变更后 -->
+        <el-table-column label="变更后" align="center" min-width="150">
+          <template #default="scope">
+            <el-tag v-for="id in parseMenus(scope.row.newMenus)" :key="'new' + id"
+                    size="small" class="permission-tag">
+              {{ menuLabel(id) }}
+            </el-tag>
+            <span v-if="parseMenus(scope.row.newMenus).length === 0" class="cell-muted">无</span>
+          </template>
+        </el-table-column>
+
+        <!-- 新增：绿色 -->
+        <el-table-column label="新增" align="center" min-width="130">
+          <template #default="scope">
+            <el-tag v-for="id in parseMenus(scope.row.addMenus)" :key="'add' + id"
+                    type="success" size="small" class="permission-tag">
+              {{ menuLabel(id) }}
+            </el-tag>
+            <span v-if="parseMenus(scope.row.addMenus).length === 0" class="cell-muted">—</span>
+          </template>
+        </el-table-column>
+
+        <!-- 移除：红色 -->
+        <el-table-column label="移除" align="center" min-width="130">
+          <template #default="scope">
+            <el-tag v-for="id in parseMenus(scope.row.removeMenus)" :key="'rm' + id"
+                    type="danger" size="small" class="permission-tag">
+              {{ menuLabel(id) }}
+            </el-tag>
+            <span v-if="parseMenus(scope.row.removeMenus).length === 0" class="cell-muted">—</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="operTime" label="操作时间" width="170" align="center" />
+        <el-table-column label="操作" width="90" align="center" fixed="right">
+          <template #default="scope">
+            <el-button link type="primary" icon="View" class="row-actions" @click="handleDetail(scope.row)">详情</el-button>
+          </template>
+        </el-table-column>
+
+        <template #empty>
+          <div class="empty-state">
+            <span class="empty-icon"><el-icon><Search /></el-icon></span>
+            <p>没有找到匹配的权限日志</p>
+            <span>请调整筛选条件后再试</span>
+          </div>
         </template>
-      </el-table-column>
+      </el-table>
 
-      <!-- 变更后 -->
-      <el-table-column label="变更后" align="center" min-width="150">
-        <template #default="scope">
-          <el-tag v-for="id in parseMenus(scope.row.newMenus)" :key="'new' + id"
-                  size="small" style="margin: 2px">
-            {{ menuLabel(id) }}
-          </el-tag>
-          <span v-if="parseMenus(scope.row.newMenus).length === 0" class="empty-text">无</span>
-        </template>
-      </el-table-column>
-
-      <!-- 新增：绿色 -->
-      <el-table-column label="新增" align="center" min-width="130">
-        <template #default="scope">
-          <el-tag v-for="id in parseMenus(scope.row.addMenus)" :key="'add' + id"
-                  type="success" size="small" style="margin: 2px">
-            {{ menuLabel(id) }}
-          </el-tag>
-          <span v-if="parseMenus(scope.row.addMenus).length === 0" class="empty-text">—</span>
-        </template>
-      </el-table-column>
-
-      <!-- 移除：红色 -->
-      <el-table-column label="移除" align="center" min-width="130">
-        <template #default="scope">
-          <el-tag v-for="id in parseMenus(scope.row.removeMenus)" :key="'rm' + id"
-                  type="danger" size="small" style="margin: 2px">
-            {{ menuLabel(id) }}
-          </el-tag>
-          <span v-if="parseMenus(scope.row.removeMenus).length === 0" class="empty-text">—</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="operTime" label="操作时间" width="170" align="center"/>
-      <el-table-column label="操作" width="90" align="center" fixed="right">
-        <template #default="scope">
-          <el-button link type="primary" icon="View" @click="handleDetail(scope.row)">详情</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination :total="total"
-                v-model:page="query.pageNum"
-                v-model:limit="query.pageSize"
-                @pagination="getList"/>
+      <div class="table-footer">
+        <div class="footer-summary">
+          <span>第 {{ query.pageNum }} 页</span>
+          <span class="footer-dot">·</span>
+          <span>每页 {{ query.pageSize }} 条</span>
+        </div>
+        <pagination class="log-pagination"
+                    :total="total"
+                    v-model:page="query.pageNum"
+                    v-model:limit="query.pageSize"
+                    @pagination="getList" />
+      </div>
+    </section>
 
     <!-- 详情抽屉 -->
-    <el-drawer v-model="detailOpen" title="权限变更详情" size="45%">
+    <el-drawer v-model="detailOpen" class="detail-drawer" size="520px">
+      <template #header>
+        <div class="drawer-heading">
+          <span class="drawer-heading-icon"><el-icon><Key /></el-icon></span>
+          <div>
+            <h3>权限变更详情</h3>
+            <p>角色菜单授权差异与操作链路</p>
+          </div>
+        </div>
+      </template>
+
       <el-descriptions :column="1" border>
         <el-descriptions-item label="日志编号">{{ detail.logId }}</el-descriptions-item>
         <el-descriptions-item label="操作人">
@@ -104,7 +154,7 @@
         </el-descriptions-item>
         <el-descriptions-item label="操作时间">{{ detail.operTime }}</el-descriptions-item>
         <el-descriptions-item label="traceId">
-          <span style="font-family: monospace">{{ detail.traceId }}</span>
+          <code class="trace-id">{{ detail.traceId }}</code>
         </el-descriptions-item>
       </el-descriptions>
 
@@ -128,7 +178,6 @@
         <pre class="detail-pre">{{ prettyJson(detail.removeMenus) }}</pre>
       </div>
     </el-drawer>
-
   </div>
 </template>
 
@@ -253,29 +302,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.empty-text {
-  color: #c0c4cc;
-  font-size: 12px;
-}
-.detail-block {
-  margin-top: 16px;
-}
-.detail-title {
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #303133;
-}
-.detail-pre {
-  background: #f5f7fa;
-  border: 1px solid #ebeef5;
-  border-radius: 4px;
-  padding: 10px 12px;
-  max-height: 220px;
-  overflow: auto;
-  white-space: pre-wrap;
-  word-break: break-all;
-  font-size: 13px;
-  line-height: 1.6;
-  margin: 0;
+.permission-tag {
+  margin: 2px;
 }
 </style>
