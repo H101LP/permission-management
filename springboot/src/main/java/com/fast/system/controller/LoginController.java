@@ -87,15 +87,9 @@ public class LoginController extends BaseController {
         String storedPwd = user.getPassword();
 
         if (!passwordEncoder.matches(rawPwd, storedPwd)) {
-            // 兼容存量明文（迁移期）：明文相等则放行，并顺手改写成密文
-            if (rawPwd.equals(storedPwd)) {
-                // resetUserPwd 内部会 encode 一次，这里必须传明文，否则会二次加密导致下次登录永久失败
-                userService.resetUserPwd(user.getUserId(), rawPwd);
-            } else {
-                // 记一次失败（固定 15 分钟窗口）
-                recordFail(failKey);
-                throw new BusinessException("密码错误");
-            }
+            // 记一次失败（固定 15 分钟窗口）
+            recordFail(failKey);
+            throw new BusinessException("密码错误");
         }
         // 密码正确，清零失败计数
         clearFail(failKey);
